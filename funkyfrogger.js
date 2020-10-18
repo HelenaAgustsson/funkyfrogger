@@ -18,14 +18,42 @@ var game = {
 		type	: 0
 	}],
 	distance	: 0,
+	started		: 0,	//Når spelet er i gang vil "started" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
+	fps			: 20,
 
 	//Spelfunksjonar for å styre spelet.
 	update	: update_game,
+
 	start	: function(fps = 20) {
-		this.interval = setInterval(this.update, 1000/fps);
+		if(this.started == 0)
+		{
+			this.fps = fps;
+			this.started = setInterval(this.update, 1000/fps);
+		}
+		else
+		{
+			console.log("Error: Game already started");
+		}
 	},
+
 	stop	: function() {
-		clearInterval(this.interval);
+		if(this.started != 0)
+		{
+			clearInterval(this.started);
+			this.started = 0;
+		}
+	},
+
+	pause	: function() {
+		if(this.started != 0)
+		{
+			this.stop()
+		}
+		else
+		{
+			//Resume game
+			this.start(game.fps);
+		}
 	}
 };
 
@@ -106,8 +134,14 @@ function update_game() {
 	game.distance += 5 * (1 - 1 * Math.cos(time/10))
 }
 
+function key_logger(event) {
+	if(event.key == "Escape") {
+		game.pause();
+	}
+}
+
 //Vent til nettsida er lasta
 window.onload = function() {
 	game.canvas = document.getElementById("gamecanvas");
-	game.start(20);
+	window.onkeydown = key_logger;
 }
