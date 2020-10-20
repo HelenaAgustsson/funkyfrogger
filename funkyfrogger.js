@@ -188,3 +188,43 @@ function enviroment_is_complete() {
 
 game.audio = new Audio("multimedia/the_monarch_full.mp3");
 game.audio.loop = true;
+
+
+//************************//
+//       High Score       //
+//************************//
+
+//Poengsum vert lagra i window.localStorage. Då vert han "permanent" lagra i nettlesaren og kan hentast fram ved seinare tilhøve.
+//Nyttar JSON format for å lagra ein "array" av "high scores" som eit "string" objekt.
+
+function add_high_score(name, score) {
+	try{
+		var highScore = JSON.parse(window.localStorage.getItem("highScore"))
+	} catch(error) {
+		var highScore = [];
+	}
+
+	//Legg til den nye poengsummen og sorterar lista slik at han kjem på rett plass.
+	highScore.push([name, score]);
+	highScore.sort(
+			function(a, b){
+				return b[1] - a[1];
+			}
+			);
+
+	window.localStorage.setItem("highScore", JSON.stringify(highScore));
+}
+
+function get_high_score_list() {
+	try{
+		var highScore = JSON.parse(window.localStorage.getItem("highScore"))
+	} catch(error) {
+		var highScore = [];
+	}
+
+	return highScore;
+}
+
+function clear_all_high_score() {
+	window.localStorage.setItem("highScore", JSON.stringify([]));
+}
