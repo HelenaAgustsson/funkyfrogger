@@ -27,6 +27,7 @@ var game = {
 		{
 			this.fps = fps;
 			this.started = setInterval(this.update, 1000/fps);
+			this.audio.play();
 		}
 		else
 		{
@@ -39,6 +40,7 @@ var game = {
 		{
 			clearInterval(this.started);
 			this.started = 0;
+			this.audio.pause();
 		}
 	},
 
@@ -178,3 +180,11 @@ function enviroment_is_complete() {
 
 	return game.canvas.height < (lastEnv.end - game.distance);
 }
+
+
+//************************//
+//       Multimedia       //
+//************************//
+
+game.audio = new Audio("multimedia/the_monarch_full.mp3");
+game.audio.loop = true;
