@@ -12,6 +12,9 @@ var constants = {
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"]
 };
 
+//Initialisering av hindre med kollisjon
+var car1, car2, car3, car4, car5;
+
 var game = {
 	//Spelvariabler. Initialisert til 0
 	tileSize	: 0,
@@ -70,7 +73,12 @@ function update_game() {
 	//Vert rekna ut kvar gong i tilfelle canvas har endra størrelse.
 	game.tileSize = game.canvas.height / constants.tileCount;
 
+	// Miljø
 	handle_enviroment();
+
+	// Hindre og plattformer
+	draw_obstacles();
+
 
 	//Eksempelfunksjonar
 	//handle_platforms();
@@ -180,6 +188,63 @@ function enviroment_is_complete() {
 
 	return game.canvas.height < (lastEnv.end - game.distance);
 }
+
+
+//************************//
+//        Obstacles       //
+//************************//
+
+// Tegner opp hindre
+function draw_obstacles() {
+	car1 = create_obstacle(20, game.tileSize, "black", -this.width+20, game.canvas.height-this.height*3);
+	car2 = create_obstacle(20, game.tileSize, "red", -this.width+20, game.canvas.height-this.height*5);
+	car3 = create_obstacle(20, game.tileSize, "blue", game.canvas.width-this.width, game.canvas.height-this.height*2);
+	car4 = create_obstacle(20, game.tileSize, "yellow", game.canvas.width-this.width, game.canvas.height-this.height*4);
+	car5 = create_obstacle(20, game.tileSize, "purple", game.canvas.width-this.width, game.canvas.height-this.height*6);
+}
+
+// Beveger hindrene horisontalt
+function move_obstacles() {
+	var context = game.canvas.getContext("2d");
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	
+	car1.x += 1;
+	car2.x += 1.5;
+	car3.x -= 1;
+	car4.x -= 1.5;
+	car5.x -= 2;
+
+	car1.update();
+	car2.update();
+	car3.update();
+	car4.update();
+	car5.update();
+}
+
+//Lager hindre etter spesifikasjon
+function create_obstacle(width, height, color, x, y) {
+	this.width = width;
+	this.height = height;
+	this.x = x;
+	this.y = y;
+
+	var context = game.canvas.getContext("2d");
+	context.fillStyle = color;
+	context.fillRect(this.x, this.y, this.width, this.height);
+}
+//Inspirert av https://www.w3schools.com/graphics/game_components.asp
+
+
+
+
+//************************//
+//        Platforms       //
+//************************//
+
+
+
+
+
 
 
 //************************//
