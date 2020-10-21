@@ -13,7 +13,7 @@ var constants = {
 };
 
 //Initialisering av hindre med kollisjon
-var car1, car2, car3, car4, car5;
+var cars = [];
 
 var game = {
 	//Spelvariabler. Initialisert til 0
@@ -64,7 +64,15 @@ var game = {
 //Vent til nettsida er lasta før ein hentar canvas og koplar opp funksjonar
 window.onload = function() {
 	game.canvas = document.getElementById("gamecanvas");
+	game.tileSize = game.canvas.height / constants.tileCount;
+
 	window.onkeydown = key_logger;
+
+	cars.push(create_obstacle(20, game.tileSize, "black", 20, 3, 1));
+	cars.push(create_obstacle(20, game.tileSize, "red", 20, 5, 1.5));
+	cars.push(create_obstacle(20, game.tileSize, "blue", game.canvas.width, 2, -1));
+	cars.push(create_obstacle(20, game.tileSize, "yellow", game.canvas.width, 4, -1.5));
+	cars.push(create_obstacle(20, game.tileSize, "purple", game.canvas.width, 6, -2));
 }
 
 //Hovudloopen til spelet. Alt starter frå her.
@@ -77,6 +85,7 @@ function update_game() {
 	handle_enviroment();
 
 	// Hindre og plattformer
+	move_obstacles();
 	draw_obstacles();
 
 
@@ -196,41 +205,35 @@ function enviroment_is_complete() {
 
 // Tegner opp hindre
 function draw_obstacles() {
-	car1 = create_obstacle(20, game.tileSize, "black", -this.width+20, game.canvas.height-this.height*3);
-	car2 = create_obstacle(20, game.tileSize, "red", -this.width+20, game.canvas.height-this.height*5);
-	car3 = create_obstacle(20, game.tileSize, "blue", game.canvas.width-this.width, game.canvas.height-this.height*2);
-	car4 = create_obstacle(20, game.tileSize, "yellow", game.canvas.width-this.width, game.canvas.height-this.height*4);
-	car5 = create_obstacle(20, game.tileSize, "purple", game.canvas.width-this.width, game.canvas.height-this.height*6);
+	var context = game.canvas.getContext("2d");
+
+	for(car of cars)
+	{
+		context.fillStyle = car.color;
+		context.fillRect(car.x, car.y, car.width, car.height);
+	}
 }
 
 // Beveger hindrene horisontalt
 function move_obstacles() {
-	var context = game.canvas.getContext("2d");
-	context.clearRect(0, 0, canvas.width, canvas.height);
-	
-	car1.x += 1;
-	car2.x += 1.5;
-	car3.x -= 1;
-	car4.x -= 1.5;
-	car5.x -= 2;
-
-	car1.update();
-	car2.update();
-	car3.update();
-	car4.update();
-	car5.update();
+	for(car of cars)
+	{
+		car.x += car.speed;
+	}
 }
 
 //Lager hindre etter spesifikasjon
-function create_obstacle(width, height, color, x, y) {
-	this.width = width;
-	this.height = height;
-	this.x = x;
-	this.y = y;
+function create_obstacle(width, height, color, x, row, speed) {
+	car = {}
 
-	var context = game.canvas.getContext("2d");
-	context.fillStyle = color;
-	context.fillRect(this.x, this.y, this.width, this.height);
+	car.width = width;
+	car.height = height;
+	car.color = color;
+	car.x = x-car.width;
+	car.y = game.canvas.height - car.height*row;
+	car.speed = speed;
+
+	return car;
 }
 //Inspirert av https://www.w3schools.com/graphics/game_components.asp
 
