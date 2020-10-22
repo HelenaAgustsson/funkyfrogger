@@ -12,6 +12,9 @@ var constants = {
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"]
 };
 
+//Initialisering av hindre med kollisjon
+var cars = [];
+
 var game = {
 	//Spelvariabler. Initialisert til 0
 	tileSize	: 0,
@@ -61,7 +64,15 @@ var game = {
 //Vent til nettsida er lasta før ein hentar canvas og koplar opp funksjonar
 window.onload = function() {
 	game.canvas = document.getElementById("gamecanvas");
+	game.tileSize = game.canvas.height / constants.tileCount;
+
 	window.onkeydown = key_logger;
+
+	cars.push(create_obstacle(20, game.tileSize, "black", 20, 3, 1));
+	cars.push(create_obstacle(20, game.tileSize, "red", 20, 5, 1.5));
+	cars.push(create_obstacle(20, game.tileSize, "blue", game.canvas.width, 2, -1));
+	cars.push(create_obstacle(20, game.tileSize, "yellow", game.canvas.width, 4, -1.5));
+	cars.push(create_obstacle(20, game.tileSize, "purple", game.canvas.width, 6, -2));
 }
 
 //Hovudloopen til spelet. Alt starter frå her.
@@ -70,7 +81,13 @@ function update_game() {
 	//Vert rekna ut kvar gong i tilfelle canvas har endra størrelse.
 	game.tileSize = game.canvas.height / constants.tileCount;
 
+	// Miljø
 	handle_enviroment();
+
+	// Hindre og plattformer
+	move_obstacles();
+	draw_obstacles();
+
 
 	//Eksempelfunksjonar
 	//handle_platforms();
@@ -180,6 +197,57 @@ function enviroment_is_complete() {
 
 	return game.canvas.height < (lastEnv.end - game.distance);
 }
+
+
+//************************//
+//        Obstacles       //
+//************************//
+
+// Tegner opp hindre
+function draw_obstacles() {
+	var context = game.canvas.getContext("2d");
+
+	for(car of cars)
+	{
+		context.fillStyle = car.color;
+		context.fillRect(car.x, car.y, car.width, car.height);
+	}
+}
+
+// Beveger hindrene horisontalt
+function move_obstacles() {
+	for(car of cars)
+	{
+		car.x += car.speed;
+	}
+}
+
+//Lager hindre etter spesifikasjon
+function create_obstacle(width, height, color, x, row, speed) {
+	car = {}
+
+	car.width = width;
+	car.height = height;
+	car.color = color;
+	car.x = x-car.width;
+	car.y = game.canvas.height - car.height*row;
+	car.speed = speed;
+
+	return car;
+}
+//Inspirert av https://www.w3schools.com/graphics/game_components.asp
+
+
+
+
+//************************//
+//        Platforms       //
+//************************//
+
+
+
+
+
 
 
 //************************//
