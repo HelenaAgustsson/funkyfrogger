@@ -148,7 +148,7 @@ function handle_enviroment() {
 	}
 
 	//Dersom me har scrolla forbi gamle miljø vert dei sletta.
-	while(game.env[0].start + game.env[0].tiles+game.tileSize < game.distance) {
+	while(game.env[0].end < game.distance) {
 		game.env.shift();
 	}
 
