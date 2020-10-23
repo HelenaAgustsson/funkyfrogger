@@ -79,6 +79,8 @@ window.onload = function() {
 function update_game() {
 	//Rekn ut kor stor ein "tile" er på canvas. 
 	//Vert rekna ut kvar gong i tilfelle canvas har endra størrelse.
+	game.canvas.height = game.canvas.clientHeight;
+	game.canvas.width = game.canvas.clientWidth;
 	game.tileSize = game.canvas.height / constants.tileCount;
 
 	// Miljø
@@ -98,11 +100,12 @@ function update_game() {
 	//end_game_if_no_more_lives();
 
 	//DEBUG
+	debug_draw_test();
+
 	//Automatisk scrolling ved å auka distance
 	time += 1;
 	game.distance += 5 * (1 - 1 * Math.cos(time/10))
 }
-
 
 //************************//
 //    Hjelpefunksjonar    //
@@ -114,6 +117,89 @@ function get_random(min, max) {
 	return min + Math.floor((max+1-min)*Math.random());
 }
 
+// Teiknar eit objekt på canvas basert på flisoppsett frå game.tileSize
+// Width og height vert målt i flisstørrelse, dvs width = 4 er fire gongar så breitt som ei flis.
+// Posisjon vert og målt i flislengd. Dvs y = 3 vil tilsvare 3 flislengder opp på canvas.
+// Nullpunkt for x-posisjon er satt til midt på canvas og negativ x vil dermed vera i venstre halvdel.
+// Objektet er i tillegg sentrert på x,y slik at ein ikkje treng å basera posisjon på hjørne til figuren.
+function draw_object(object) {
+	var context = game.canvas.getContext("2d");
+
+	var width  = Math.round(object.width  * game.tileSize);
+	var height = Math.round(object.height * game.tileSize);
+
+	var x = Math.round(game.canvas.width/2 + (object.x * game.tileSize) - width/2);
+	var y = Math.round(game.canvas.height  - (object.y * game.tileSize) - height/2);
+
+
+	if(object.hasOwnProperty("color")) {
+		context.fillStyle = object.color;
+	}
+	else {
+		context.fillStyle = "magenta";
+	}
+
+	context.fillRect(x, y, width, height);
+}
+
+// Testfunksjon for å visualisere bruken av draw_object(object)
+function debug_draw_test() {
+	//Array med testobjekt
+	var testObjects = [{
+		x : -2,
+		y : 0.5,
+		width: 1,
+		height: 1,
+	}, {
+		x : -1,
+		y : 1,
+		width: 1,
+		height: 1,
+	}, {
+		x : 0,
+		y : 2,
+		width: 0.5,
+		height: 1.5,
+		color: "purple"
+	}, {
+		x : 1,
+		y : 2.5,
+		width: 0.2,
+		height: 0.2,
+	}, {
+		x : 2,
+		y : 0,
+		width: 1,
+		height: 1,
+	}];
+
+	var topLeftCornerX = 0.5 - (game.canvas.width / game.tileSize)/2;
+	var topLeftCornerY = 11.5;
+	var testObjectTopLeft = {
+		x : topLeftCornerX,
+		y : topLeftCornerY,
+		width: 1,
+		height: 1,
+		color: "red"
+		};
+
+	var topRightCornerX = (game.canvas.width / game.tileSize)/2 - 0.5;
+	var topRightCornerY = 11.5;
+	var testObjectTopRight = {
+		x : topRightCornerX,
+		y : topRightCornerY,
+		width: 1,
+		height: 1,
+		color: "green"
+		};
+
+	for (object of testObjects){
+		draw_object(object);
+	}
+
+	draw_object(testObjectTopLeft);
+	draw_object(testObjectTopRight);
+}
 
 //************************//
 //         Input          //
