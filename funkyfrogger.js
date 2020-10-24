@@ -323,7 +323,16 @@ function create_obstacle(width, height, color, x, row, speed) {
 }
 //Inspirert av https://www.w3schools.com/graphics/game_components.asp
 
+//************************//
+//        Coins           //
+//************************//
 
+
+function create_coins(x, y, width, height){
+	console.log("creating coins");
+}
+
+create_coins(0,0,0,0);
 
 
 //************************//
