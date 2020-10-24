@@ -14,6 +14,8 @@ var constants = {
 
 //Initialisering av hindre med kollisjon
 var cars = [];
+// Initialisering av elementer som kan plukkes opp
+var coins = [];
 
 var game = {
 	//Spelvariabler. Initialisert til 0
@@ -65,6 +67,7 @@ var game = {
 window.onload = function() {
 	game.canvas = document.getElementById("gamecanvas");
 	game.tileSize = game.canvas.height / constants.tileCount;
+	let coinImg = document.getElementById('coins');
 
 	window.onkeydown = key_logger;
 
@@ -73,6 +76,11 @@ window.onload = function() {
 	cars.push(create_obstacle(20, game.tileSize, "blue", game.canvas.width, 2, -1));
 	cars.push(create_obstacle(20, game.tileSize, "yellow", game.canvas.width, 4, -1.5));
 	cars.push(create_obstacle(20, game.tileSize, "purple", game.canvas.width, 6, -2));
+
+	//array med coins objekter
+	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 200, 200));
+	
+	//create_coins(coinImg, 0, 30, game.tileSize, game.tileSize);
 }
 
 //Hovudloopen til spelet. Alt starter frå her.
@@ -89,6 +97,7 @@ function update_game() {
 	// Hindre og plattformer
 	move_obstacles();
 	draw_obstacles();
+	draw_coins();
 
 
 	//Eksempelfunksjonar
@@ -140,6 +149,7 @@ function draw_object(object) {
 	}
 
 	context.fillRect(x, y, width, height);
+
 }
 
 // Testfunksjon for å visualisere bruken av draw_object(object)
@@ -199,6 +209,7 @@ function debug_draw_test() {
 
 	draw_object(testObjectTopLeft);
 	draw_object(testObjectTopRight);
+	draw_coins(coins[0]);
 }
 
 //************************//
@@ -327,12 +338,39 @@ function create_obstacle(width, height, color, x, row, speed) {
 //        Coins           //
 //************************//
 
+// creating a coin for froggy to pick up
+function create_coin(width, height, image, x, y){
+	coin = {}
 
-function create_coins(x, y, width, height){
-	console.log("creating coins");
+	coin.width = width;
+	coin.height = height;
+	coin.x=x;
+	coin.y=y;
+	coin.image = image;
+
+	return coin;
+
+	
+	/*
+	game.canvas = document.getElementById("gamecanvas");
+    //let ctx = game.canvas.getContext('2d');
+    ctx.drawImage(image, coin.x, coin.y, coin.width, coin.height);
+        this.update = function(){
+        ctx.drawImage(image, this.x, this.y, width, height);
+	}
+	*/
 }
 
-create_coins(0,0,0,0);
+function draw_coins() {
+	var context = game.canvas.getContext("2d");
+
+	for(coin of coins)
+	{
+		context.drawImage(coin.image, coin.x, coin.y, coin.width, coin.height);
+	}
+}
+
+
 
 
 //************************//

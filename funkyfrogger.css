@@ -36,7 +36,8 @@ canvas {
 }
 
 .coins {
-    height: 30px;
+    height: 10px;
     width: auto;
-    visibility: hidden;
+	visibility: hidden;
+	padding: 5px;
 }
