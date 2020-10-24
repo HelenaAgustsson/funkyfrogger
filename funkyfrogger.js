@@ -79,6 +79,9 @@ window.onload = function() {
 
 	//array med coins objekter
 	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 200, 200));
+	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 400, 400));
+	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 600, 200));
+	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 800, 400));
 	
 	//create_coins(coinImg, 0, 30, game.tileSize, game.tileSize);
 }
@@ -338,7 +341,7 @@ function create_obstacle(width, height, color, x, row, speed) {
 //        Coins           //
 //************************//
 
-// creating a coin for froggy to pick up
+// lager et coin object 
 function create_coin(width, height, image, x, y){
 	coin = {}
 
@@ -347,20 +350,10 @@ function create_coin(width, height, image, x, y){
 	coin.x=x;
 	coin.y=y;
 	coin.image = image;
-
 	return coin;
-
-	
-	/*
-	game.canvas = document.getElementById("gamecanvas");
-    //let ctx = game.canvas.getContext('2d');
-    ctx.drawImage(image, coin.x, coin.y, coin.width, coin.height);
-        this.update = function(){
-        ctx.drawImage(image, this.x, this.y, width, height);
-	}
-	*/
 }
 
+// Tegner coins som froggy kan plukke opp
 function draw_coins() {
 	var context = game.canvas.getContext("2d");
 
