@@ -41,3 +41,8 @@ canvas {
 	visibility: hidden;
 	padding: 5px;
 }
+
+/* Display hidden då desse er fullstendig gøymd */
+.gameresources {
+	display: none;
+}

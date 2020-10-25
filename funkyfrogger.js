@@ -69,7 +69,9 @@ window.onload = function() {
 	game.tileSize = game.canvas.height / constants.tileCount;
 	let coinImg = document.getElementById('coins');
 
-	window.onkeydown = key_logger;
+	//Legg til interaktivitet
+	window.onkeydown = key_down_logger;
+	window.onkeyup = key_up_logger;
 
 	cars.push(create_obstacle(20, game.tileSize, "black", 20, 3, 1));
 	cars.push(create_obstacle(20, game.tileSize, "red", 20, 5, 1.5));
@@ -84,6 +86,8 @@ window.onload = function() {
 	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 800, 400));
 	
 	//create_coins(coinImg, 0, 30, game.tileSize, game.tileSize);
+
+	create_frog();
 }
 
 //Hovudloopen til spelet. Alt starter frå her.
@@ -113,6 +117,8 @@ function update_game() {
 
 	//DEBUG
 	debug_draw_test();
+
+	handle_frog();
 
 	//Automatisk scrolling ved å auka distance
 	time += 1;
@@ -221,12 +227,53 @@ function debug_draw_test() {
 //         Input          //
 //************************//
 
-function key_logger(event) {
-	if(event.key == "Escape") {
-		game.pause();
+function key_down_logger(event) {
+	switch(event.key) {
+		// Nyttar escape til å pause og starte spelet
+		case "Escape":
+			game.pause();
+			break;
+
+		// Når me trykkjer ned ein tast vil frosken flytta på seg. 
+		case "ArrowUp":
+		case "w":
+			game.frog.yVel = game.frog.speed;
+			break;
+
+		case "ArrowDown":
+		case "s":
+			game.frog.yVel = -game.frog.speed;
+			break;
+
+		case "ArrowLeft":
+		case "a":
+			game.frog.xVel = -game.frog.speed;
+			break;
+
+		case "ArrowRight":
+		case "d":
+			game.frog.xVel = game.frog.speed;
 	}
 }
 
+function key_up_logger(event) {
+	switch(event.key) {
+
+		//Når me slepp opp ein tast vil frosken stoppa opp.
+		case "ArrowUp":
+		case "ArrowDown":
+		case "w":
+		case "s":
+			game.frog.yVel = 0;
+			break;
+
+		case "ArrowLeft":
+		case "ArrowRight":
+		case "a":
+		case "d":
+			game.frog.xVel = 0;
+	}
+}
 
 //************************//
 //       Enviroment       //
@@ -423,4 +470,36 @@ function get_high_score_list() {
 
 function clear_all_high_score() {
 	window.localStorage.setItem("highScore", JSON.stringify([]));
+}
+
+//************************//
+//       Funky Frog       //
+//************************//
+
+function create_frog() {
+	var frog = {
+		x : 0,
+		y : 0.5,
+		width  : 1,
+		height : 1,
+
+		xVel : 0,
+		yVel : 0,
+		speed : 0.2,
+
+		//https://www.flaticon.com/free-icon/frog_1036001
+		image : document.getElementById("frog")
+	};
+
+	game.frog = frog;
+}
+
+function handle_frog() {
+	var frog = game.frog;
+
+	//Me oppdaterar frosken sin posisjon med farten dei har i x eller y retning
+	frog.x += frog.xVel;
+	frog.y += frog.yVel;
+
+	draw_object(frog);
 }
