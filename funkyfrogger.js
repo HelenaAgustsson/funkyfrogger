@@ -144,15 +144,17 @@ function draw_object(object) {
 	var y = Math.round(game.canvas.height  - (object.y * game.tileSize) - height/2);
 
 
-	if(object.hasOwnProperty("color")) {
+	if(object.hasOwnProperty("image")) {
+		context.drawImage(object.image, x, y, width, height);
+	}
+	else if(object.hasOwnProperty("color")) {
 		context.fillStyle = object.color;
+		context.fillRect(x, y, width, height);
 	}
 	else {
 		context.fillStyle = "magenta";
+		context.fillRect(x, y, width, height);
 	}
-
-	context.fillRect(x, y, width, height);
-
 }
 
 // Testfunksjon for å visualisere bruken av draw_object(object)
