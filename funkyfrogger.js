@@ -88,6 +88,8 @@ window.onload = function() {
 	//create_coins(coinImg, 0, 30, game.tileSize, game.tileSize);
 
 	create_frog();
+
+	update_game();
 }
 
 //Hovudloopen til spelet. Alt starter frå her.
