@@ -8,6 +8,7 @@ var time = 0;
 
 //Faste konstantar me ikkje forventar skal endre seg i løpet av spelet. 
 var constants = {
+	scrollSpeed	: 0.5,
 	tileCount	: 12, //Kor mange "tiles" som er synlege på canvas. Vert nytta til å rekna ut størrelsen ved teikning på canvas.
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"]
 };
@@ -23,6 +24,7 @@ var game = {
 	distance	: 0,
 	started		: 0,	//Når spelet er i gang vil "started" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
 	fps			: 20,
+	env			: [],
 
 	//Spelfunksjonar for å styre spelet.
 	update	: update_game,
@@ -72,6 +74,9 @@ window.onload = function() {
 	//Legg til interaktivitet
 	window.onkeydown = key_down_logger;
 	window.onkeyup = key_up_logger;
+
+	//Legg til fyrste enviroment
+	add_environment(0);
 
 	cars.push(create_obstacle(20, game.tileSize, "black", 20, 3, 1));
 	cars.push(create_obstacle(20, game.tileSize, "red", 20, 5, 1.5));
@@ -123,8 +128,8 @@ function update_game() {
 	handle_frog();
 
 	//Automatisk scrolling ved å auka distance
-	time += 1;
-	game.distance += 5 * (1 - 1 * Math.cos(time/10))
+	//time += 1;
+	//game.distance += 5 * (1 - 1 * Math.cos(time/10))
 }
 
 //************************//
@@ -140,6 +145,7 @@ function get_random(min, max) {
 // Teiknar eit objekt på canvas basert på flisoppsett frå game.tileSize
 // Width og height vert målt i flisstørrelse, dvs width = 4 er fire gongar så breitt som ei flis.
 // Posisjon vert og målt i flislengd. Dvs y = 3 vil tilsvare 3 flislengder opp på canvas.
+// Objektet vert scrolla nedover basert på game.distance
 // Nullpunkt for x-posisjon er satt til midt på canvas og negativ x vil dermed vera i venstre halvdel.
 // Objektet er i tillegg sentrert på x,y slik at ein ikkje treng å basera posisjon på hjørne til figuren.
 function draw_object(object) {
@@ -149,8 +155,7 @@ function draw_object(object) {
 	var height = Math.round(object.height * game.tileSize);
 
 	var x = Math.round(game.canvas.width/2 + (object.x * game.tileSize) - width/2);
-	var y = Math.round(game.canvas.height  - (object.y * game.tileSize) - height/2);
-
+	var y = Math.round(game.canvas.height  - ((object.y - game.distance) * game.tileSize) - height/2);
 
 	if(object.hasOwnProperty("image")) {
 		context.drawImage(object.image, x, y, width, height);
@@ -281,26 +286,19 @@ function key_up_logger(event) {
 //       Enviroment       //
 //************************//
 
-//Starthjelp for å hindra error
-game.env =  [{
-	start	: 0,
-	end		: 0,
-	tiles	: 0,
-	type	: 0
-}];
-
 //Hovudfunksjonen til handtering av miljø
 function handle_enviroment() {
 	//Dersom det ikkje er nok miljø, legg til så det er nok.
 	while(!enviroment_is_complete()) {
-		var lastEnv = game.env[game.env.length-1];
-
-		add_environment(lastEnv.start + lastEnv.tiles*game.tileSize);
+		add_environment();
 	}
 
 	//Dersom me har scrolla forbi gamle miljø vert dei sletta.
 	while(game.env[0].end < game.distance) {
 		game.env.shift();
+
+		//Fix for overscroll bug
+		game.distance = game.env[0].start;
 	}
 
 	//Teikn opp alle miljø på canvas.
@@ -313,30 +311,44 @@ function handle_enviroment() {
 function draw_environment(env) {
 	var context = game.canvas.getContext("2d");
 
-	var y = game.canvas.height - (env.start - game.distance) - env.tiles * game.tileSize;
-	var width = game.canvas.width;
-	var height = env.end - env.start;
+	var y = game.canvas.height - (env.end - game.distance) * game.tileSize;
 
+	var width = game.canvas.width;
+	var height = env.tiles * game.tileSize;
+
+	//Teiknar berre rein farge. Trend meir avansert grafikk
 	context.fillStyle = constants.envColors[env.type];
 	context.fillRect(0, y, width, height);
 }
 
 //Legg til eit nytt (tilfeldig) miljø i game.env.
-function add_environment() {
-	var prevEnv = game.env[game.env.length-1];
+function add_environment(start = undefined) {
+	//Dersom start ikkje er satt ved funksjons-kall, bruk slutten frå førre miljø
+	if(start == undefined)
+	{
+		var prevEnv = game.env[game.env.length-1];
+
+		start = prevEnv.end;
+	}
 
 	var env = {
-		start	: prevEnv.end,
+		start	: start,
 		tiles	: 6,
 		//tiles	: get_random(3,8),
 		type	: get_random(0,5)
 	};
-	env.end = env.start + env.tiles*game.tileSize;
+	env.end = env.start + env.tiles;
 
 	//Dersom me tilfeldigvis fekk same miljø att, prøv igjen.
-	while(env.type == prevEnv.type)
-	{
-		env.type = get_random(0,5);
+	try {
+		while(env.type == prevEnv.type)
+		{
+			env.type = get_random(0,5);
+		}
+	}
+	catch {
+		//Dersom dette er fyrste enviroment vil prevEnv vera "undefined". 
+		//Nyttar difor try-catch blokk for å ignorera error sidan me ikkje bryr oss.
 	}
 
 	game.env.push(env);
@@ -346,7 +358,7 @@ function add_environment() {
 function enviroment_is_complete() {
 	var lastEnv = game.env[game.env.length-1];
 
-	return game.canvas.height < (lastEnv.end - game.distance);
+	return constants.tileCount < (lastEnv.end - game.distance);
 }
 
 
@@ -502,6 +514,13 @@ function handle_frog() {
 	//Me oppdaterar frosken sin posisjon med farten dei har i x eller y retning
 	frog.x += frog.xVel;
 	frog.y += frog.yVel;
+
+	//Dersom frosken har vandra over i neste miljø vil skjermen scrolla nedover
+	//fram til førre miljø forsvinner ut av canvas og vert sletta i handle_enviroment.
+	if(frog.y > game.env[1].start)
+	{
+		game.distance += constants.scrollSpeed;
+	}
 
 	draw_object(frog);
 }
