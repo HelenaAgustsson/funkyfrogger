@@ -170,6 +170,28 @@ function draw_object(object) {
 	}
 }
 
+//Funksjon for å sjekke om to objekt er borti kvarandre. Kan nyttast til platformar, hinder, mynter og anna
+//Overlap definerar kor sensitiv collisjonen skal vera.
+//Med overlap 0 vil funksjonen returnera true med ein gong dei to objekta kjem i kontakt med kvarandre.
+//Med overlap 1 må sentrum på objA liggje inni objB for å returnera true. Dvs at mesteparten må vera oppå kvarandre.
+//Overlap frå 0.0 til 1.0 vil naturlegvis vera ein mellomting.
+function collision_detect(objA, objB, overlap = 0) {
+	var xDistance = Math.abs(objB.x - objA.x);
+	var yDistance = Math.abs(objB.y - objA.y);
+
+	var xSize = (objA.width * (1-overlap) + objB.width) / 2;
+	var ySize = (objA.height * (1-overlap) + objB.height) / 2;
+
+	if(xDistance < xSize && yDistance < ySize)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 // Testfunksjon for å visualisere bruken av draw_object(object)
 function debug_draw_test() {
 	//Array med testobjekt
