@@ -266,22 +266,22 @@ function key_down_logger(event) {
 		// Når me trykkjer ned ein tast vil frosken flytta på seg. 
 		case "ArrowUp":
 		case "w":
-			game.frog.yVel = game.frog.speed;
+			game.frog.ySpeed = game.frog.speed;
 			break;
 
 		case "ArrowDown":
 		case "s":
-			game.frog.yVel = -game.frog.speed;
+			game.frog.ySpeed = -game.frog.speed;
 			break;
 
 		case "ArrowLeft":
 		case "a":
-			game.frog.xVel = -game.frog.speed;
+			game.frog.xSpeed = -game.frog.speed;
 			break;
 
 		case "ArrowRight":
 		case "d":
-			game.frog.xVel = game.frog.speed;
+			game.frog.xSpeed = game.frog.speed;
 	}
 }
 
@@ -293,14 +293,14 @@ function key_up_logger(event) {
 		case "ArrowDown":
 		case "w":
 		case "s":
-			game.frog.yVel = 0;
+			game.frog.ySpeed = 0;
 			break;
 
 		case "ArrowLeft":
 		case "ArrowRight":
 		case "a":
 		case "d":
-			game.frog.xVel = 0;
+			game.frog.xSpeed = 0;
 	}
 }
 
@@ -385,7 +385,7 @@ function add_environment(start = undefined) {
 	if(env.type % 2 == 1)
 	{
 		env.platforms = [];
-		var totalPlatforms = get_random(10,20);
+		var totalPlatforms = get_random(8,12);
 
 		for(var i = 0; i<totalPlatforms; ++i)
 		{
@@ -577,11 +577,11 @@ function create_frog() {
 	var frog = {
 		x : 0,
 		y : 0.5,
-		width  : 1,
-		height : 1,
+		width  : 0.75,
+		height : 0.75,
 
-		xVel : 0,
-		yVel : 0,
+		xSpeed : 0,
+		ySpeed : 0,
 		speed : 0.2,
 
 		//https://www.flaticon.com/free-icon/frog_1036001
@@ -595,14 +595,39 @@ function handle_frog() {
 	var frog = game.frog;
 
 	//Me oppdaterar frosken sin posisjon med farten dei har i x eller y retning
-	frog.x += frog.xVel;
-	frog.y += frog.yVel;
+	frog.x += frog.xSpeed;
+	frog.y += frog.ySpeed;
+
+	//Reknar ut kva miljø frosken er i no.
+	var i = 0;
+	var currentEnv = game.env[i];
+	while(frog.y > currentEnv.end)
+	{
+		currentEnv = game.env[++i];
+	}
 
 	//Dersom frosken har vandra over i neste miljø vil skjermen scrolla nedover
 	//fram til førre miljø forsvinner ut av canvas og vert sletta i handle_enviroment.
-	if(frog.y > game.env[1].start)
+	if(currentEnv != game.env[0])
 	{
 		game.distance += constants.scrollSpeed;
+	}
+
+	//Dersom frosken er i eit vått miljø med platformar itererar me over plattformane for å sjå om han står på ein.
+	//Dersom han gjer det, så seglar han bortetter saman med plattformen.
+	//Dersom han ikkje gjer det, så må han mista eit liv.
+	if(currentEnv.hasOwnProperty("platforms"))
+	{
+		var safe = false;
+		for(platform of currentEnv.platforms)
+		{
+			if(collision_detect(frog, platform, 1))
+			{
+				safe = true;
+				frog.x += platform.speed;
+				break;
+			}
+		}
 	}
 
 	draw_object(frog);
