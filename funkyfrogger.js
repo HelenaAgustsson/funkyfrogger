@@ -302,8 +302,15 @@ function handle_enviroment() {
 	}
 
 	//Teikn opp alle miljø på canvas.
-	for (e of game.env) {
-		draw_environment(e);
+	for (env of game.env) {
+		draw_environment(env);
+
+		//Sjekker om dette er eit miljø med
+		//plattformer og teiknar dei
+		if(env.hasOwnProperty("platforms")) {
+			move_platforms_in(env);
+			draw_platforms_in(env);
+		}
 	}
 }
 
@@ -349,6 +356,19 @@ function add_environment(start = undefined) {
 	catch {
 		//Dersom dette er fyrste enviroment vil prevEnv vera "undefined". 
 		//Nyttar difor try-catch blokk for å ignorera error sidan me ikkje bryr oss.
+	}
+
+
+	//Sjekkar om miljøet er eit vått miljø (env.type er oddetal) og dermed lagar plattformar
+	if(env.type % 2 == 1)
+	{
+		env.platforms = [];
+		var totalPlatforms = get_random(10,20);
+
+		for(var i = 0; i<totalPlatforms; ++i)
+		{
+			create_platform_in(env);
+		}
 	}
 
 	game.env.push(env);
@@ -427,16 +447,57 @@ function draw_coins() {
 }
 
 
-
-
 //************************//
 //        Platforms       //
 //************************//
 
+//Funksjon til å lage platformer til eit miljø. Veldig tilfeldig generering med mykje overlapp og kollisjon.
+function create_platform_in(env) {
 
+	var row = get_random(0, env.tiles);
+	var platform = {
+		x		: Math.random() * 10 - 5,
+		y		: env.start + row + 0.5,
 
+		width	: 1.4,
+		height	: 0.9,
 
+		speed	: Math.random() - 0.5,
 
+		color	: "white"
+	}
+
+	env.platforms.push(platform);
+}
+
+function move_platforms_in(env) {
+	//Reknar ut kor langt det er ut til sidekanten
+	var maxX = game.canvas.width / (2 * game.tileSize);
+
+	for (p of env.platforms) {
+		p.x += p.speed;
+
+		//Dersom platformen har køyrd ut på eine sida, send han inn att på den andre sida i ei tilfeldig rad.
+		if(p.x > maxX)
+		{
+			//Høgre side
+			p.x = -maxX;
+			p.y = get_random(0, env.tiles) + env.start + 0.5;
+		}
+		else if(p.x < -maxX)
+		{
+			//Venstre side
+			p.x = maxX;
+			p.y = get_random(0, env.tiles) + env.start + 0.5;
+		}
+	}
+}
+
+function draw_platforms_in(env) {
+	for (platform of env.platforms) {
+		draw_object(platform);
+	}
+}
 
 
 //************************//
