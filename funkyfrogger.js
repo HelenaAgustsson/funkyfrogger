@@ -16,7 +16,7 @@ var constants = {
 //Initialisering av hindre med kollisjon
 var cars = [];
 // Initialisering av elementer som kan plukkes opp
-var coins = [];
+//var coins = [];
 
 var game = {
 	//Spelvariabler. Initialisert til 0
@@ -103,7 +103,7 @@ function update_game() {
 	// Hindre og plattformer
 	move_obstacles();
 	draw_obstacles();
-	draw_coins();
+	//draw_coins();
 
 
 	//Eksempelfunksjonar
@@ -252,7 +252,7 @@ function debug_draw_test() {
 
 	draw_object(testObjectTopLeft);
 	draw_object(testObjectTopRight);
-	draw_coins(coins[0]);
+	
 }
 
 //************************//
@@ -398,16 +398,18 @@ function add_environment(start = undefined) {
 			create_platform_in(env);
 		}
 	}
+	
 
-	game.env.push(env);
-
+	// lager coins uansett type miljø foreløpig
+	
 	env.coins = [];
 	var totalCoins = 4;
 	for(var i = 0; i<totalCoins; ++i)
 		{
 			create_coin_in(env);
 		}
-
+	
+	game.env.push(env);	
 }
 
 //Sjekker om me har nok miljø eller er nøydt til å leggja til fleire.
@@ -460,29 +462,6 @@ function create_obstacle(width, height, color, x, row, speed) {
 //        Coins           //
 //************************//
 
-// lager et coin object 
-function create_coin(width, height, image, x, y){
-	coin = {};
-	//var row = get_random(0, env.tiles);
-
-	coin.width = width;
-	coin.height = height;
-	coin.x=x;
-	coin.y=y;
-	coin.image = image;
-	console.log(coin.width);
-	return coin;
-}
-
-// Tegner coins som froggy kan plukke opp
-function draw_coins() {
-	var context = game.canvas.getContext("2d");
-
-	for(coin of coins)
-	{
-		draw_coin(coin);
-	}
-}
 
 
 //************************//
