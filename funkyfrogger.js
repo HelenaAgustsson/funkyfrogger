@@ -84,14 +84,6 @@ window.onload = function() {
 	cars.push(create_obstacle(20, game.tileSize, "yellow", game.canvas.width, 4, -1.5));
 	cars.push(create_obstacle(20, game.tileSize, "purple", game.canvas.width, 6, -2));
 
-	//array med coins objekter
-	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 200, 200));
-	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 400, 400));
-	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 600, 200));
-	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 800, 400));
-	
-	//create_coins(coinImg, 0, 30, game.tileSize, game.tileSize);
-
 	create_frog();
 
 	update_game();
@@ -168,6 +160,17 @@ function draw_object(object) {
 		context.fillStyle = "magenta";
 		context.fillRect(x, y, width, height);
 	}
+}
+
+function draw_coin(object){
+	var context = game.canvas.getContext("2d");
+
+	var width  = Math.round(object.width  * game.tileSize);
+	var height = Math.round(object.height * game.tileSize);
+	
+	context.drawImage(object.image, object.x, object.y, width, height);
+	console.log("image");
+	
 }
 
 //Funksjon for å sjekke om to objekt er borti kvarandre. Kan nyttast til platformar, hinder, mynter og anna
@@ -333,6 +336,9 @@ function handle_enviroment() {
 			move_platforms_in(env);
 			draw_platforms_in(env);
 		}
+		if(env.hasOwnProperty("coins")) {
+			draw_coins_in(env);
+		}
 	}
 }
 
@@ -394,6 +400,14 @@ function add_environment(start = undefined) {
 	}
 
 	game.env.push(env);
+
+	env.coins = [];
+	var totalCoins = 4;
+	for(var i = 0; i<totalCoins; ++i)
+		{
+			create_coin_in(env);
+		}
+
 }
 
 //Sjekker om me har nok miljø eller er nøydt til å leggja til fleire.
@@ -448,13 +462,15 @@ function create_obstacle(width, height, color, x, row, speed) {
 
 // lager et coin object 
 function create_coin(width, height, image, x, y){
-	coin = {}
+	coin = {};
+	//var row = get_random(0, env.tiles);
 
 	coin.width = width;
 	coin.height = height;
 	coin.x=x;
 	coin.y=y;
 	coin.image = image;
+	console.log(coin.width);
 	return coin;
 }
 
@@ -464,7 +480,7 @@ function draw_coins() {
 
 	for(coin of coins)
 	{
-		context.drawImage(coin.image, coin.x, coin.y, coin.width, coin.height);
+		draw_coin(coin);
 	}
 }
 
@@ -490,6 +506,24 @@ function create_platform_in(env) {
 	}
 
 	env.platforms.push(platform);
+}
+
+function create_coin_in(env) {
+
+	var row = get_random(0, env.tiles);
+	var coin = {
+		x		: Math.random() * 10 - 5,
+		y		: env.start + row + 0.5,
+
+		width	: 0.5,
+		height	: 0.5,
+
+		speed	: 0,
+
+		image	: document.getElementById('coins')
+	}
+
+	env.coins.push(coin);
 }
 
 function move_platforms_in(env) {
@@ -518,6 +552,13 @@ function move_platforms_in(env) {
 function draw_platforms_in(env) {
 	for (platform of env.platforms) {
 		draw_object(platform);
+		
+	}
+}
+
+function draw_coins_in(env) {
+	for (coin of env.coins) {
+		draw_object(coin);
 	}
 }
 
