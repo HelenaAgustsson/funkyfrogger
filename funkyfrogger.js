@@ -97,6 +97,9 @@ function update_game() {
 	game.canvas.width = game.canvas.clientWidth;
 	game.tileSize = game.canvas.height / constants.tileCount;
 
+	//Reknar ut kor mange tiles det er frå senter ut til sida.
+	game.width = (game.canvas.width / game.tileSize) / 2;
+
 	// Miljø
 	handle_enviroment();
 
@@ -648,6 +651,17 @@ function handle_frog() {
 				break;
 			}
 		}
+	}
+
+	//Stenger frosken inne i spelvindauge.
+	if(frog.y - frog.height/2 < game.distance) {
+		frog.y = game.distance + frog.height/2;
+	}
+	if(frog.x + frog.width/2 > game.width) {
+		frog.x = game.width - frog.width/2;
+	}
+	else if(frog.x - frog.width/2 < -game.width) {
+		frog.x = frog.width/2 - game.width;
 	}
 
 	draw_object(frog);
