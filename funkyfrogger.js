@@ -194,6 +194,29 @@ function collision_detect(objA, objB, hitbox = 1) {
 	}
 }
 
+//Flyttar plattformar og hindringar
+function move_objects(objects) {
+	//Reknar ut kor langt det er ut til plattformen skal gå rundt
+	var maxX = game.width + 5;
+
+	for (o of objects) {
+
+		o.x += o.speed;
+
+		//Dersom platformen har køyrd ut på eine sida, send han inn att på den andre sida.
+		if(o.x > maxX)
+		{
+			//Høgre side
+			o.x -= 2*maxX;
+		}
+		else if(o.x < -maxX)
+		{
+			//Venstre side
+			o.x += 2*maxX;
+		}
+	}
+}
+
 // Testfunksjon for å visualisere bruken av draw_object(object)
 function debug_draw_test() {
 	//Array med testobjekt
@@ -323,17 +346,24 @@ function handle_enviroment() {
 
 		//Fix for overscroll bug
 		game.distance = game.env[0].start;
+		game.frog.y = game.distance + 0.5;
 	}
 
 	//Teikn opp alle miljø på canvas.
 	for (env of game.env) {
 		draw_environment(env);
 
-		//Sjekker om dette er eit miljø med
-		//plattformer og teiknar dei
 		if(env.hasOwnProperty("platforms")) {
-			move_platforms_in(env);
-			draw_platforms_in(env);
+			move_objects(env.platforms);
+			for(obj of env.platforms) {
+				draw_object(obj);
+			}
+		}
+		if(env.hasOwnProperty("obstacles")) {
+			move_objects(env.obstacles);
+			for(obj of env.obstacles) {
+				draw_object(obj);
+			}
 		}
 		if(env.hasOwnProperty("coins")) {
 			draw_coins_in(env);
@@ -386,18 +416,20 @@ function add_environment(start = undefined) {
 	}
 
 
+	env.platforms = [];
+	env.obstacles = [];
+
 	//Sjekkar om miljøet er eit vått miljø (env.type er oddetal) og dermed lagar plattformar
 	if(env.type % 2 == 1)
 	{
-		env.platforms = [];
-		var totalPlatforms = get_random(8,12);
-
-		for(var i = 0; i<totalPlatforms; ++i)
-		{
-			create_platform_in(env);
-		}
+		env.platforms.push(create_safe_platform(env.start));
+		create_platforms_in(env);
 	}
-	
+	//For tørt miljø lagar me bilar
+	else
+	{
+		create_obstacles_in(env);
+	}
 
 	// lager coins uansett type miljø foreløpig
 	
@@ -423,39 +455,36 @@ function enviroment_is_complete() {
 //        Obstacles       //
 //************************//
 
-// Tegner opp hindre
-function draw_obstacles() {
-	var context = game.canvas.getContext("2d");
+//Funksjon til å lage hindringar til eit miljø.
+function create_obstacles_in(env) {
+	for(var row = 1; row < env.tiles; ++row) {
+		var x = -game.width - 4;
 
-	for(car of cars)
-	{
-		context.fillStyle = car.color;
-		context.fillRect(car.x, car.y, car.width, car.height);
+		var carColors = ["blue", "purple", "black"];
+		while(x < game.width + 4) {
+			var platform = {
+				x		: x,
+				y		: env.start + row + 0.5,
+
+				width	: 1 + 1 * Math.random(),
+				height	: 0.8,
+
+				speed	: 0.05 + 0.04*row,
+
+				color	: carColors[get_random(0,2)]
+			}
+
+			x += 4 + 2 * Math.random();
+
+			//Alternerer fartsretning
+			if(row % 2 == 0) {
+				platform.speed = -platform.speed;
+			}
+
+			env.obstacles.push(platform);
+		}
 	}
 }
-
-// Beveger hindrene horisontalt
-function move_obstacles() {
-	for(car of cars)
-	{
-		car.x += car.speed;
-	}
-}
-
-//Lager hindre etter spesifikasjon
-function create_obstacle(width, height, color, x, row, speed) {
-	car = {}
-
-	car.width = width;
-	car.height = height;
-	car.color = color;
-	car.x = x-car.width;
-	car.y = game.canvas.height - car.height*row;
-	car.speed = speed;
-
-	return car;
-}
-//Inspirert av https://www.w3schools.com/graphics/game_components.asp
 
 //************************//
 //        Coins           //
@@ -467,23 +496,76 @@ function create_obstacle(width, height, color, x, row, speed) {
 //        Platforms       //
 //************************//
 
-//Funksjon til å lage platformer til eit miljø. Veldig tilfeldig generering med mykje overlapp og kollisjon.
-function create_platform_in(env) {
+//Funksjon til å lage platformer til eit miljø.
+function create_platforms_in(env) {
+	for(var row = 1; row < env.tiles; ++row) {
+		var x = -game.width - 4;
 
-	var row = get_random(0, env.tiles);
-	var platform = {
-		x		: Math.random() * 10 - 5,
-		y		: env.start + row + 0.5,
+		while(x < game.width + 4) {
+			var platform = {
+				x		: x,
+				y		: env.start + row + 0.5,
 
-		width	: 1.4,
-		height	: 0.9,
+				width	: 1 + 2 * Math.random(),
+				height	: 1.05,
 
-		speed	: Math.random() - 0.5,
+				speed	: 0.05 + 0.04*row,
 
-		color	: "white"
+				color	: "white"
+			};
+
+			x += 3.1 + 3 * Math.random();
+
+			//Alternerer fartsretning
+			if(row % 2 == 0) {
+				platform.speed = -platform.speed;
+			}
+
+			//Krokodille
+			if(Math.random() < 0.05) {
+				platform.width = 1.5;
+
+				var crocHead = {
+					x		: platform.x,
+					y		: platform.y,
+
+					width	: 0.4,
+					height	: 0.8,
+
+					speed	: platform.speed,
+
+					color	: "grey"
+				};
+
+				if(crocHead.speed < 0) {
+					crocHead.x -= (platform.width + crocHead.width)/2
+				}
+				else {
+					crocHead.x += (platform.width + crocHead.width)/2
+				}
+
+				env.obstacles.push(crocHead);
+			}
+
+			env.platforms.push(platform);
+		}
 	}
+}
 
-	env.platforms.push(platform);
+//Startplattform til våte miljø
+function create_safe_platform(row) {
+	var platform = {
+		x : 0,
+		y : row + 0.5,
+
+		width : game.width * 1.8,
+		height : 0.9,
+
+		speed : 0,
+		color : constants.envColors[0]
+	};
+
+	return platform;
 }
 
 function create_coin_in(env) {
@@ -502,36 +584,6 @@ function create_coin_in(env) {
 	}
 
 	env.coins.push(coin);
-}
-
-function move_platforms_in(env) {
-	//Reknar ut kor langt det er ut til sidekanten
-	var maxX = game.canvas.width / (2 * game.tileSize);
-
-	for (p of env.platforms) {
-		p.x += p.speed;
-
-		//Dersom platformen har køyrd ut på eine sida, send han inn att på den andre sida i ei tilfeldig rad.
-		if(p.x > maxX)
-		{
-			//Høgre side
-			p.x = -maxX;
-			p.y = get_random(0, env.tiles) + env.start + 0.5;
-		}
-		else if(p.x < -maxX)
-		{
-			//Venstre side
-			p.x = maxX;
-			p.y = get_random(0, env.tiles) + env.start + 0.5;
-		}
-	}
-}
-
-function draw_platforms_in(env) {
-	for (platform of env.platforms) {
-		draw_object(platform);
-		
-	}
 }
 
 function draw_coins_in(env) {
