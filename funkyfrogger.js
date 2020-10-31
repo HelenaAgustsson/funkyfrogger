@@ -175,16 +175,14 @@ function draw_coin(object){
 }
 
 //Funksjon for å sjekke om to objekt er borti kvarandre. Kan nyttast til platformar, hinder, mynter og anna
-//Overlap definerar kor sensitiv collisjonen skal vera.
-//Med overlap 0 vil funksjonen returnera true med ein gong dei to objekta kjem i kontakt med kvarandre.
-//Med overlap 1 må sentrum på objA liggje inni objB for å returnera true. Dvs at mesteparten må vera oppå kvarandre.
-//Overlap frå 0.0 til 1.0 vil naturlegvis vera ein mellomting.
-function collision_detect(objA, objB, overlap = 0) {
+//Hitbox definerar kor stor kontaktboksen til frosken skal vera. Mindre enn 1 betyr dei må overlappe, meir enn 1
+//så vil dei kollidera på avstand
+function collision_detect(objA, objB, hitbox = 1) {
 	var xDistance = Math.abs(objB.x - objA.x);
 	var yDistance = Math.abs(objB.y - objA.y);
 
-	var xSize = (objA.width * (1-overlap) + objB.width) / 2;
-	var ySize = (objA.height * (1-overlap) + objB.height) / 2;
+	var xSize = (objA.width * hitbox + objB.width) / 2;
+	var ySize = (objA.height * hitbox + objB.height) / 2;
 
 	if(xDistance < xSize && yDistance < ySize)
 	{
