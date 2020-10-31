@@ -653,7 +653,7 @@ function create_frog() {
 
 		xSpeed : 0,
 		ySpeed : 0,
-		speed : 0.2,
+		speed : 0.25,
 
 		//https://www.flaticon.com/free-icon/frog_1036001
 		image : document.getElementById("frog")
@@ -665,10 +665,6 @@ function create_frog() {
 function handle_frog() {
 	var frog = game.frog;
 
-	//Me oppdaterar frosken sin posisjon med farten dei har i x eller y retning
-	frog.x += frog.xSpeed;
-	frog.y += frog.ySpeed;
-
 	//Reknar ut kva miljø frosken er i no.
 	var i = 0;
 	var currentEnv = game.env[i];
@@ -679,24 +675,60 @@ function handle_frog() {
 
 	//Dersom frosken har vandra over i neste miljø vil skjermen scrolla nedover
 	//fram til førre miljø forsvinner ut av canvas og vert sletta i handle_enviroment.
+	//Når dette skjer kan me ikkje flytta på frosken og han vil ikkje kollidera med noko.
 	if(currentEnv != game.env[0])
 	{
 		game.distance += constants.scrollSpeed;
+		frog.y = currentEnv.start + 1;
 	}
+	else {
+		//Me oppdaterar frosken sin posisjon med farten dei har i x eller y retning
+		frog.x += frog.xSpeed;
+		frog.y += frog.ySpeed;
 
-	//Dersom frosken er i eit vått miljø med platformar itererar me over plattformane for å sjå om han står på ein.
-	//Dersom han gjer det, så seglar han bortetter saman med plattformen.
-	//Dersom han ikkje gjer det, så må han mista eit liv.
-	if(currentEnv.hasOwnProperty("platforms"))
-	{
-		var safe = false;
-		for(platform of currentEnv.platforms)
+		//Dersom frosken er i eit vått miljø med platformar itererar me over plattformane for å sjå om han står på ein.
+		//Dersom han gjer det, så seglar han bortetter saman med plattformen.
+		//Dersom han ikkje gjer det, så må han mista eit liv.
+		if(currentEnv.hasOwnProperty("platforms"))
 		{
-			if(collision_detect(frog, platform, 1))
+			var safe = false;
+			for(platform of currentEnv.platforms)
 			{
-				safe = true;
-				frog.x += platform.speed;
-				break;
+				//Collision detect med 0.5 for at mesteparten av frosken må vera oppå platformen.
+				if(collision_detect(frog, platform, 0.5))
+				{
+					safe = true;
+					frog.x += platform.speed;
+
+					//Endrar farge for å visa kontakt. Debugfunksjon
+					platform.color = constants.envColors[0];
+					break;
+				}
+				else
+				{
+					//Tilbakestiller til vanleg farge. Debugfunksjon
+					if(platform != currentEnv.platforms[0]) {
+						platform.color = 'white';
+					}
+				}
+			}
+		}
+
+		//Tester om frosken kolliderar med ein bil
+		if(currentEnv.hasOwnProperty("obstacles"))
+		{
+			var safe = true;
+			for(obstacle of currentEnv.obstacles)
+			{
+				//Collision detect med 0.9 for å gje litt slark med kollisjonen.
+				if(collision_detect(frog, obstacle, 0.9))
+				{
+					safe = false;
+
+					//Endrar farge for å visa kontakt. Debugfunksjon
+					obstacle.color = "red";
+					break;
+				}
 			}
 		}
 	}
