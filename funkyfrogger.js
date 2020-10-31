@@ -64,6 +64,16 @@ var game = {
 	}
 };
 
+function set_canvas() {
+	//Rekn ut kor stor ein "tile" er på canvas.
+	//Vert rekna ut kvar gong i tilfelle canvas har endra størrelse.
+	game.canvas.height = game.canvas.clientHeight;
+	game.canvas.width = game.canvas.clientWidth;
+	game.tileSize = game.canvas.height / constants.tileCount;
+
+	//Reknar ut kor mange tiles det er frå senter ut til sida.
+	game.width = (game.canvas.width / game.tileSize) / 2;
+}
 
 //Vent til nettsida er lasta før ein hentar canvas og koplar opp funksjonar
 window.onload = function() {
@@ -76,13 +86,8 @@ window.onload = function() {
 	window.onkeyup = key_up_logger;
 
 	//Legg til fyrste enviroment
+	set_canvas();
 	add_environment(0);
-
-	cars.push(create_obstacle(20, game.tileSize, "black", 20, 3, 1));
-	cars.push(create_obstacle(20, game.tileSize, "red", 20, 5, 1.5));
-	cars.push(create_obstacle(20, game.tileSize, "blue", game.canvas.width, 2, -1));
-	cars.push(create_obstacle(20, game.tileSize, "yellow", game.canvas.width, 4, -1.5));
-	cars.push(create_obstacle(20, game.tileSize, "purple", game.canvas.width, 6, -2));
 
 	create_frog();
 
@@ -91,21 +96,14 @@ window.onload = function() {
 
 //Hovudloopen til spelet. Alt starter frå her.
 function update_game() {
-	//Rekn ut kor stor ein "tile" er på canvas. 
-	//Vert rekna ut kvar gong i tilfelle canvas har endra størrelse.
-	game.canvas.height = game.canvas.clientHeight;
-	game.canvas.width = game.canvas.clientWidth;
-	game.tileSize = game.canvas.height / constants.tileCount;
-
-	//Reknar ut kor mange tiles det er frå senter ut til sida.
-	game.width = (game.canvas.width / game.tileSize) / 2;
+	set_canvas();
 
 	// Miljø
 	handle_enviroment();
 
 	// Hindre og plattformer
-	move_obstacles();
-	draw_obstacles();
+	//move_obstacles();
+	//draw_obstacles();
 	//draw_coins();
 
 
@@ -118,7 +116,7 @@ function update_game() {
 	//end_game_if_no_more_lives();
 
 	//DEBUG
-	debug_draw_test();
+	//debug_draw_test();
 
 	handle_frog();
 
