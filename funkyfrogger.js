@@ -20,6 +20,7 @@ var cars = [];
 
 var game = {
 	//Spelvariabler. Initialisert til 0
+	score       : 0,
 	tileSize	: 0,
 	distance	: 0,
 	started		: 0,	//Når spelet er i gang vil "started" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
@@ -104,7 +105,6 @@ function update_game() {
 	// Hindre og plattformer
 	//move_obstacles();
 	//draw_obstacles();
-	//draw_coins();
 
 
 	//Eksempelfunksjonar
@@ -163,16 +163,6 @@ function draw_object(object) {
 	}
 }
 
-function draw_coin(object){
-	var context = game.canvas.getContext("2d");
-
-	var width  = Math.round(object.width  * game.tileSize);
-	var height = Math.round(object.height * game.tileSize);
-	
-	context.drawImage(object.image, object.x, object.y, width, height);
-	console.log("image");
-	
-}
 
 //Funksjon for å sjekke om to objekt er borti kvarandre. Kan nyttast til platformar, hinder, mynter og anna
 //Hitbox definerar kor stor kontaktboksen til frosken skal vera. Mindre enn 1 betyr dei må overlappe, meir enn 1
@@ -729,6 +719,24 @@ function handle_frog() {
 					obstacle.color = "red";
 					break;
 				}
+			}
+		}
+
+		if(currentEnv.hasOwnProperty("coins"))
+		{
+			for(coin of currentEnv.coins)
+			{
+				//Collision detect med 1
+				if(collision_detect(frog, coin, 1))
+				{ 
+					//fjerner myntene frosken har plukket opp fra spillbrettet
+					var idx = currentEnv.coins.indexOf(coin);
+					currentEnv.coins.splice(idx);
+					game.score+=10;
+					console.log("Points: "+game.score);
+					break;
+				}
+				
 			}
 		}
 	}
