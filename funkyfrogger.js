@@ -16,10 +16,11 @@ var constants = {
 //Initialisering av hindre med kollisjon
 var cars = [];
 // Initialisering av elementer som kan plukkes opp
-var coins = [];
+//var coins = [];
 
 var game = {
 	//Spelvariabler. Initialisert til 0
+	score       : 0,
 	tileSize	: 0,
 	distance	: 0,
 	started		: 0,	//Når spelet er i gang vil "started" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
@@ -64,6 +65,16 @@ var game = {
 	}
 };
 
+function set_canvas() {
+	//Rekn ut kor stor ein "tile" er på canvas.
+	//Vert rekna ut kvar gong i tilfelle canvas har endra størrelse.
+	game.canvas.height = game.canvas.clientHeight;
+	game.canvas.width = game.canvas.clientWidth;
+	game.tileSize = game.canvas.height / constants.tileCount;
+
+	//Reknar ut kor mange tiles det er frå senter ut til sida.
+	game.width = (game.canvas.width / game.tileSize) / 2;
+}
 
 //Vent til nettsida er lasta før ein hentar canvas og koplar opp funksjonar
 window.onload = function() {
@@ -76,21 +87,8 @@ window.onload = function() {
 	window.onkeyup = key_up_logger;
 
 	//Legg til fyrste enviroment
+	set_canvas();
 	add_environment(0);
-
-	cars.push(create_obstacle(20, game.tileSize, "black", 20, 3, 1));
-	cars.push(create_obstacle(20, game.tileSize, "red", 20, 5, 1.5));
-	cars.push(create_obstacle(20, game.tileSize, "blue", game.canvas.width, 2, -1));
-	cars.push(create_obstacle(20, game.tileSize, "yellow", game.canvas.width, 4, -1.5));
-	cars.push(create_obstacle(20, game.tileSize, "purple", game.canvas.width, 6, -2));
-
-	//array med coins objekter
-	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 200, 200));
-	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 400, 400));
-	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 600, 200));
-	coins.push(create_coin(game.tileSize, game.tileSize, coinImg, 800, 400));
-	
-	//create_coins(coinImg, 0, 30, game.tileSize, game.tileSize);
 
 	create_frog();
 
@@ -99,19 +97,14 @@ window.onload = function() {
 
 //Hovudloopen til spelet. Alt starter frå her.
 function update_game() {
-	//Rekn ut kor stor ein "tile" er på canvas. 
-	//Vert rekna ut kvar gong i tilfelle canvas har endra størrelse.
-	game.canvas.height = game.canvas.clientHeight;
-	game.canvas.width = game.canvas.clientWidth;
-	game.tileSize = game.canvas.height / constants.tileCount;
+	set_canvas();
 
 	// Miljø
 	handle_enviroment();
 
 	// Hindre og plattformer
-	move_obstacles();
-	draw_obstacles();
-	draw_coins();
+	//move_obstacles();
+	//draw_obstacles();
 
 
 	//Eksempelfunksjonar
@@ -123,7 +116,7 @@ function update_game() {
 	//end_game_if_no_more_lives();
 
 	//DEBUG
-	debug_draw_test();
+	//debug_draw_test();
 
 	handle_frog();
 
@@ -170,17 +163,16 @@ function draw_object(object) {
 	}
 }
 
+
 //Funksjon for å sjekke om to objekt er borti kvarandre. Kan nyttast til platformar, hinder, mynter og anna
-//Overlap definerar kor sensitiv collisjonen skal vera.
-//Med overlap 0 vil funksjonen returnera true med ein gong dei to objekta kjem i kontakt med kvarandre.
-//Med overlap 1 må sentrum på objA liggje inni objB for å returnera true. Dvs at mesteparten må vera oppå kvarandre.
-//Overlap frå 0.0 til 1.0 vil naturlegvis vera ein mellomting.
-function collision_detect(objA, objB, overlap = 0) {
+//Hitbox definerar kor stor kontaktboksen til frosken skal vera. Mindre enn 1 betyr dei må overlappe, meir enn 1
+//så vil dei kollidera på avstand
+function collision_detect(objA, objB, hitbox = 1) {
 	var xDistance = Math.abs(objB.x - objA.x);
 	var yDistance = Math.abs(objB.y - objA.y);
 
-	var xSize = (objA.width * (1-overlap) + objB.width) / 2;
-	var ySize = (objA.height * (1-overlap) + objB.height) / 2;
+	var xSize = (objA.width * hitbox + objB.width) / 2;
+	var ySize = (objA.height * hitbox + objB.height) / 2;
 
 	if(xDistance < xSize && yDistance < ySize)
 	{
@@ -189,6 +181,29 @@ function collision_detect(objA, objB, overlap = 0) {
 	else
 	{
 		return false;
+	}
+}
+
+//Flyttar plattformar og hindringar
+function move_objects(objects) {
+	//Reknar ut kor langt det er ut til plattformen skal gå rundt
+	var maxX = game.width + 5;
+
+	for (o of objects) {
+
+		o.x += o.speed;
+
+		//Dersom platformen har køyrd ut på eine sida, send han inn att på den andre sida.
+		if(o.x > maxX)
+		{
+			//Høgre side
+			o.x -= 2*maxX;
+		}
+		else if(o.x < -maxX)
+		{
+			//Venstre side
+			o.x += 2*maxX;
+		}
 	}
 }
 
@@ -249,7 +264,7 @@ function debug_draw_test() {
 
 	draw_object(testObjectTopLeft);
 	draw_object(testObjectTopRight);
-	draw_coins(coins[0]);
+	
 }
 
 //************************//
@@ -321,17 +336,27 @@ function handle_enviroment() {
 
 		//Fix for overscroll bug
 		game.distance = game.env[0].start;
+		game.frog.y = game.distance + 0.5;
 	}
 
 	//Teikn opp alle miljø på canvas.
 	for (env of game.env) {
 		draw_environment(env);
 
-		//Sjekker om dette er eit miljø med
-		//plattformer og teiknar dei
 		if(env.hasOwnProperty("platforms")) {
-			move_platforms_in(env);
-			draw_platforms_in(env);
+			move_objects(env.platforms);
+			for(obj of env.platforms) {
+				draw_object(obj);
+			}
+		}
+		if(env.hasOwnProperty("obstacles")) {
+			move_objects(env.obstacles);
+			for(obj of env.obstacles) {
+				draw_object(obj);
+			}
+		}
+		if(env.hasOwnProperty("coins")) {
+			draw_coins_in(env);
 		}
 	}
 }
@@ -381,19 +406,31 @@ function add_environment(start = undefined) {
 	}
 
 
+	env.platforms = [];
+	env.obstacles = [];
+
 	//Sjekkar om miljøet er eit vått miljø (env.type er oddetal) og dermed lagar plattformar
 	if(env.type % 2 == 1)
 	{
-		env.platforms = [];
-		var totalPlatforms = get_random(8,12);
-
-		for(var i = 0; i<totalPlatforms; ++i)
-		{
-			create_platform_in(env);
-		}
+		env.platforms.push(create_safe_platform(env.start));
+		create_platforms_in(env);
+	}
+	//For tørt miljø lagar me bilar
+	else
+	{
+		create_obstacles_in(env);
 	}
 
-	game.env.push(env);
+	// lager coins uansett type miljø foreløpig
+	
+	env.coins = [];
+	var totalCoins = 4;
+	for(var i = 0; i<totalCoins; ++i)
+		{
+			create_coin_in(env);
+		}
+	
+	game.env.push(env);	
 }
 
 //Sjekker om me har nok miljø eller er nøydt til å leggja til fleire.
@@ -408,116 +445,140 @@ function enviroment_is_complete() {
 //        Obstacles       //
 //************************//
 
-// Tegner opp hindre
-function draw_obstacles() {
-	var context = game.canvas.getContext("2d");
+//Funksjon til å lage hindringar til eit miljø.
+function create_obstacles_in(env) {
+	for(var row = 1; row < env.tiles; ++row) {
+		var x = -game.width - 4;
 
-	for(car of cars)
-	{
-		context.fillStyle = car.color;
-		context.fillRect(car.x, car.y, car.width, car.height);
+		var carColors = ["blue", "purple", "black"];
+		while(x < game.width + 4) {
+			var platform = {
+				x		: x,
+				y		: env.start + row + 0.5,
+
+				width	: 1 + 1 * Math.random(),
+				height	: 0.8,
+
+				speed	: 0.05 + 0.04*row,
+
+				color	: carColors[get_random(0,2)]
+			}
+
+			x += 4 + 2 * Math.random();
+
+			//Alternerer fartsretning
+			if(row % 2 == 0) {
+				platform.speed = -platform.speed;
+			}
+
+			env.obstacles.push(platform);
+		}
 	}
 }
-
-// Beveger hindrene horisontalt
-function move_obstacles() {
-	for(car of cars)
-	{
-		car.x += car.speed;
-	}
-}
-
-//Lager hindre etter spesifikasjon
-function create_obstacle(width, height, color, x, row, speed) {
-	car = {}
-
-	car.width = width;
-	car.height = height;
-	car.color = color;
-	car.x = x-car.width;
-	car.y = game.canvas.height - car.height*row;
-	car.speed = speed;
-
-	return car;
-}
-//Inspirert av https://www.w3schools.com/graphics/game_components.asp
 
 //************************//
 //        Coins           //
 //************************//
 
-// lager et coin object 
-function create_coin(width, height, image, x, y){
-	coin = {}
-
-	coin.width = width;
-	coin.height = height;
-	coin.x=x;
-	coin.y=y;
-	coin.image = image;
-	return coin;
-}
-
-// Tegner coins som froggy kan plukke opp
-function draw_coins() {
-	var context = game.canvas.getContext("2d");
-
-	for(coin of coins)
-	{
-		context.drawImage(coin.image, coin.x, coin.y, coin.width, coin.height);
-	}
-}
 
 
 //************************//
 //        Platforms       //
 //************************//
 
-//Funksjon til å lage platformer til eit miljø. Veldig tilfeldig generering med mykje overlapp og kollisjon.
-function create_platform_in(env) {
+//Funksjon til å lage platformer til eit miljø.
+function create_platforms_in(env) {
+	for(var row = 1; row < env.tiles; ++row) {
+		var x = -game.width - 4;
+
+		while(x < game.width + 4) {
+			var platform = {
+				x		: x,
+				y		: env.start + row + 0.5,
+
+				width	: 1 + 2 * Math.random(),
+				height	: 1.05,
+
+				speed	: 0.05 + 0.04*row,
+
+				color	: "white"
+			};
+
+			x += 3.1 + 3 * Math.random();
+
+			//Alternerer fartsretning
+			if(row % 2 == 0) {
+				platform.speed = -platform.speed;
+			}
+
+			//Krokodille
+			if(Math.random() < 0.05) {
+				platform.width = 1.5;
+
+				var crocHead = {
+					x		: platform.x,
+					y		: platform.y,
+
+					width	: 0.4,
+					height	: 0.8,
+
+					speed	: platform.speed,
+
+					color	: "grey"
+				};
+
+				if(crocHead.speed < 0) {
+					crocHead.x -= (platform.width + crocHead.width)/2
+				}
+				else {
+					crocHead.x += (platform.width + crocHead.width)/2
+				}
+
+				env.obstacles.push(crocHead);
+			}
+
+			env.platforms.push(platform);
+		}
+	}
+}
+
+//Startplattform til våte miljø
+function create_safe_platform(row) {
+	var platform = {
+		x : 0,
+		y : row + 0.5,
+
+		width : game.width * 1.8,
+		height : 0.9,
+
+		speed : 0,
+		color : constants.envColors[0]
+	};
+
+	return platform;
+}
+
+function create_coin_in(env) {
 
 	var row = get_random(0, env.tiles);
-	var platform = {
+	var coin = {
 		x		: Math.random() * 10 - 5,
 		y		: env.start + row + 0.5,
 
-		width	: 1.4,
-		height	: 0.9,
+		width	: 0.5,
+		height	: 0.5,
 
-		speed	: Math.random() - 0.5,
+		speed	: 0,
 
-		color	: "white"
+		image	: document.getElementById('coins')
 	}
 
-	env.platforms.push(platform);
+	env.coins.push(coin);
 }
 
-function move_platforms_in(env) {
-	//Reknar ut kor langt det er ut til sidekanten
-	var maxX = game.canvas.width / (2 * game.tileSize);
-
-	for (p of env.platforms) {
-		p.x += p.speed;
-
-		//Dersom platformen har køyrd ut på eine sida, send han inn att på den andre sida i ei tilfeldig rad.
-		if(p.x > maxX)
-		{
-			//Høgre side
-			p.x = -maxX;
-			p.y = get_random(0, env.tiles) + env.start + 0.5;
-		}
-		else if(p.x < -maxX)
-		{
-			//Venstre side
-			p.x = maxX;
-			p.y = get_random(0, env.tiles) + env.start + 0.5;
-		}
-	}
-}
-
-function draw_platforms_in(env) {
-	for (platform of env.platforms) {
-		draw_object(platform);
+function draw_coins_in(env) {
+	for (coin of env.coins) {
+		draw_object(coin);
 	}
 }
 
@@ -582,7 +643,7 @@ function create_frog() {
 
 		xSpeed : 0,
 		ySpeed : 0,
-		speed : 0.2,
+		speed : 0.25,
 
 		//https://www.flaticon.com/free-icon/frog_1036001
 		image : document.getElementById("frog")
@@ -594,10 +655,6 @@ function create_frog() {
 function handle_frog() {
 	var frog = game.frog;
 
-	//Me oppdaterar frosken sin posisjon med farten dei har i x eller y retning
-	frog.x += frog.xSpeed;
-	frog.y += frog.ySpeed;
-
 	//Reknar ut kva miljø frosken er i no.
 	var i = 0;
 	var currentEnv = game.env[i];
@@ -608,26 +665,91 @@ function handle_frog() {
 
 	//Dersom frosken har vandra over i neste miljø vil skjermen scrolla nedover
 	//fram til førre miljø forsvinner ut av canvas og vert sletta i handle_enviroment.
+	//Når dette skjer kan me ikkje flytta på frosken og han vil ikkje kollidera med noko.
 	if(currentEnv != game.env[0])
 	{
 		game.distance += constants.scrollSpeed;
+		frog.y = currentEnv.start + 1;
 	}
+	else {
+		//Me oppdaterar frosken sin posisjon med farten dei har i x eller y retning
+		frog.x += frog.xSpeed;
+		frog.y += frog.ySpeed;
 
-	//Dersom frosken er i eit vått miljø med platformar itererar me over plattformane for å sjå om han står på ein.
-	//Dersom han gjer det, så seglar han bortetter saman med plattformen.
-	//Dersom han ikkje gjer det, så må han mista eit liv.
-	if(currentEnv.hasOwnProperty("platforms"))
-	{
-		var safe = false;
-		for(platform of currentEnv.platforms)
+		//Dersom frosken er i eit vått miljø med platformar itererar me over plattformane for å sjå om han står på ein.
+		//Dersom han gjer det, så seglar han bortetter saman med plattformen.
+		//Dersom han ikkje gjer det, så må han mista eit liv.
+		if(currentEnv.hasOwnProperty("platforms"))
 		{
-			if(collision_detect(frog, platform, 1))
+			var safe = false;
+			for(platform of currentEnv.platforms)
 			{
-				safe = true;
-				frog.x += platform.speed;
-				break;
+				//Collision detect med 0.5 for at mesteparten av frosken må vera oppå platformen.
+				if(collision_detect(frog, platform, 0.5))
+				{
+					safe = true;
+					frog.x += platform.speed;
+
+					//Endrar farge for å visa kontakt. Debugfunksjon
+					platform.color = constants.envColors[0];
+					break;
+				}
+				else
+				{
+					//Tilbakestiller til vanleg farge. Debugfunksjon
+					if(platform != currentEnv.platforms[0]) {
+						platform.color = 'white';
+					}
+				}
 			}
 		}
+
+		//Tester om frosken kolliderar med ein bil
+		if(currentEnv.hasOwnProperty("obstacles"))
+		{
+			var safe = true;
+			for(obstacle of currentEnv.obstacles)
+			{
+				//Collision detect med 0.9 for å gje litt slark med kollisjonen.
+				if(collision_detect(frog, obstacle, 0.9))
+				{
+					safe = false;
+
+					//Endrar farge for å visa kontakt. Debugfunksjon
+					obstacle.color = "red";
+					break;
+				}
+			}
+		}
+
+		if(currentEnv.hasOwnProperty("coins"))
+		{
+			for(coin of currentEnv.coins)
+			{
+				//Collision detect med 1
+				if(collision_detect(frog, coin, 1))
+				{ 
+					//fjerner myntene frosken har plukket opp fra spillbrettet
+					var idx = currentEnv.coins.indexOf(coin);
+					currentEnv.coins.splice(idx);
+					game.score+=10;
+					console.log("Points: "+game.score);
+					break;
+				}
+				
+			}
+		}
+	}
+
+	//Stenger frosken inne i spelvindauge.
+	if(frog.y - frog.height/2 < game.distance) {
+		frog.y = game.distance + frog.height/2;
+	}
+	if(frog.x + frog.width/2 > game.width) {
+		frog.x = game.width - frog.width/2;
+	}
+	else if(frog.x - frog.width/2 < -game.width) {
+		frog.x = frog.width/2 - game.width;
 	}
 
 	draw_object(frog);
