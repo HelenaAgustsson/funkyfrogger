@@ -1,31 +1,57 @@
 <!DOCTYPE html>
 <html lang="no">
-    <head>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" href="funkyfrogger.css">
-    </head>
-    <body>
-        <nav class="nav">
-            <a class="nav__link" href="index.html">Hjem</a>
-            <a class="nav__link" href="instruksjoner.html">Instruksjoner</a>
-            <a class="nav__link" href="backstory.html">Backstory</a>
-            <a class="nav__link" href="kontakt.html">Kontakt oss</a>
-        </nav>
-        <header>
-            <h1>Kontakt oss</h1>
-        </header>
-        <div class="section">
-            <h3>Kontakt oss</h3>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-        </div>
-        <div class="section">
-            <h3>Om oss</h3>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-        </div>
-        
-    </body>
+<head>
+    <title>Funky Frogger</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="funkyfrogger.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<!-- Navigasjonsbar -->
+<div class="nav" id="nav">
+    <a href="index.html">Hjem</a>
+    <a href="spill.html">Spill</a>
+    <a href="instruksjoner.html">Instruksjoner</a>
+    <a href="backstory.html">Bakgrunnshistorie</a>
+    <a href="kontakt.html" class="active">Kontakt oss</a>
+    <a href="javascript:void(0);" class="icon" onclick="collapsenavbar()">
+        <i class="fa fa-bars"></i>
+    </a>
+</div>
+
+<!-- Overskrift -->
+<header>
+    <h1>Funky Frogger</h1>
+</header>
+
+<!-- Hovedinnhold -->
+<div class="section">
+    <h3>Kontakt oss</h3>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </p>
+</div>
+
+<div class="section">
+    <h3>Om oss</h3>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </p>
+</div>
+
+<!-- Script til responsiv navigasjonsbar -->
+<script>
+    function collapsenavbar() {
+        var x = document.getElementById("nav");
+        if (x.className === "nav") {
+            x.className += " responsive";
+        } else {
+            x.className = "nav";
+        }
+    }
+</script>
+
+</body>
 </html>
