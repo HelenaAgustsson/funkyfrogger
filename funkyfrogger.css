@@ -52,3 +52,15 @@ canvas {
 .gameresources {
 	display: none;
 }
+
+.button {
+	padding: 10px 15px;
+	margin: 20px 10px;
+	background-color: #ffffff;
+	border: solid 2px green;
+	color: green;
+	border-radius: 2px;
+	cursor: pointer;
+}
+
+

@@ -81,6 +81,8 @@ window.onload = function() {
 	game.canvas = document.getElementById("gamecanvas");
 	game.tileSize = game.canvas.height / constants.tileCount;
 	let coinImg = document.getElementById('coins');
+	let startButton = $("#start-btn");
+	let stopButton = $("#stop-btn");
 
 	//Legg til interaktivitet
 	window.onkeydown = key_down_logger;
@@ -93,6 +95,15 @@ window.onload = function() {
 	create_frog();
 
 	update_game();
+
+	startButton.on('click', function(){
+		game.start();
+		//startButton.toggleClass("active");
+	});
+
+	stopButton.on('click', function(){
+		game.stop();
+	});
 }
 
 //Hovudloopen til spelet. Alt starter frå her.
