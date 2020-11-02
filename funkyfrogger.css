@@ -199,9 +199,9 @@ canvas {
 	display: none;
 }
 
-/*
 
-.button {
+
+.game-button {
 	padding: 10px 15px;
 	margin: 20px 10px;
 	background-color: #ffffff;
@@ -211,4 +211,4 @@ canvas {
 	cursor: pointer;
 }
 
-*/
+
