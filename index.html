@@ -1,43 +1,100 @@
 <!DOCTYPE html>
 <html lang="no">
-    <head>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" href="funkyfrogger.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="funkyfrogger.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    </head>
-    <body>
-        <nav class="nav">
-            <a class="nav__link" href="index.html">Hjem</a>
-            <a class="nav__link" href="instruksjoner.html">Instruksjoner</a>
-            <a class="nav__link" href="backstory.html">Backstory</a>
-            <a class="nav__link" href="kontakt.html">Kontakt oss</a>
-        </nav>
-        <header>
-            <h1>Funky Frogger</h1>
-        </header>
-        <div class="section">
-            <p>
-                
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Orci ac auctor augue mauris augue neque.
-                
-            </p>
-        </div>
-        <div class="game-section">
-            <canvas id="gamecanvas" height="500" width="100%">
-            </canvas>
-        </div>
-        <div class="section">
-            <button class="button" id="start-btn">Start <i class="fa fa-play" aria-hidden="true"></i></button>
-            <button class="button" id="stop-btn">Stop <i class="fa fa-stop" aria-hidden="true"></i></button>
-        </div>
-		<div class="gameresources">
-			<img id="coins" class="coins" src="images/coin.png" >
-			<img id="frog" src="images/frog.svg">
-		</div>
-        
-    </body>
-    
+<head>
+    <title>Funky Frogger</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="funkyfrogger.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<!-- Navigasjonsbar -->
+<div class="nav" id="nav">
+    <a href="index.html" class="active">Hjem</a>
+    <a href="spill.html">Spill</a>
+    <a href="instruksjoner.html">Instruksjoner</a>
+    <a href="backstory.html">Bakgrunnshistorie</a>
+    <a href="kontakt.html">Kontakt oss</a>
+    <a href="javascript:void(0);" class="icon" onclick="collapseNavbar()">
+        <i class="fa fa-bars"></i>
+    </a>
+</div>
+
+<!-- Overskrift -->
+<div id="header">Funky Frogger</div>
+
+<!-- Midtinnhold, bestående av bilder -->
+<div class="content">
+    <div class="column side">
+        <img class="note" src="images/notes2.png" alt="Flying music notes">
+    </div>
+    <div class="column middle">
+        <img class="splashpicture" id="splashpicture" src="images/shades_frog.jpg" alt="Frog with funky moves and shades">
+    </div>
+    <div class="column side">
+        <img class="note" src="images/notes1.png" alt="Flying music notes">
+    </div>
+</div>
+
+<!-- Knapp for å starte spill -->
+<div class="center">
+    <button type="button" class="button" onclick="redirect()">
+        <i class="fa fa-play"></i> Start spill</button>
+</div>
+
+<!-- Avspillingskontroller for musikk -->
+<div class="center">
+    <audio controls autoplay>
+        <source src="multimedia/protofunk.mp3" type="audio/ogg">
+        Nettleseren din støtter ikke avspilling av lydfilen.
+    </audio>
+</div>
+
+<!-- Attribusjon til artisten -->
+<div class="center">
+    <p>
+        <strong>Music:</strong><br>
+        Protofunk by Kevin MacLeod<br>
+        Link: https://incompetech.filmmusic.io/song/4247-protofunk<br>
+        License: http://creativecommons.org/licenses/by/4.0/
+    </p>
+</div>
+
+<!-- Script for responsiv navigasjonsbar -->
+<script>
+    function collapseNavbar() {
+        var x = document.getElementById("nav");
+        if (x.className === "nav") {
+            x.className += " responsive";
+        } else {
+            x.className = "nav";
+        }
+    }
+</script>
+
+<!-- Script for å redirecte til spillet når knappen trykkes på -->
+<script>
+    function redirect() {
+        window.location.href = "spill.html"
+    }
+</script>
+
+<!-- Script for bilde-slideshow-->
+<script>
+    const frog = document.getElementById("splashpicture");
+    var frogs = ["images/shades_frog.jpg", "images/lying_frog.jpg", "images/trumpet_frog.jpg"], i = 0;
+
+    function switchPicture() {
+        if (i < frogs.length) {
+            i += 1
+        } else {
+            i = 0
+        }
+        frog.src = frogs[i];
+    }
+    setInterval(switchPicture, 4000);
+</script>
+
+</body>
 </html>
