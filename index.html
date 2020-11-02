@@ -87,9 +87,8 @@
     var frogs = ["images/shades_frog.jpg", "images/lying_frog.jpg", "images/trumpet_frog.jpg"], i = 0;
 
     function switchPicture() {
-        if (i < frogs.length) {
-            i += 1
-        } else {
+		i += 1;
+		if (i >= frogs.length) {
             i = 0
         }
         frog.src = frogs[i];
