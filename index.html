@@ -16,7 +16,7 @@
     <a href="instruksjoner.html">Instruksjoner</a>
     <a href="backstory.html">Bakgrunnshistorie</a>
     <a href="kontakt.html">Kontakt oss</a>
-    <a href="javascript:void(0);" class="icon" onclick="collapsenavbar()">
+    <a href="javascript:void(0);" class="icon" onclick="collapseNavbar()">
         <i class="fa fa-bars"></i>
     </a>
 </div>
@@ -30,7 +30,7 @@
         <img class="note" src="images/notes2.png" alt="Flying music notes">
     </div>
     <div class="column middle">
-        <img class="splashpicture" src="images/shades_frog.jpg" alt="Frog with funky moves and shades">
+        <img class="splashpicture" id="splashpicture" src="images/shades_frog.jpg" alt="Frog with funky moves and shades">
     </div>
     <div class="column side">
         <img class="note" src="images/notes1.png" alt="Flying music notes">
@@ -39,7 +39,8 @@
 
 <!-- Knapp for å starte spill -->
 <div class="center">
-    <button type="button" onclick="redirect()">Start spill</button>
+    <button type="button" class="button" onclick="redirect()">
+        <i class="fa fa-play"></i> Start spill</button>
 </div>
 
 <!-- Avspillingskontroller for musikk -->
@@ -60,9 +61,9 @@
     </p>
 </div>
 
-<!-- Script til responsiv navigasjonsbar -->
+<!-- Script for responsiv navigasjonsbar -->
 <script>
-    function collapsenavbar() {
+    function collapseNavbar() {
         var x = document.getElementById("nav");
         if (x.className === "nav") {
             x.className += " responsive";
@@ -77,6 +78,22 @@
     function redirect() {
         window.location.href = "spill.html"
     }
+</script>
+
+<!-- Script for bilde-slideshow-->
+<script>
+    const frog = document.getElementById("splashpicture");
+    var frogs = ["images/shades_frog.jpg", "images/lying_frog.jpg", "images/trumpet_frog.jpg"], i = 0;
+
+    function switchPicture() {
+        if (i < frogs.length) {
+            i += 1
+        } else {
+            i = 0
+        }
+        frog.src = frogs[i];
+    }
+    setInterval(switchPicture, 4000);
 </script>
 
 </body>

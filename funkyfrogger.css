@@ -88,9 +88,9 @@ er lånt fra https://www.w3schools.com/howto/howto_js_topnav_responsive.asp */
 
 /* Midtre kolonne */
 .column.middle {
-	-webkit-flex: 4;
-	-ms-flex: 4;
-	flex: 4;
+	-webkit-flex: 5;
+	-ms-flex: 5;
+	flex: 5;
 }
 
 /* Flexbox-oppsettet er sterkt inspirert fra w3schools, og mye av koden
@@ -103,10 +103,13 @@ er lånt fra https://www.w3schools.com/css/tryit.asp?filename=trycss_template2_f
 
 /* Overskrift */
 #header {
-    font-family: Verdana, Tahoma, sans-serif;
-    font-size: 6em;
-    font-weight: normal;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-size: 7em;
+    font-weight: bold;
 	text-align: center;
+	color: #FF00DD;
+	-webkit-text-stroke: 3px #0058FF;
+
 }
 
 /* Midtstilte elementer */
@@ -127,7 +130,9 @@ body {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 50%;
+	width: 50%;
+	height: 20em;
+	object-fit: scale-down;
 }
 
 /* Musikknoter */
@@ -136,6 +141,28 @@ body {
     margin-left: auto;
     margin-right: auto;
     width: 50%;
+}
+
+/* Knapp for å starte spill */
+.button {
+	background-color: #3DFF00;
+	border-radius: 6px;
+	border: 3px solid #FF00DD;
+	color: white;
+	padding: 12px 128px;
+	text-align: center;
+	font-size: 32px;
+	font-weight: bold;
+	margin: 4px 2px;
+	cursor: pointer;
+	-webkit-text-stroke: 1px black;
+}
+
+/* Fargebytteeffekt når musepekeren holdes over knappen */
+.button:hover {
+	background-color: #0058FF;
+	color: #FFEF00;
+	border: 3px solid #FF007E;
 }
 
 
