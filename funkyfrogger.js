@@ -36,6 +36,7 @@ var game = {
 			this.fps = fps;
 			this.started = setInterval(this.update, 1000/fps);
 			this.audio.play();
+			this.audio.volume = 0.3;
 		}
 		else
 		{
@@ -462,6 +463,11 @@ function create_obstacles_in(env) {
 		var x = -game.width - 4;
 
 		var carColors = ["blue", "purple", "black"];
+		var carTypes = [
+			car1 = document.getElementById("car1"),
+			car2 = document.getElementById("car2"),
+			bus = document.getElementById("bus")
+		];
 		while(x < game.width + 4) {
 			var platform = {
 				x		: x,
@@ -472,7 +478,8 @@ function create_obstacles_in(env) {
 
 				speed	: 0.05 + 0.04*row,
 
-				color	: carColors[get_random(0,2)]
+				color	: carColors[get_random(0,2)],
+				image	: carTypes[get_random(0,2)]
 			}
 
 			x += 4 + 2 * Math.random();
@@ -502,6 +509,9 @@ function create_platforms_in(env) {
 	for(var row = 1; row < env.tiles; ++row) {
 		var x = -game.width - 4;
 
+		var logTypes = [
+			log1 = document.getElementById("log1"),
+		];
 		while(x < game.width + 4) {
 			var platform = {
 				x		: x,
@@ -512,7 +522,8 @@ function create_platforms_in(env) {
 
 				speed	: 0.05 + 0.04*row,
 
-				color	: "white"
+				color	: "white",
+				image	: logTypes[0]
 			};
 
 			x += 3.1 + 3 * Math.random();
@@ -563,7 +574,7 @@ function create_safe_platform(row) {
 		height : 0.9,
 
 		speed : 0,
-		color : constants.envColors[0]
+		color : constants.envColors[0],
 	};
 
 	return platform;
@@ -581,7 +592,7 @@ function create_coin_in(env) {
 
 		speed	: 0,
 
-		image	: document.getElementById('coins')
+		image	: document.getElementById('musicnote')
 	}
 
 	env.coins.push(coin);
@@ -598,7 +609,7 @@ function draw_coins_in(env) {
 //       Multimedia       //
 //************************//
 
-game.audio = new Audio("multimedia/the_monarch_full.mp3");
+game.audio = new Audio("audio/aces-high.mp3");
 game.audio.loop = true;
 
 

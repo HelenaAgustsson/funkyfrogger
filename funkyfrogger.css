@@ -98,7 +98,7 @@ er lånt fra https://www.w3schools.com/css/tryit.asp?filename=trycss_template2_f
 
 
 /*************************/
-/* 	  	  Innhold	    */
+/* 	  	  Innhold	     */
 /*************************/
 
 /* Overskrift */
@@ -116,6 +116,8 @@ er lånt fra https://www.w3schools.com/css/tryit.asp?filename=trycss_template2_f
 .center {
 	padding: 10px;
 	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 /* Øvrig tekst */
@@ -212,3 +214,32 @@ canvas {
 }
 
 
+/*************************/
+/* 	     High Score      */
+/*************************/
+
+#scoretable {
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+	border-collapse: collapse;
+	width: 70%;
+}
+
+#scoretable td, #scoretable th {
+	border: 1px solid #ddd;
+	padding: 8px;
+}
+
+#scoretable tr:nth-child(even){background-color: #f2f2f2;}
+
+#scoretable tr:hover {background-color: #ddd;}
+
+#scoretable th {
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: left;
+	background-color: #4CAF50;
+	color: white;
+}
+
+/* Tabellen er sterkt inspirert fra w3schools, og mye av koden er lånt
+fra https://www.w3schools.com/css/css_table.asp */

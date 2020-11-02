@@ -13,11 +13,10 @@
 <div class="nav" id="nav">
     <a href="index.html">Hjem</a>
     <a href="spill.html">Spill</a>
-    <a href="instruksjoner.html" class="active">Instruksjoner</a>
+    <a href="instruksjoner.html">Instruksjoner</a>
     <a href="backstory.html">Bakgrunnshistorie</a>
-    <a href="highscore.html">High Score</a>
+    <a href="highscore.html" class="active">High Score</a>
     <a href="kontakt.html">Kontakt oss</a>
-    <a href="kreditering.html">Kreditering</a>
     <a href="javascript:void(0);" class="icon" onclick="collapsenavbar()">
         <i class="fa fa-bars"></i>
     </a>
@@ -25,28 +24,32 @@
 
 <!-- Overskrift -->
 <header>
-    <h1>Instruksjoner</h1>
+    <h1>High Score</h1>
 </header>
 
 <!-- Hovedinnhold -->
-<div class="section">
-    <p>
-        
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        Orci ac auctor augue mauris augue neque.
-        
-    </p>
-</div>
-
-<div class="section">
-    <ol>
-        <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
-        <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
-        <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
-        <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
-        <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
-    </ol>
-</div>
+<table id = "scoretable" class="center">
+    <tr>
+        <th>Rangering</th>
+        <th>Poengsum</th>
+        <th>Navn</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>1337</td>
+        <td>Stein</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>999</td>
+        <td>Stein</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>420</td>
+        <td>Stein</td>
+    </tr>
+    </table>
 
 <!-- Script til responsiv navigasjonsbar -->
 <script>
@@ -59,6 +62,6 @@
         }
     }
 </script>
-
+    
 </body>
 </html>
