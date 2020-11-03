@@ -112,6 +112,11 @@ er lånt fra https://www.w3schools.com/css/tryit.asp?filename=trycss_template2_f
 
 }
 
+.page-header {
+	color: green;
+	margin: 30px auto;
+}
+
 /* Midtstilte elementer */
 .center {
 	padding: 10px;
@@ -186,7 +191,9 @@ canvas {
     border: 2px solid #04276e;
 	width: 100%;
 	max-width: 1000px;
-    height: 500px;
+	max-height: 500px;
+	display: block;
+	margin: auto;
 }
 
 .coins {
@@ -195,13 +202,6 @@ canvas {
 	visibility: hidden;
 	padding: 5px;
 }
-
-/* Display hidden då desse er fullstendig gøymd */
-.gameresources {
-	display: none;
-}
-
-
 
 .game-button {
 	padding: 10px 15px;
@@ -212,6 +212,17 @@ canvas {
 	border-radius: 2px;
 	cursor: pointer;
 }
+
+#start-btn {
+	float: right;
+}
+
+/* Display hidden då desse er fullstendig gøymd */
+.gameresources {
+	display: none;
+}
+
+
 
 
 /*************************/

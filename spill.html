@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="funkyfrogger.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="funkyfrogger.js"></script>
      
 </head>
@@ -29,19 +31,26 @@
 </div>
 
 <!-- Overskrift -->
-<header>
-    <h1>Funky Frogger</h1>
+<header class="container text-center">
+    <h1 class="page-header">Funky Frogger</h1>
 </header>
 
 <!-- Spillvindu -->
-<div class="game-section">
-    <canvas id="gamecanvas" height="500" width="100%">
+<div class="game-section container">
+    <canvas id="gamecanvas">
     </canvas>
 </div>
 
-<div class="section">
-    <button class="game-button" id="start-btn">Start <i class="fa fa-play" aria-hidden="true"></i></button>
-    <button class="game-button" id="stop-btn">Stop <i class="fa fa-stop" aria-hidden="true"></i></button>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <button class="game-button" id="start-btn">Start <i class="fa fa-play" aria-hidden="true"></i></button>
+        </div>
+        <div class="col">
+            <button class="game-button" id="stop-btn">Stop <i class="fa fa-stop" aria-hidden="true"></i></button>
+        </div>
+    </div>
+    
 </div>
 
 <!-- Spillressurser -->
