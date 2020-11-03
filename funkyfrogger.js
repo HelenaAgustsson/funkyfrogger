@@ -15,8 +15,7 @@ var constants = {
 
 //Initialisering av hindre med kollisjon
 var cars = [];
-// Initialisering av elementer som kan plukkes opp
-//var coins = [];
+
 
 var game = {
 	//Spelvariabler. Initialisert til 0
@@ -81,7 +80,7 @@ function set_canvas() {
 window.onload = function() {
 	game.canvas = document.getElementById("gamecanvas");
 	game.tileSize = game.canvas.height / constants.tileCount;
-	let coinImg = document.getElementById('coins');
+	//let coinImg = document.getElementById('coins');
 	let startButton = $("#start-btn");
 	let stopButton = $("#stop-btn");
 
@@ -99,7 +98,6 @@ window.onload = function() {
 
 	startButton.on('click', function(){
 		game.start();
-		//startButton.toggleClass("active");
 	});
 
 	stopButton.on('click', function(){
@@ -367,8 +365,8 @@ function handle_enviroment() {
 				draw_object(obj);
 			}
 		}
-		if(env.hasOwnProperty("coins")) {
-			draw_coins_in(env);
+		if(env.hasOwnProperty("items")) {
+			draw_items_in(env);
 		}
 	}
 }
@@ -433,13 +431,13 @@ function add_environment(start = undefined) {
 		create_obstacles_in(env);
 	}
 
-	// lager coins uansett type miljø foreløpig
+	// lager items uansett type miljø foreløpig
 	
-	env.coins = [];
-	var totalCoins = 4;
-	for(var i = 0; i<totalCoins; ++i)
+	env.items = [];
+	var totalItems = 4;
+	for(var i = 0; i<totalItems; ++i)
 		{
-			create_coin_in(env);
+			create_item_in(env);
 		}
 	
 	game.env.push(env);	
@@ -464,7 +462,7 @@ function create_obstacles_in(env) {
 
 		var carColors = ["blue", "purple", "black"];
 		var carTypes = [
-			car1 = document.getElementById("car1"),
+			car1 = document.getElementById("redcar_right"),
 			car2 = document.getElementById("car2"),
 			bus = document.getElementById("bus")
 		];
@@ -495,7 +493,7 @@ function create_obstacles_in(env) {
 }
 
 //************************//
-//        Coins           //
+//        items           //
 //************************//
 
 
@@ -580,10 +578,10 @@ function create_safe_platform(row) {
 	return platform;
 }
 
-function create_coin_in(env) {
+function create_item_in(env) {
 
 	var row = get_random(0, env.tiles);
-	var coin = {
+	var item = {
 		x		: Math.random() * 10 - 5,
 		y		: env.start + row + 0.5,
 
@@ -595,12 +593,12 @@ function create_coin_in(env) {
 		image	: document.getElementById('musicnote')
 	}
 
-	env.coins.push(coin);
+	env.items.push(item);
 }
 
-function draw_coins_in(env) {
-	for (coin of env.coins) {
-		draw_object(coin);
+function draw_items_in(env) {
+	for (item of env.items) {
+		draw_object(item);
 	}
 }
 
@@ -744,16 +742,16 @@ function handle_frog() {
 			}
 		}
 
-		if(currentEnv.hasOwnProperty("coins"))
+		if(currentEnv.hasOwnProperty("items"))
 		{
-			for(coin of currentEnv.coins)
+			for(item of currentEnv.items)
 			{
 				//Collision detect med 1
-				if(collision_detect(frog, coin, 1))
+				if(collision_detect(frog, item, 1))
 				{ 
 					//fjerner myntene frosken har plukket opp fra spillbrettet
-					var idx = currentEnv.coins.indexOf(coin);
-					currentEnv.coins.splice(idx, 1);
+					var idx = currentEnv.items.indexOf(item);
+					currentEnv.items.splice(idx, 1);
 					game.score+=10;
 					console.log("Points: "+game.score);
 					break;
