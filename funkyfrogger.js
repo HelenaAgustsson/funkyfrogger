@@ -753,7 +753,7 @@ function handle_frog() {
 				{ 
 					//fjerner myntene frosken har plukket opp fra spillbrettet
 					var idx = currentEnv.coins.indexOf(coin);
-					currentEnv.coins.splice(idx);
+					currentEnv.coins.splice(idx, 1);
 					game.score+=10;
 					console.log("Points: "+game.score);
 					break;
