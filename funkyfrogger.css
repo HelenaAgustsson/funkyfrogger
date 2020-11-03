@@ -254,3 +254,32 @@ canvas {
 
 /* Tabellen er sterkt inspirert fra w3schools, og mye av koden er lånt
 fra https://www.w3schools.com/css/css_table.asp */
+
+
+/*************************/
+/* 	     Instruksjoner     */
+/*************************/
+
+.game-rules {
+	padding: 20px;
+	border: 2px dashed green;
+}
+
+/*************************/
+/* 	     Kontaktsiden    */
+/*************************/
+
+.profile-img {
+	background-image: url(images/frog-profile.jpg);
+	background-position: center;
+	height: 100px;
+	display: block;	
+	margin: 10px auto;
+}
+
+.section__div--rectangle {
+	border: 2px solid green;
+	padding: 10px;
+	border-radius: 5px;
+	margin-bottom: 20px;
+}
