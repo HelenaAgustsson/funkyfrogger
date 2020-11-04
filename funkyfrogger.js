@@ -366,11 +366,12 @@ function handle_enviroment() {
 	for (env of game.env) {
 		draw_environment(env);
 
-		if(env.hasOwnProperty("platforms")) {
+		if(env.platforms.length > 0) {
 			move_objects(env.platforms);
 			for(obj of env.platforms) {
 				draw_object(obj);
 			}
+			draw_safe_platform(env.platforms[0]);
 		}
 		if(env.hasOwnProperty("obstacles")) {
 			move_objects(env.obstacles);
@@ -586,9 +587,38 @@ function create_safe_platform(row) {
 
 		speed : 0,
 		color : constants.envColors[0],
+
+		image : document.getElementById('piano')
 	};
 
 	return platform;
+}
+
+function draw_safe_platform(object) {
+	var context = game.canvas.getContext("2d");
+
+	// 128/95 er pixelratio på bilete.
+	var width  = Math.round(object.height * (128/95) * game.tileSize);
+	var height = Math.round(object.height * game.tileSize);
+
+	var max = Math.floor(((object.width/2) * game.tileSize) / width);
+
+	var x = Math.round(game.canvas.width/2);
+	var y = Math.round(game.canvas.height  - ((object.y - game.distance) * game.tileSize) - height/2);
+
+	if(object.hasOwnProperty("image")) {
+		var i = 0;
+		while(i < max) {
+			context.drawImage(object.image, x + width*i	, y, width, height);
+			context.drawImage(object.image, x - width*(i+1), y, width, height);
+
+			++i;
+		}
+	}
+	else {
+		context.fillStyle = "magenta";
+		context.fillRect(x, y, width, height);
+	}
 }
 
 function create_item_in(env) {
