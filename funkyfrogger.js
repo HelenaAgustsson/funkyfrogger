@@ -13,10 +13,6 @@ var constants = {
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"]
 };
 
-//Initialisering av hindre med kollisjon
-var cars = [];
-
-
 var game = {
 	//Spelvariabler. Initialisert til 0
 	score       : 0,
@@ -28,6 +24,9 @@ var game = {
 
 	//Spelfunksjonar for å styre spelet.
 	update	: update_game,
+
+	reset	: reset_game,
+	end		: end_game,
 
 	start	: function(fps = 20) {
 		if(this.started == 0)
@@ -76,10 +75,24 @@ function set_canvas() {
 	game.width = (game.canvas.width / game.tileSize) / 2;
 }
 
+function reset_game() {
+	game.score = 0;
+	game.distance = 0;
+	game.env = [];
+
+	set_canvas();
+	add_environment(0);
+
+	//Lagar ny frosk, gamle vert sletta
+	create_frog();
+
+	//Teikner opp fyrste bilete
+	update_game();
+}
+
 //Vent til nettsida er lasta før ein hentar canvas og koplar opp funksjonar
 window.onload = function() {
 	game.canvas = document.getElementById("gamecanvas");
-	game.tileSize = game.canvas.height / constants.tileCount;
 	//let coinImg = document.getElementById('coins');
 	let startButton = $("#start-btn");
 	let stopButton = $("#stop-btn");
@@ -88,14 +101,6 @@ window.onload = function() {
 	window.onkeydown = key_down_logger;
 	window.onkeyup = key_up_logger;
 
-	//Legg til fyrste enviroment
-	set_canvas();
-	add_environment(0);
-
-	create_frog();
-
-	update_game();
-
 	startButton.on('click', function(){
 		game.start();
 	});
@@ -103,6 +108,8 @@ window.onload = function() {
 	stopButton.on('click', function(){
 		game.stop();
 	});
+
+	reset_game();
 }
 
 //Hovudloopen til spelet. Alt starter frå her.
@@ -116,24 +123,30 @@ function update_game() {
 	//move_obstacles();
 	//draw_obstacles();
 
-
 	//Eksempelfunksjonar
-	//handle_platforms();
 	//handle_enemies();
-	//handle_froggy();
 	//collision_detect();
 	//add_score();
-	//end_game_if_no_more_lives();
-
-	//DEBUG
-	//debug_draw_test();
 
 	handle_frog();
 
 	//Automatisk scrolling ved å auka distance
 	//time += 1;
 	//game.distance += 5 * (1 - 1 * Math.cos(time/10))
+
+	if(game.frog.lifepoints < 1) {
+		game.end();
+	}
 }
+
+function end_game() {
+	//Vis sluttskjerm med poengsum og "Vil du spille igjen?"
+	//Lagre poengsum
+
+	//game.stop();
+	game.reset();
+}
+
 
 //************************//
 //    Hjelpefunksjonar    //
@@ -665,6 +678,9 @@ function create_frog() {
 		ySpeed : 0,
 		speed : 0.25,
 
+		inputCooldown : 0,
+		lifepoints : 3,
+
 		//https://www.flaticon.com/free-icon/frog_1036001
 		image : document.getElementById("frog")
 	};
@@ -693,15 +709,22 @@ function handle_frog() {
 	}
 	else {
 		//Me oppdaterar frosken sin posisjon med farten dei har i x eller y retning
-		frog.x += frog.xSpeed;
-		frog.y += frog.ySpeed;
+		if(frog.inputCooldown > 0) {
+			frog.inputCooldown -= 1;
+		}
+		else {
+			frog.x += frog.xSpeed;
+			frog.y += frog.ySpeed;
+		}
+
+		var safe = true;
 
 		//Dersom frosken er i eit vått miljø med platformar itererar me over plattformane for å sjå om han står på ein.
 		//Dersom han gjer det, så seglar han bortetter saman med plattformen.
 		//Dersom han ikkje gjer det, så må han mista eit liv.
-		if(currentEnv.hasOwnProperty("platforms"))
+		if(currentEnv.platforms.length > 0)
 		{
-			var safe = false;
+			safe = false;
 			for(platform of currentEnv.platforms)
 			{
 				//Collision detect med 0.5 for at mesteparten av frosken må vera oppå platformen.
@@ -725,9 +748,8 @@ function handle_frog() {
 		}
 
 		//Tester om frosken kolliderar med ein bil
-		if(currentEnv.hasOwnProperty("obstacles"))
+		if(safe == true && currentEnv.hasOwnProperty("obstacles"))
 		{
-			var safe = true;
 			for(obstacle of currentEnv.obstacles)
 			{
 				//Collision detect med 0.9 for å gje litt slark med kollisjonen.
@@ -742,7 +764,7 @@ function handle_frog() {
 			}
 		}
 
-		if(currentEnv.hasOwnProperty("items"))
+		if(safe == true && currentEnv.hasOwnProperty("items"))
 		{
 			for(item of currentEnv.items)
 			{
@@ -758,6 +780,15 @@ function handle_frog() {
 				}
 				
 			}
+		}
+
+		//Frosken er i vatnet eller truffen av ein bil.
+		if(safe == false) {
+			frog.inputCooldown = Math.round(game.fps/2);
+			frog.lifepoints -= 1;
+
+			frog.x = 0;
+			frog.y = currentEnv.start + 0.5;
 		}
 	}
 
