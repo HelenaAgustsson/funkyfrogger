@@ -141,7 +141,14 @@ function update_game() {
 
 function end_game() {
 	//Vis sluttskjerm med poengsum og "Vil du spille igjen?"
-	//Lagre poengsum
+
+	add_high_score("Froggy", game.score);
+
+	var highScore = get_high_score_list();
+	console.log("High scores");
+	for(hs of highScore) {
+		console.log(hs);
+	}
 
 	//game.stop();
 	game.reset();
@@ -678,6 +685,10 @@ function add_high_score(name, score) {
 		var highScore = [];
 	}
 
+	if(!Array.isArray(highScore)) {
+		highScore = [];
+	}
+
 	//Legg til den nye poengsummen og sorterar lista slik at han kjem på rett plass.
 	highScore.push([name, score]);
 	highScore.sort(
@@ -685,6 +696,11 @@ function add_high_score(name, score) {
 				return b[1] - a[1];
 			}
 			);
+
+	//Maks 10 high scores
+	if(highScore.length > 10) {
+		highScore.pop();
+	}
 
 	window.localStorage.setItem("highScore", JSON.stringify(highScore));
 }
@@ -694,6 +710,10 @@ function get_high_score_list() {
 		var highScore = JSON.parse(window.localStorage.getItem("highScore"))
 	} catch(error) {
 		var highScore = [];
+	}
+
+	if(!Array.isArray(highScore)) {
+		highScore = [];
 	}
 
 	return highScore;
