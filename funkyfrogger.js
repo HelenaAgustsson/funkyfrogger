@@ -295,50 +295,90 @@ function debug_draw_test() {
 //************************//
 
 function key_down_logger(event) {
+	var frog = game.frog;
 	switch(event.key) {
 		// Nyttar escape til å pause og starte spelet
 		case "Escape":
 			game.pause();
 			break;
+		// Hopp med mellomtast
+		case " ":
+			frog.jump = true;
+			frog.jumpTarget = Math.ceil(frog.y - 0.49) + 0.5;
+			break;
 
 		// Når me trykkjer ned ein tast vil frosken flytta på seg. 
 		case "ArrowUp":
 		case "w":
-			game.frog.ySpeed = game.frog.speed;
+			frog.up = true;
+			frog.ySpeed = frog.walkSpeed;
 			break;
 
 		case "ArrowDown":
 		case "s":
-			game.frog.ySpeed = -game.frog.speed;
+			frog.down = true;
+			frog.ySpeed = -frog.walkSpeed;
 			break;
 
 		case "ArrowLeft":
 		case "a":
-			game.frog.xSpeed = -game.frog.speed;
+			frog.left = true;
+			frog.xSpeed = -frog.walkSpeed;
 			break;
 
 		case "ArrowRight":
 		case "d":
-			game.frog.xSpeed = game.frog.speed;
+			frog.right = true;
+			frog.xSpeed = frog.walkSpeed;
+		default:
 	}
 }
 
 function key_up_logger(event) {
+	var frog = game.frog;
 	switch(event.key) {
-
 		//Når me slepp opp ein tast vil frosken stoppa opp.
 		case "ArrowUp":
-		case "ArrowDown":
 		case "w":
+			frog.up = false;
+			if(frog.down == true) {
+				frog.y = -frog.walkSpeed;
+			}
+			else {
+				frog.ySpeed = 0;
+			}
+		case "ArrowDown":
 		case "s":
-			game.frog.ySpeed = 0;
+			frog.down = false;
+			if(frog.up == true) {
+				frog.ySpeed = frog.walkSpeed;
+			}
+			else {
+				frog.ySpeed = 0;
+			}
 			break;
 
 		case "ArrowLeft":
-		case "ArrowRight":
 		case "a":
+			frog.left = false;
+			if(frog.right == true) {
+				frog.xSpeed = frog.walkSpeed;
+			}
+			else {
+				frog.xSpeed = 0;
+			}
+			break;
+		case "ArrowRight":
 		case "d":
-			game.frog.xSpeed = 0;
+			frog.right = false;
+			if(frog.left == true) {
+				frog.xSpeed = -frog.walkSpeed;
+			}
+			else {
+				frog.xSpeed = 0;
+			}
+			break;
+		default:
 	}
 }
 
@@ -676,10 +716,18 @@ function create_frog() {
 
 		xSpeed : 0,
 		ySpeed : 0,
-		speed : 0.25,
+		walkSpeed : 0.2,
+		jumpSpeed : 0.3,
 
 		inputCooldown : 0,
 		lifepoints : 3,
+
+		up		: false,
+		down	: false,
+		left	: false,
+		right	: false,
+
+		jump	: false,
 
 		//https://www.flaticon.com/free-icon/frog_1036001
 		image : document.getElementById("frog")
@@ -708,13 +756,25 @@ function handle_frog() {
 		frog.y = currentEnv.start + 1;
 	}
 	else {
-		//Me oppdaterar frosken sin posisjon med farten dei har i x eller y retning
-		if(frog.inputCooldown > 0) {
-			frog.inputCooldown -= 1;
+		if(frog.jump == true) {
+			frog.y += frog.jumpSpeed * 2;
+
+			//Om han har nådd målet, er han ferdig med å hoppe.
+			if(frog.y >= frog.jumpTarget) {
+				frog.y = frog.jumpTarget;
+				frog.jump = false;
+				frog.inputCooldown = 2;
+			}
 		}
 		else {
-			frog.x += frog.xSpeed;
-			frog.y += frog.ySpeed;
+			//Me oppdaterar frosken sin posisjon med farten dei har i x eller y retning
+			if(frog.inputCooldown > 0) {
+				frog.inputCooldown -= 1;
+			}
+			else {
+				frog.x += frog.xSpeed;
+				frog.y += frog.ySpeed;
+			}
 		}
 
 		var safe = true;
