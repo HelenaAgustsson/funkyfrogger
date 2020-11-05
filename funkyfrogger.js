@@ -77,6 +77,13 @@ function set_canvas() {
 
 function reset_game() {
 	game.score = 0;
+
+	// setter poengteller i statusbar tilbake til null
+	$("#score > span").text(game.score);
+
+	//fyller opp til tre liv igjen
+	$(".life").removeClass("fa-heart-o").addClass("fa-heart");
+
 	game.distance = 0;
 	game.env = [];
 
@@ -96,6 +103,7 @@ window.onload = function() {
 	//let coinImg = document.getElementById('coins');
 	let startButton = $("#start-btn");
 	let stopButton = $("#stop-btn");
+	let gameScore = $("#score > span");
 
 	//Legg til interaktivitet
 	window.onkeydown = key_down_logger;
@@ -143,7 +151,7 @@ function end_game() {
 	//Vis sluttskjerm med poengsum og "Vil du spille igjen?"
 
 	add_high_score("Froggy", game.score);
-
+	$("#highscore > span").text(game.score);
 	var highScore = get_high_score_list();
 	console.log("High scores");
 	for(hs of highScore) {
@@ -855,7 +863,7 @@ function handle_frog() {
 					var idx = currentEnv.items.indexOf(item);
 					currentEnv.items.splice(idx, 1);
 					game.score+=10;
-					console.log("Points: "+game.score);
+					$("#score > span").text(game.score);
 					break;
 				}
 				
@@ -866,6 +874,13 @@ function handle_frog() {
 		if(safe == false) {
 			frog.inputCooldown = Math.round(game.fps/2);
 			frog.lifepoints -= 1;
+			if(frog.lifepoints==2){
+				$("#life3").removeClass("fa-heart").addClass("fa-heart-o");
+			} else if(frog.lifepoints==1){
+				$("#life2").removeClass("fa-heart").addClass("fa-heart-o");
+			} else if(frog.lifepoints==0){
+				$("#life1").removeClass("fa-heart").addClass("fa-heart-o");
+			}
 
 			frog.x = 0;
 			frog.y = currentEnv.start + 0.5;

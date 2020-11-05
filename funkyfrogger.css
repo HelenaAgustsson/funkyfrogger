@@ -222,7 +222,20 @@ canvas {
 	display: none;
 }
 
+.statusbar.flexbox-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
 
+.statusbar-item {
+	margin: 20px 10px;
+}
+
+.life {
+	margin: 0px 5px;
+	color: red;
+}
 
 
 /*************************/
