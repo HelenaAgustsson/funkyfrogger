@@ -2,6 +2,10 @@
 /* 	   Navigasjonsbar    */
 /*************************/
 
+#navbar-resp {
+	padding: 0px;
+}
+
 /* Legg til blank bakgrunnsfarge på navigasjonsbar */
 .nav {
 	background-color: #333;
@@ -10,7 +14,7 @@
 }
 
 /* Stilsett lenkene i navigasjonsbaren */
-.nav a {
+.nav-item {
 	float: left;
 	display: block;
 	color: #f2f2f2;
@@ -18,17 +22,21 @@
 	padding: 14px 16px;
 	text-decoration: none;
 	font-size: 18px;
+	text-align: center;
+	padding: 0px 16px;
+	font-size: 18px;
+	padding: 10px;
 }
 
 /* Endre fargen på lenkene ved "hover" */
-.nav a:hover {
-	background-color: #ddd;
-	color:black;
+.nav-item:hover {
+	background-color: green;
+	color: #ffffff;
 }
 
 /* Fremheve den aktive siden */
-.nav a.active {
-	background-color: #4CAF50;
+.nav-item.active {
+	background-color: green;
 	color: white;
 }
 
@@ -37,7 +45,9 @@
 	display: none;
 }
 
+/* Dette skjer nå automatisk med boostrap */
 /* Når skjermen er mindre enn 600 piksler bred, gjem alle lenker, unntatt den første ("Hjem") */
+/*
 @media screen and (max-width: 600px) {
 	.nav a:not(:first-child) {display: none;}
 	.nav a.icon {
@@ -59,7 +69,7 @@
 		text-align: left;
 	}
 }
-
+*/
 /* Navigasjonsbaren er sterkt inspirert fra w3schools, og mye av koden
 er lånt fra https://www.w3schools.com/howto/howto_js_topnav_responsive.asp */
 
