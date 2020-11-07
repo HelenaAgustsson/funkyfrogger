@@ -530,7 +530,7 @@ function create_obstacles_in(env) {
 
 		var carColors = ["blue", "purple", "black"];
 		var carTypes = [
-			car1 = document.getElementById("redcar_right"),
+			car1 = document.getElementById("redcar"),
 			car2 = document.getElementById("car2"),
 			bus = document.getElementById("bus")
 		];

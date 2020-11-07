@@ -56,6 +56,33 @@
 	background-color: #0E9908;
 }
 
+/* footer */
+
+.footer {
+	background-color: #333;
+	color: #ffffff;
+	text-align: left;
+	margin-top: 150px;
+	padding: 20px 30px;
+	font-size: 0.8em;
+}
+
+.footer-li {
+	list-style: none;
+	padding-left:0;
+	display: block;
+}
+
+.footer-link {
+	color: #ffffff;
+	margin-left: 5px;
+}
+
+.footer-link:hover {
+	color: #ffffff;
+	cursor: pointer;
+}
+
 /* Gjem lenken som skal være åpen og lukk navigasjonsbar på små skjermer 
 .nav .icon {
 	display: none;
