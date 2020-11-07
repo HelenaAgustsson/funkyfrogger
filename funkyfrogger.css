@@ -209,7 +209,7 @@ body {
     margin: auto;
 }
 
-.game-section {
+/* .game-section {
 	max-width: 900px;
 	margin: auto;
 	}
@@ -221,7 +221,45 @@ canvas {
 	max-height: 500px;
 	display: block;
 	margin: auto;
+} */
+
+#gamecanvas {
+	border: 2px solid #04276e;
+	width: 100%;
+	height: 100%;
+	max-width: 1000px;
+	max-height: 500px;
+	display: block;
+	margin: 0;
+	padding: 0;
 }
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+	
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+	#gamecanvas {background: green;}
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+	#gamecanvas {background: blue;}
+} 
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+	#gamecanvas {background: orange;}
+} 
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+	#gamecanvas {background: pink;}
+}
+
+
 
 .coins {
     height: 10px;
