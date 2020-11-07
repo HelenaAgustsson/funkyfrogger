@@ -4,47 +4,63 @@
 
 #navbar-resp {
 	padding: 0px;
+	
 }
 
 /* Legg til blank bakgrunnsfarge på navigasjonsbar */
-.nav {
+.navbar {
 	background-color: #333;
 	overflow: hidden;
+	/*
+	
 	padding: 0;
+	*/
 }
 
 /* Stilsett lenkene i navigasjonsbaren */
 .nav-item {
+	text-decoration: none;
+	/*
+	color: white;
 	float: left;
 	display: block;
-	color: #f2f2f2;
-	text-align: center;
 	padding: 14px 16px;
-	text-decoration: none;
 	font-size: 18px;
 	text-align: center;
-	padding: 0px 16px;
-	font-size: 18px;
-	padding: 10px;
+	*/
+	padding: 10px 5px;
+}
+
+.nav-link {
+	color: white;
+}
+
+/* Modify brand and text color */ 
+.navbar-custom .navbar-brand, 
+.navbar-custom .navbar-text { 
+    color: green; 
 }
 
 /* Endre fargen på lenkene ved "hover" */
 .nav-item:hover {
-	background-color: green;
+	background-color: #28E322;
 	color: #ffffff;
+}
+
+.nav-link:hover {
+	color: white;
 }
 
 /* Fremheve den aktive siden */
 .nav-item.active {
-	background-color: green;
-	color: white;
+	background-color: #0E9908;
 }
 
-/* Gjem lenken som skal være åpen og lukk navigasjonsbar på små skjermer */
+/* Gjem lenken som skal være åpen og lukk navigasjonsbar på små skjermer 
 .nav .icon {
 	display: none;
 }
-
+*/
 /* Dette skjer nå automatisk med boostrap */
 /* Når skjermen er mindre enn 600 piksler bred, gjem alle lenker, unntatt den første ("Hjem") */
 /*
