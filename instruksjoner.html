@@ -14,18 +14,24 @@
 <body>
 
 <!-- Navigasjonsbar -->
-<div class="nav" id="nav">
-    <a href="index.html">Hjem</a>
-    <a href="spill.html">Spill</a>
-    <a href="instruksjoner.html" class="active">Instruksjoner</a>
-    <a href="backstory.html">Bakgrunnshistorie</a>
-    <a href="highscore.html">High Score</a>
-    <a href="kontakt.html">Kontakt oss</a>
-    <a href="kreditering.html">Kreditering</a>
-    <a href="javascript:void(0);" class="icon" onclick="collapsenavbar()">
-        <i class="fa fa-bars"></i>
-    </a>
-</div>
+<!-- Boostrap er lagt til -->
+<nav class="navbar navbar-expand-md" id="navbar-resp">
+    <!-- Toggler/collapsibe Button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+    <span class="navbar-toggler-icon"></span>
+    </button> 
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="index.html">Hjem</a></li>
+            <li class="nav-item"><a class="nav-link " href="spill.html" class="active">Spill</a></li>
+            <li class="nav-item active"><a class="nav-link" href="instruksjoner.html">Instruksjoner</a></li>
+            <li class="nav-item"><a class="nav-link" href="backstory.html">Bakgrunnshistorie</a></li>
+            <li class="nav-item"><a class="nav-link" href="highscore.html">High Score</a></li>
+            <li class="nav-item"><a class="nav-link" href="kontakt.html">Kontakt oss</a></li>
+            <li class="nav-item"><a class="nav-link" href="kreditering.html">Kreditering</a></li>   
+        </ul>
+    </div>
+</nav>
 
 <!-- Overskrift -->
 <header class="container text-center">
@@ -61,7 +67,7 @@
     
 </div>
 
-<!-- Script til responsiv navigasjonsbar -->
+<!-- Script til responsiv navigasjonsbar 
 <script>
     function collapsenavbar() {
         var x = document.getElementById("nav");
@@ -72,6 +78,6 @@
         }
     }
 </script>
-
+-->
 </body>
 </html>
