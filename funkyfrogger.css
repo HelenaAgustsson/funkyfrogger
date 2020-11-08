@@ -58,11 +58,15 @@
 
 /* footer */
 
+.page-container {
+	position: relative;
+	min-height: 100vh;
+}
+
 .footer {
 	background-color: #333;
 	color: #ffffff;
 	text-align: left;
-	margin-top: 150px;
 	padding: 20px 30px;
 	font-size: 0.8em;
 	position: static;
@@ -71,8 +75,6 @@
     left: 0;
     z-index: 1030;
 }
-
-
 
 .footer-li {
 	list-style: none;
@@ -261,12 +263,14 @@ canvas {
 	margin: auto;
 }
 
+/*
 .coins {
     height: 10px;
     width: auto;
 	visibility: hidden;
 	padding: 5px;
 }
+*/
 
 .game-button {
 	padding: 10px 15px;
@@ -287,14 +291,36 @@ canvas {
 	display: none;
 }
 
-.statusbar.flexbox-container {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
+.statusbar {
+	color: green;
+	margin: 20px auto;
+	
+}
+
+@media screen and (max-width: 600px) {
+	.statusbar-item {
+		font-size: 0.8rem;
+	}
 }
 
 .statusbar-item {
-	margin: 20px 10px;
+	border-top: solid green 2px;
+	border-bottom: solid green 2px;
+	padding: 10px;
+	text-align: center;
+	margin: 0px 0px;
+}
+
+#score {
+	border-bottom-left-radius: 5px;
+	border-top-left-radius: 5px;
+	border-left: solid green 2px;
+}
+
+#highscore {
+	border-right: solid 2px green;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
 
 .life {
