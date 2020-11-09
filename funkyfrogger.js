@@ -122,6 +122,7 @@ window.onload = function() {
 
 //Hovudloopen til spelet. Alt starter frå her.
 function update_game() {
+	game.frameTime = Date.now();
 	set_canvas();
 
 	// Miljø
@@ -199,6 +200,28 @@ function draw_object(object) {
 		context.fillStyle = "magenta";
 		context.fillRect(x, y, width, height);
 	}
+}
+
+function animate_object(object) {
+	//Summerar opp kor lang tid animasjonen brukar på loop.
+	var totalAnimationTime = 0;
+	for(animationFrame of object.animation) {
+		totalAnimationTime -= -animationFrame.name;
+	}
+
+	//Finner ut kor langt objektet er kommen i animasjonen
+	var animationTime = (game.frameTime - object.animationStart) % totalAnimationTime;
+
+	//Finner ut kva animasjonframe me skal bruke
+	var i= 0;
+	while(animationTime > object.animation[i].name) {
+		animationTime -= object.animation[i].name;
+		++i;
+	}
+
+	//Hentar ut animasjonframe og teiknar han
+	object.image = object.animation[i];
+	draw_object(object);
 }
 
 
@@ -302,7 +325,6 @@ function debug_draw_test() {
 
 	draw_object(testObjectTopLeft);
 	draw_object(testObjectTopRight);
-	
 }
 
 //************************//
@@ -678,7 +700,6 @@ function draw_items_in(env) {
 game.audio = new Audio("audio/aces-high.mp3");
 game.audio.loop = true;
 
-
 //************************//
 //       High Score       //
 //************************//
@@ -758,7 +779,9 @@ function create_frog() {
 		jump	: false,
 
 		//https://www.flaticon.com/free-icon/frog_1036001
-		image : document.getElementById("frog")
+		image : document.getElementById("frog"),
+		animation : document.getElementsByClassName("froganimation"),
+		animationStart : 0
 	};
 
 	game.frog = frog;
@@ -884,6 +907,7 @@ function handle_frog() {
 
 			frog.x = 0;
 			frog.y = currentEnv.start + 0.5;
+			frog.jump = false;
 		}
 	}
 
@@ -898,5 +922,6 @@ function handle_frog() {
 		frog.x = frog.width/2 - game.width;
 	}
 
-	draw_object(frog);
+	//draw_object(frog);
+	animate_object(frog);
 }
