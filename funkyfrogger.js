@@ -340,8 +340,16 @@ function key_down_logger(event) {
 			break;
 		// Hopp med mellomtast
 		case " ":
-			frog.jump = true;
-			frog.jumpTarget = Math.ceil(frog.y - 0.49) + 0.5;
+			if(frog.down) {
+				//Hopp bakover
+				frog.jump = true;
+				frog.jumpTarget = Math.floor(frog.y) - 0.5;
+			}
+			else {
+				//Hopp framover
+				frog.jump = true;
+				frog.jumpTarget = Math.ceil(frog.y) + 0.5;
+			}
 			break;
 
 		// Når me trykkjer ned ein tast vil frosken flytta på seg. 
@@ -449,14 +457,14 @@ function handle_enviroment() {
 				draw_object(obj);
 			}
 		}
+		if(env.hasOwnProperty("items")) {
+			draw_items_in(env);
+		}
 		if(env.hasOwnProperty("obstacles")) {
 			move_objects(env.obstacles);
 			for(obj of env.obstacles) {
 				draw_object(obj);
 			}
-		}
-		if(env.hasOwnProperty("items")) {
-			draw_items_in(env);
 		}
 	}
 }
