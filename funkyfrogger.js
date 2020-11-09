@@ -533,6 +533,7 @@ function handle_enviroment() {
 		if(env.hasOwnProperty("items")) {
 			draw_items_in(env);
 		}
+
 		if(env.hasOwnProperty("obstacles")) {
 			move_objects(env.obstacles);
 			for(obj of env.obstacles) {
@@ -540,13 +541,15 @@ function handle_enviroment() {
 			}
 		}
 
+		if(env.hasOwnProperty("specialItems")) {
+			draw_special_items_in(env);
+		}
+
     /*
 		if(env.hasOwnProperty("items")) {
 			draw_items_in(env);
 		}
-		if(env.hasOwnProperty("specialItems")) {
-			draw_special_items_in(env);
-		}
+		
     */
 
 	}
@@ -721,7 +724,126 @@ function create_obstacles_in(env) {
 //        items           //
 //************************//
 
+function create_item_in(env) {
 
+	var row = get_random(0, env.tiles);
+	var item = {
+		x		: Math.random() * 10 - 5,
+		y		: env.start + row + 0.5,
+
+		width	: 0.5,
+		height	: 0.5,
+
+		speed	: 0,
+
+		image	: document.getElementById('musicnote')
+	}
+
+	env.items.push(item);
+}
+
+function create_special_item_in(env) {
+
+	var row = get_random(0, env.tiles);
+	var item = {
+		x		: Math.random() * 10 - 5,
+		y		: env.start + row + 0.5,
+
+		width	: 0.5,
+		height	: 0.5,
+
+		speed	: 0,
+
+		image	: document.getElementById('musicnote-purple')
+	}
+
+
+
+	env.specialItems.push(item);
+}
+
+function draw_items_in(env) {
+	for (item of env.items) {
+		draw_object(item);
+	}
+}
+
+function draw_special_items_in(env) {
+	for (item of env.specialItems) {
+		draw_object(item);
+	}
+}
+
+function handle_items(){
+	var frog = game.frog;
+	var i = 0;
+	var currentEnv = game.env[i];
+	while(frog.y > currentEnv.end)
+	{
+		currentEnv = game.env[++i];
+	}
+
+	//tester om spesialnote kolliderer med platform	
+	if(currentEnv.hasOwnProperty("platforms"))
+	{
+		for(item of currentEnv.specialItems)
+		{
+			for(platform of currentEnv.platforms){
+			//Collision detect med 1
+			if(collision_detect(item, platform, 1))
+			{ 
+				//logger kollisjon
+				item.x += platform.speed;
+				console.log("collisjon");
+				break;
+			} else {
+				
+
+			}
+			}
+			
+			
+		}
+	}
+
+	// tester om frosken kolliderer med note
+	if(currentEnv.hasOwnProperty("items"))
+	{
+		for(item of currentEnv.items)
+		{
+			//Collision detect med 1
+			if(collision_detect(frog, item, 1))
+			{ 
+				//fjerner myntene frosken har plukket opp fra spillbrettet
+				var idx = currentEnv.items.indexOf(item);
+				currentEnv.items.splice(idx, 1);
+				game.score+=10;
+				$("#score > span").text(game.score);
+				break;
+			}
+			
+		}
+	}
+
+	//tester om frosken kolliderer med spesialnote
+	if(currentEnv.hasOwnProperty("specialItems"))
+	{
+		for(item of currentEnv.specialItems)
+		{
+			//Collision detect med 1
+			if(collision_detect(frog, item, 1))
+			{ 
+				//fjerner myntene frosken har plukket opp fra spillbrettet
+				var idx = currentEnv.specialItems.indexOf(item);
+				currentEnv.specialItems.splice(idx, 1);
+				game.score+=30;
+				$("#score > span").text(game.score);
+				break;
+			}
+			
+		}
+	}
+}
 
 //************************//
 //        Platforms       //
@@ -809,55 +931,7 @@ function create_safe_platform(row) {
 	return platform;
 }
 
-function create_item_in(env) {
 
-	var row = get_random(0, env.tiles);
-	var item = {
-		x		: Math.random() * 10 - 5,
-		y		: env.start + row + 0.5,
-
-		width	: 0.5,
-		height	: 0.5,
-
-		speed	: 0,
-
-		image	: document.getElementById('musicnote')
-	}
-
-	env.items.push(item);
-}
-
-function create_special_item_in(env) {
-
-	var row = get_random(0, env.tiles);
-	var item = {
-		x		: Math.random() * 10 - 5,
-		y		: env.start + row + 0.5,
-
-		width	: 0.5,
-		height	: 0.5,
-
-		speed	: 0,
-
-		image	: document.getElementById('musicnote-purple')
-	}
-
-
-
-	env.specialItems.push(item);
-}
-
-function draw_items_in(env) {
-	for (item of env.items) {
-		draw_object(item);
-	}
-}
-
-function draw_special_items_in(env) {
-	for (item of env.specialItems) {
-		draw_object(item);
-	}
-}
 
 
 //************************//
@@ -954,76 +1028,7 @@ function create_frog() {
 	game.frog = frog;
 }
 
-function handle_items(){
-	var frog = game.frog;
-	var i = 0;
-	var currentEnv = game.env[i];
-	while(frog.y > currentEnv.end)
-	{
-		currentEnv = game.env[++i];
-	}
 
-	//tester om spesialnote kolliderer med platform	
-	if(currentEnv.hasOwnProperty("platforms"))
-	{
-		for(item of currentEnv.specialItems)
-		{
-			for(platform of currentEnv.platforms){
-			//Collision detect med 1
-			if(collision_detect(item, platform, 1))
-			{ 
-				//logger kollisjon
-				item.x += platform.speed;
-				console.log("collisjon");
-				break;
-			} else {
-				
-
-			}
-			}
-			
-			
-		}
-	}
-
-	// tester om frosken kolliderer med note
-	if(currentEnv.hasOwnProperty("items"))
-	{
-		for(item of currentEnv.items)
-		{
-			//Collision detect med 1
-			if(collision_detect(frog, item, 1))
-			{ 
-				//fjerner myntene frosken har plukket opp fra spillbrettet
-				var idx = currentEnv.items.indexOf(item);
-				currentEnv.items.splice(idx, 1);
-				game.score+=10;
-				$("#score > span").text(game.score);
-				break;
-			}
-			
-		}
-	}
-
-	//tester om frosken kolliderer med spesialnote
-	if(currentEnv.hasOwnProperty("specialItems"))
-	{
-		for(item of currentEnv.specialItems)
-		{
-			//Collision detect med 1
-			if(collision_detect(frog, item, 1))
-			{ 
-				//fjerner myntene frosken har plukket opp fra spillbrettet
-				var idx = currentEnv.specialItems.indexOf(item);
-				currentEnv.specialItems.splice(idx, 1);
-				game.score+=30;
-				$("#score > span").text(game.score);
-				break;
-			}
-			
-		}
-	}
-}
 
 function handle_frog() {
 	var frog = game.frog;
