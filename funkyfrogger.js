@@ -8,42 +8,42 @@ var time = 0;
 
 //Faste konstantar me ikkje forventar skal endre seg i løpet av spelet. 
 var constants = {
-	scrollSpeed	: 0.5,
+	scrollSpeed	: 0.8,
 	tileCount	: 12, //Kor mange "tiles" som er synlege på canvas. Vert nytta til å rekna ut størrelsen ved teikning på canvas.
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"],
 
 		//Oppsett av vanskegrad. Større fart og akselerasjon vil vera vanskelegare. Større avstand på platformar vil vera vanskelegare. Større avstand på hinder vil vera lettare.
 	difficulty	: {
 		easy	: {
-			platformSpeed	: 0.02,
-			platformAccel	: 0.02,
+			platformSpeed	: 0.05,
+			platformAccel	: 0.05,
 			platformGap		: 4,
-			obstacleSpeed	: 0.02,
-			obstacleAccel	: 0.02,
+			obstacleSpeed	: 0.05,
+			obstacleAccel	: 0.05,
 			obstacleGap		: 6,
 		},
 		normal	: {
-			platformSpeed	: 0.03,
-			platformAccel	: 0.03,
+			platformSpeed	: 0.07,
+			platformAccel	: 0.07,
 			platformGap		: 6,
-			obstacleSpeed	: 0.03,
-			obstacleAccel	: 0.03,
+			obstacleSpeed	: 0.07,
+			obstacleAccel	: 0.07,
 			obstacleGap		: 5,
 		},
 		hard	: {
-			platformSpeed	: 0.04,
-			platformAccel	: 0.04,
+			platformSpeed	: 0.09,
+			platformAccel	: 0.09,
 			platformGap		: 8,
-			obstacleSpeed	: 0.04,
-			obstacleAccel	: 0.04,
+			obstacleSpeed	: 0.09,
+			obstacleAccel	: 0.09,
 			obstacleGap		: 4,
 		},
 		impossible	: {
-			platformSpeed	: 0.05,
-			platformAccel	: 0.05,
+			platformSpeed	: 0.11,
+			platformAccel	: 0.11,
 			platformGap		: 10,
-			obstacleSpeed	: 0.05,
-			obstacleAccel	: 0.05,
+			obstacleSpeed	: 0.11,
+			obstacleAccel	: 0.11,
 			obstacleGap		: 3,
 		}
 	}
@@ -56,8 +56,8 @@ var game = {
 	score       : 0,
 	tileSize	: 0,
 	distance	: 0,
-	started		: 0,	//Når spelet er i gang vil "started" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
-	fps			: 20,
+	started		: false,	//Når spelet er i gang vil "started" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
+	fps			: 30,
 	env			: [],
 
 	//Spelfunksjonar for å styre spelet.
@@ -66,13 +66,16 @@ var game = {
 	reset	: reset_game,
 	end		: end_game,
 
-	start	: function(fps = 20) {
-		if(this.started == 0)
+	start	: function(fps = 30) {
+		if(!this.started)
 		{
 			this.fps = fps;
-			this.started = setInterval(this.update, 1000/fps);
+			this.started = true;
+			//setInterval(this.update, 1000/fps);
 			this.audio.play();
 			this.audio.volume = 0.3;
+
+			window.requestAnimationFrame(this.update);
 		}
 		else
 		{
@@ -81,16 +84,16 @@ var game = {
 	},
 
 	stop	: function() {
-		if(this.started != 0)
+		if(this.started)
 		{
-			clearInterval(this.started);
-			this.started = 0;
+			//clearInterval(this.started);
+			this.started = false;
 			this.audio.pause();
 		}
 	},
 
 	pause	: function() {
-		if(this.started != 0)
+		if(this.started)
 		{
 			this.stop()
 		}
@@ -132,6 +135,7 @@ function reset_game() {
 	create_frog();
 
 	//Teikner opp fyrste bilete
+	game.started = false;
 	update_game();
 }
 
@@ -161,12 +165,18 @@ window.onload = function() {
 		game.pause();
 	});
 
-	reset_game();
+	game.reset();
 }
 
 //Hovudloopen til spelet. Alt starter frå her.
-function update_game() {
-	game.frameTime = Date.now();
+function update_game(frameTime) {
+	game.deltaSpeed = (frameTime - game.frameTime)  / 100;
+	game.frameTime = frameTime;
+
+	if(isNaN(game.deltaSpeed)) {
+		game.deltaSpeed = 0.33;
+	}
+
 	set_canvas();
 
 	// Miljø
@@ -191,6 +201,15 @@ function update_game() {
 	if(game.frog.lifepoints < 1) {
 		game.end();
 	}
+
+	//Wait a frame for 30 fps
+	if(game.started) {
+		window.requestAnimationFrame(wait_a_frame);
+	}
+}
+
+function wait_a_frame() {
+	window.requestAnimationFrame(game.update);
 }
 
 function end_game() {
@@ -211,9 +230,8 @@ function end_game() {
 	
 	//game.stop();
 	game.reset();
+	game.started = true;
 }
-
-
 
 //************************//
 //    Hjelpefunksjonar    //
@@ -244,11 +262,11 @@ function draw_object(object) {
 		scaleY = object.scaleY;
 	}
 
-	var width  = Math.round(object.width  * game.tileSize * scaleX);
-	var height = Math.round(object.height * game.tileSize * scaleY);
+	var width  = (object.width  * game.tileSize * scaleX);
+	var height = (object.height * game.tileSize * scaleY);
 
-	var x = Math.round(game.canvas.width/2 + (object.x * game.tileSize) - width/2);
-	var y = Math.round(game.canvas.height  - ((object.y - game.distance) * game.tileSize) - height/2);
+	var x = (game.canvas.width/2 + (object.x * game.tileSize) - width/2);
+	var y = (game.canvas.height  - ((object.y - game.distance) * game.tileSize) - height/2);
 
 	//Debug teiknefunksjon. Teiknar ein kvit firkant under objektet
 	if(game.debug == true) {
@@ -325,7 +343,7 @@ function move_objects(objects) {
 
 	for (o of objects) {
 
-		o.x += o.speed;
+		o.x += o.speed * game.deltaSpeed;
 
 		//Dersom platformen har køyrd ut på eine sida, send han inn att på den andre sida.
 		if(o.x > maxX)
@@ -793,7 +811,7 @@ function handle_items(){
 			if(collision_detect(item, platform, 1))
 			{ 
 				//logger kollisjon
-				item.x += platform.speed;
+				item.x += platform.speed * game.deltaSpeed;
 				console.log("collisjon");
 				break;
 			} else {
@@ -1006,8 +1024,8 @@ function create_frog() {
 
 		xSpeed : 0,
 		ySpeed : 0,
-		walkSpeed : 0.2,
-		jumpSpeed : 0.3,
+		walkSpeed : 0.5,
+		jumpSpeed : 0.8,
 
 		inputCooldown : 0,
 		lifepoints : 3,
@@ -1046,12 +1064,12 @@ function handle_frog() {
 	//Når dette skjer kan me ikkje flytta på frosken og han vil ikkje kollidera med noko.
 	if(currentEnv != game.env[0])
 	{
-		game.distance += constants.scrollSpeed;
+		game.distance += constants.scrollSpeed * game.deltaSpeed;
 		frog.y = currentEnv.start + 1;
 	}
 	else {
 		if(frog.jump == true) {
-			frog.y += frog.jumpSpeed * 2;
+			frog.y += frog.jumpSpeed * game.deltaSpeed;
 
 			//Om han har nådd målet, er han ferdig med å hoppe.
 			if(frog.y >= frog.jumpTarget) {
@@ -1066,8 +1084,8 @@ function handle_frog() {
 				frog.inputCooldown -= 1;
 			}
 			else {
-				frog.x += frog.xSpeed;
-				frog.y += frog.ySpeed;
+				frog.x += frog.xSpeed * game.deltaSpeed;
+				frog.y += frog.ySpeed * game.deltaSpeed;
 			}
 		}
 
@@ -1085,7 +1103,7 @@ function handle_frog() {
 				if(collision_detect(frog, platform, 0.1))
 				{
 					safe = true;
-					frog.x += platform.speed;
+					frog.x += platform.speed * game.deltaSpeed;
 
 					//Endrar farge for å visa kontakt. Debugfunksjon
 					//platform.color = constants.envColors[0];
