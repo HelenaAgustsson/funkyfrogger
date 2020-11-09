@@ -15,6 +15,8 @@
 </head>
 <body>
 
+<div class="page-container">
+
 <!-- Navigasjonsbar -->
 <!-- Boostrap er lagt til -->
 <nav class="navbar navbar-expand-md navbar-custom" id="navbar-resp">
@@ -43,40 +45,32 @@
 
 <!-- Stausbar -->
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <div class="statusbar flexbox-container">
-                <div id="score" class="statusbar-item">Poeng: <span>0</span></div>
-                <div id="lives" class="statusbar-item">Liv: <i id="life1" class="life fa fa-heart" aria-hidden="true"></i><i id="life2" class="life fa fa-heart" aria-hidden="true"></i><i id="life3" class="life fa fa-heart" aria-hidden="true"></i></div>
-                <div id="highscore" class="statusbar-item">Highscore: <span>0</span></div>
-            </div>
-            
-
-        </div>
+    <div class="row statusbar">
+                <div id="score" class="col-3 offset-1 col-lg-2 offset-lg-3 statusbar-item">Poeng: <span>0</span></div>
+                <div id="lives" class="col-4 col-lg-2 statusbar-item">Liv: <i id="life1" class="life fa fa-heart" aria-hidden="true"></i><i id="life2" class="life fa fa-heart" aria-hidden="true"></i><i id="life3" class="life fa fa-heart" aria-hidden="true"></i></div>
+                <div id="highscore" class="col-3 col-lg-2 statusbar-item">High score: <span>0</span></div>
     </div>
 </div>
 
 <!-- Spillvindu -->
-<div class="game-section container">
+<div class="container game-section">
+    <div class="overlay">
+        
+    </div>
     <canvas id="gamecanvas">
     </canvas>
 </div>
 
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <button class="game-button" id="start-btn">Start <i class="fa fa-play" aria-hidden="true"></i></button>
-        </div>
-        <div class="col">
-            <button class="game-button" id="stop-btn">Stop <i class="fa fa-stop" aria-hidden="true"></i></button>
-        </div>
-    </div>
-    
+<div class="container game-buttons text-center ">
+    <div class="row no-gutters">
+        <div class="col-4 col-md-2 offset-md-3 col-lg-1 offset-lg-4"><button class="game-button" id="start-btn">Start <i class="fa fa-play" aria-hidden="true"></i></button></div>
+        <div class="col-4 col-md-2 col-lg-2"><button class="game-button" id="pause-btn">Pause <i class="fa fa-pause" aria-hidden="true"></i></button></div>
+        <div class="col-4 col-md-2 col-lg-1"><button class="game-button" id="stop-btn">Stop <i class="fa fa-stop" aria-hidden="true"></i></button></div>
+    </div>    
 </div>
 
 <!-- Spillressurser -->
 <div class="gameresources">
-    <img id="coins" class="coins" src="graphics/coin.png">
     <img id="frog" src="graphics/frog.svg">
     <img id="bus" src="graphics/bus.svg">
     <img id="car1" src="graphics/car1.svg">
@@ -86,6 +80,12 @@
     <img id="log1" src="graphics/log1.svg">
     <img id="piano" src="graphics/88-Piano-Keys.svg" >
     <img id="musicnote" src="graphics/musicnote.svg">
+
+    <img id="musicnote-purple" src="graphics/musicnote-purple.png">
+    <img id="piano" src="graphics/piano.svg">
+    <img id="redcar" src="graphics/red-car.png" >
+    <img id="yellowcar" src="graphics/yellow-car.png" >
+
     <img id="rock" src="graphics/rock.svg">
     <img id="redcarright" src="graphics/red_car_right.png" >
     <img id="yellowcarleft" src="graphics/yellow_car_left.png" >
@@ -95,6 +95,7 @@
     <img class="froganimation" name="500" src="graphics/raphael.svg">
     <img class="froganimation" name="500" src="graphics/michaelangelo.svg">
     <img class="froganimation" name="500" src="graphics/donatello.svg">
+
 </div>
 
 <!-- Script til responsiv navigasjonsbar -->
@@ -110,6 +111,34 @@
     }
     */
 </script>
+
+</div>
+
+<footer class="footer">
+    <div class="row footer-row">
+        
+        <div class="col-0 col-sm-3 col-lg-2" style="margin-bottom: 10px;">
+            <div> Authors:<a class="footer-link" href="kontakt.html">Gruppe 9 @ NTNU</a> </div>
+        </div>
+        
+        <div class="col-6 col-sm-3 offset-sm-3 col-lg-2 offset-lg-6">
+            <ul class="footer-links">
+                    <li class="footer-li"><a class="footer-link" href="index.html">Hjem</a></li>
+                    <li class="footer-li"><a class="footer-link " href="spill.html" class="active">Spill</a></li>
+                    <li class="footer-li"><a class="footer-link" href="instruksjoner.html">Instruksjoner</a></li>
+                    <li class="footer-li"><a class="footer-link" href="backstory.html">Bakgrunnshistorie</a></li>
+            </ul>  
+        </div>
+
+        <div class="col-6 col-sm-3 col-lg-2">
+            <ul class="footer-links">
+                    <li class="footer-li"><a class="footer-link" href="highscore.html">High Score</a></li>
+                    <li class="footer-li"><a class="footer-link" href="kontakt.html">Kontakt oss</a></li>
+                    <li class="footer-li"><a class="footer-link" href="kreditering.html">Kreditering</a></li>   
+            </ul>
+        </div>
+    </div>     
+</footer>
 
 </body>
 </html>

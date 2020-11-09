@@ -56,6 +56,43 @@
 	background-color: #0E9908;
 }
 
+/* footer */
+
+.page-container {
+	position: relative;
+	min-height: 100vh;
+}
+
+.footer {
+	background-color: #333;
+	color: #ffffff;
+	text-align: left;
+	padding: 20px 30px;
+	font-size: 0.8em;
+	margin-top: 50px;
+	
+}
+
+.footer-li {
+	list-style: none;
+	padding-left:0;
+	display: block;
+}
+
+.footer-link {
+	color: #ffffff;
+	margin-left: 5px;
+}
+
+.footer-links {
+	padding-left: 0px;
+}
+
+.footer-link:hover {
+	color: #ffffff;
+	cursor: pointer;
+}
+
 /* Gjem lenken som skal være åpen og lukk navigasjonsbar på små skjermer 
 .nav .icon {
 	display: none;
@@ -223,40 +260,76 @@ canvas {
 	margin: auto;
 }
 
+/*
 .coins {
     height: 10px;
     width: auto;
 	visibility: hidden;
 	padding: 5px;
 }
+*/
+
+.game-buttons {
+	margin: 30px auto;
+}
 
 .game-button {
-	padding: 10px 15px;
-	margin: 20px 10px;
+	padding: 5px 10px;
 	background-color: #ffffff;
-	border: solid 2px green;
-	color: green;
+	border: solid 2px #e3228c;
+	background-color: #e3228c;
+	color: white;
 	border-radius: 2px;
 	cursor: pointer;
 }
 
-#start-btn {
-	float: right;
+.inactive {
+	background-color: #ff40a9;
+	border-color: #ff40a9;
 }
+
+.game-button:hover {
+	background-color: #ff40a9;
+	border-color: #ff40a9;
+}
+
 
 /* Display hidden då desse er fullstendig gøymd */
 .gameresources {
 	display: none;
 }
 
-.statusbar.flexbox-container {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
+.statusbar {
+	color: green;
+	margin: 20px auto;
+	
+}
+
+@media screen and (max-width: 420px) {
+	.statusbar-item, .game-button {
+		font-size: 0.8rem;
+	}
+	
 }
 
 .statusbar-item {
-	margin: 20px 10px;
+	border-top: solid green 2px;
+	border-bottom: solid green 2px;
+	padding: 10px;
+	text-align: center;
+	margin: 0px 0px;
+}
+
+#score {
+	border-bottom-left-radius: 5px;
+	border-top-left-radius: 5px;
+	border-left: solid green 2px;
+}
+
+#highscore {
+	border-right: solid 2px green;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
 
 .life {
@@ -300,7 +373,7 @@ fra https://www.w3schools.com/css/css_table.asp */
 /* 	     Instruksjoner     */
 /*************************/
 
-.game-rules {
+.game-rules, .backstory {
 	padding: 20px;
 	border: 2px dashed green;
 }

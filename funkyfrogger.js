@@ -141,6 +141,7 @@ window.onload = function() {
 	//let coinImg = document.getElementById('coins');
 	let startButton = $("#start-btn");
 	let stopButton = $("#stop-btn");
+	let pauseButton = $("#pause-btn");
 	let gameScore = $("#score > span");
 
 	//Legg til interaktivitet
@@ -149,10 +150,15 @@ window.onload = function() {
 
 	startButton.on('click', function(){
 		game.start();
+		//$(this).toggleClass("inactive");
 	});
 
 	stopButton.on('click', function(){
 		game.stop();
+	});
+
+	pauseButton.on('click', function(){
+		game.pause();
 	});
 
 	reset_game();
@@ -176,6 +182,7 @@ function update_game() {
 	//add_score();
 
 	handle_frog();
+	handle_items();
 
 	//Automatisk scrolling ved å auka distance
 	//time += 1;
@@ -190,16 +197,22 @@ function end_game() {
 	//Vis sluttskjerm med poengsum og "Vil du spille igjen?"
 
 	add_high_score("Froggy", game.score);
-	$("#highscore > span").text(game.score);
+	let lastHighscore = parseInt( $("#highscore > span").text());
+	console.log(lastHighscore);
+	if(game.score > lastHighscore){
+		$("#highscore > span").text(game.score);
+	}
+	
 	var highScore = get_high_score_list();
-	console.log("High scores");
+	//console.log("High scores");
 	for(hs of highScore) {
 		console.log(hs);
 	}
-
+	
 	//game.stop();
 	game.reset();
 }
+
 
 
 //************************//
@@ -526,6 +539,16 @@ function handle_enviroment() {
 				draw_object(obj);
 			}
 		}
+
+    /*
+		if(env.hasOwnProperty("items")) {
+			draw_items_in(env);
+		}
+		if(env.hasOwnProperty("specialItems")) {
+			draw_special_items_in(env);
+		}
+    */
+
 	}
 }
 
@@ -584,6 +607,7 @@ function add_environment(start = undefined) {
 	{
 		env.platforms.push(create_safe_platform(env.start));
 		create_platforms_in(env);
+		
 	}
 	//For tørt miljø lagar me bilar
 	else
@@ -599,6 +623,14 @@ function add_environment(start = undefined) {
 		{
 			create_item_in(env);
 		}
+
+		env.specialItems = [];
+		var totalspecialItems = 2;
+		for(var i = 0; i<totalspecialItems; ++i)
+			{
+				create_special_item_in(env);
+			}
+		
 	
 	game.env.push(env);	
 }
@@ -625,7 +657,10 @@ function create_obstacles_in(env) {
 		//	bus = document.getElementById("bus")
 		//];
 
+
+
 		var x = -game.width - 4;
+
 		while(x < game.width + 4) {
 			var obstacle = {
 				x		: x,
@@ -792,8 +827,34 @@ function create_item_in(env) {
 	env.items.push(item);
 }
 
+function create_special_item_in(env) {
+
+	var row = get_random(0, env.tiles);
+	var item = {
+		x		: Math.random() * 10 - 5,
+		y		: env.start + row + 0.5,
+
+		width	: 0.5,
+		height	: 0.5,
+
+		speed	: 0,
+
+		image	: document.getElementById('musicnote-purple')
+	}
+
+
+
+	env.specialItems.push(item);
+}
+
 function draw_items_in(env) {
 	for (item of env.items) {
+		draw_object(item);
+	}
+}
+
+function draw_special_items_in(env) {
+	for (item of env.specialItems) {
 		draw_object(item);
 	}
 }
@@ -893,6 +954,77 @@ function create_frog() {
 	game.frog = frog;
 }
 
+function handle_items(){
+	var frog = game.frog;
+	var i = 0;
+	var currentEnv = game.env[i];
+	while(frog.y > currentEnv.end)
+	{
+		currentEnv = game.env[++i];
+	}
+
+	//tester om spesialnote kolliderer med platform	
+	if(currentEnv.hasOwnProperty("platforms"))
+	{
+		for(item of currentEnv.specialItems)
+		{
+			for(platform of currentEnv.platforms){
+			//Collision detect med 1
+			if(collision_detect(item, platform, 1))
+			{ 
+				//logger kollisjon
+				item.x += platform.speed;
+				console.log("collisjon");
+				break;
+			} else {
+				
+
+			}
+			}
+			
+			
+		}
+	}
+
+	// tester om frosken kolliderer med note
+	if(currentEnv.hasOwnProperty("items"))
+	{
+		for(item of currentEnv.items)
+		{
+			//Collision detect med 1
+			if(collision_detect(frog, item, 1))
+			{ 
+				//fjerner myntene frosken har plukket opp fra spillbrettet
+				var idx = currentEnv.items.indexOf(item);
+				currentEnv.items.splice(idx, 1);
+				game.score+=10;
+				$("#score > span").text(game.score);
+				break;
+			}
+			
+		}
+	}
+
+	//tester om frosken kolliderer med spesialnote
+	if(currentEnv.hasOwnProperty("specialItems"))
+	{
+		for(item of currentEnv.specialItems)
+		{
+			//Collision detect med 1
+			if(collision_detect(frog, item, 1))
+			{ 
+				//fjerner myntene frosken har plukket opp fra spillbrettet
+				var idx = currentEnv.specialItems.indexOf(item);
+				currentEnv.specialItems.splice(idx, 1);
+				game.score+=30;
+				$("#score > span").text(game.score);
+				break;
+			}
+			
+		}
+	}
+}
+
 function handle_frog() {
 	var frog = game.frog;
 
@@ -980,24 +1112,10 @@ function handle_frog() {
 				}
 			}
 		}
+		
 
-		if(safe == true && currentEnv.hasOwnProperty("items"))
-		{
-			for(item of currentEnv.items)
-			{
-				//Collision detect med 1
-				if(collision_detect(frog, item, 1))
-				{ 
-					//fjerner myntene frosken har plukket opp fra spillbrettet
-					var idx = currentEnv.items.indexOf(item);
-					currentEnv.items.splice(idx, 1);
-					game.score+=10;
-					$("#score > span").text(game.score);
-					break;
-				}
-				
-			}
-		}
+		
+		
 
 		//Frosken er i vatnet eller truffen av ein bil.
 		if(safe == false) {
