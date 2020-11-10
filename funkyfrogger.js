@@ -149,6 +149,7 @@ window.onload = function() {
 	//Legg til interaktivitet
 	window.onkeydown = key_down_logger;
 	window.onkeyup = key_up_logger;
+	window.MouseEvent = mouse_logger;
 
 	startButton.on('click', function(){
 		game.start();
@@ -402,6 +403,7 @@ function debug_draw_test() {
 	draw_object(testObjectTopRight);
 }
 
+
 //************************//
 //         Input          //
 //************************//
@@ -501,6 +503,35 @@ function key_up_logger(event) {
 		default:
 	}
 }
+
+function mouse_logger(context){
+	var frog = game.frog;
+	var xpos = game.frog.x;
+	var ypos = game.frog.y;
+	var context = game.canvas.getContext("2d");
+	switch(context) {
+
+		case onmousedown:
+			if (context.screenX < xpos) {
+				frog.left = true;
+				frog.xSpeed = -frog.walkSpeed;
+			} else if (context.screenX > xpos) {
+				frog.right = true;
+				frog.xSpeed = frog.walkSpeed;
+			} else if (context.screenY < ypos) {
+				frog.down = true;
+				frog.ySpeed = -frog.walkSpeed;
+			} else if (context.screenY > ypos) {
+				frog.up = true;
+				frog.ySpeed = frog.walkSpeed;
+			}
+		default:
+		
+		case onmouseup:
+			
+	}
+}
+
 
 //************************//
 //       Enviroment       //
