@@ -9,7 +9,7 @@ var time = 0;
 //Faste konstantar me ikkje forventar skal endre seg i løpet av spelet. 
 var constants = {
 	scrollSpeed	: 0.5,
-	tileCount	: 13, //Kor mange "tiles" som er synlege på canvas. Vert nytta til å rekna ut størrelsen ved teikning på canvas.
+	tileCount	: 12, //Kor mange "tiles" som er synlege på canvas. Vert nytta til å rekna ut størrelsen ved teikning på canvas.
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"],
 
 	sinkTime	: 3000,
@@ -526,12 +526,14 @@ function handle_enviroment() {
 	for (env of game.env) {
 		draw_environment(env);
 
-		if(env.hasOwnProperty("platforms")) {
-			move_objects(env.platforms);
-			for(platform of env.platforms) {
-				handle_sinking(platform);
-				draw_object(platform);
-			}
+		//Teiknar opp platformar
+		move_objects(env.platforms);
+		for(platform of env.safePlatforms) {
+			draw_object(platform);
+		}
+		for(platform of env.platforms) {
+			handle_sinking(platform);
+			draw_object(platform);
 		}
 		if(env.hasOwnProperty("items")) {
 			draw_items_in(env);
@@ -557,12 +559,64 @@ function draw_environment(env) {
 
 	var y = game.canvas.height - (env.end - game.distance) * game.tileSize;
 
-	var width = game.canvas.width;
-	var height = env.tiles * game.tileSize;
+	if(env.type == "road") {
+		var width = 2 * game.tileSize;
 
-	//Teiknar berre rein farge. Trend meir avansert grafikk
-	context.fillStyle = constants.envColors[env.type];
-	context.fillRect(0, y, width, height);
+		var x = 0;
+		var i = 3; 
+		while (i--) 
+		{
+			while (x < game.canvas.width)
+			{
+				context.drawImage(env.image, x, y, width, width);
+
+				x += width;
+			}
+			x = 0;
+			y += width;
+		}
+	}
+	else if(env.type == "lava") {
+		var totalAnimationTime = 0;
+
+		for(animationFrame of env.animation) {
+			totalAnimationTime -= -animationFrame.name;
+		}
+
+		//Finner ut kor langt objektet er kommen i animasjonen
+		var animationTime = game.frameTime % totalAnimationTime;
+
+		//Finner ut kva animasjonframe me skal bruke
+		var i= 0;
+		while(animationTime > env.animation[i].name) {
+			animationTime -= env.animation[i].name;
+			++i;
+		}
+
+		var width = 2 * game.tileSize;
+
+		var x = 0;
+		var j = 3; 
+		while (j--) 
+		{
+			while (x < game.canvas.width)
+			{
+				context.drawImage(env.animation[i], x, y, width, width);
+
+				x += width;
+			}
+			x = 0;
+			y += width;
+		}
+	}
+	else {
+		var width = game.canvas.width;
+		var height = env.tiles * game.tileSize;
+
+		//Teiknar berre rein farge. Trend meir avansert grafikk
+		context.fillStyle = constants.envColors[env.type];
+		context.fillRect(0, y, width, height);
+	}
 }
 
 //Legg til eit nytt (tilfeldig) miljø i game.env.
@@ -598,20 +652,28 @@ function add_environment(start = undefined) {
 //	}
 
 
+	env.safePlatforms = [];
 	env.platforms = [];
 	env.obstacles = [];
 
-	env.platforms.push(create_safe_platform(env.start));
+	env.safePlatforms.push(create_safe_platform(env.start));
 	//Sjekkar om miljøet er eit vått miljø (env.type er oddetal) og dermed lagar plattformar
 	if(env.type % 2 == 1)
 	{
-		env.platforms.push(create_safe_platform(env.start));
+		if(env.type % 4 == 1) 
+		{
+			env.animation = document.getElementsByClassName("lava");
+			env.type = "lava";
+		}
+
 		create_platforms_in(env);
-		
 	}
 	//For tørt miljø lagar me bilar
 	else
 	{
+		env.image = document.getElementById("road");
+		env.type = "road";
+
 		create_obstacles_in(env);
 	}
 
@@ -1130,25 +1192,15 @@ function handle_frog() {
 		if(currentEnv.platforms.length > 0 && frog.y < currentEnv.end)
 		{
 			safe = false;
-			for(platform of currentEnv.platforms)
+			for(platform of currentEnv.platforms.concat(currentEnv.safePlatforms))
 			{
 				//Collision detect med 0.5 for at mesteparten av frosken må vera oppå platformen.
 				if(collision_detect(frog, platform, 0.1))
 				{
 					safe = true;
 					frog.x += platform.speed;
-
-					//Endrar farge for å visa kontakt. Debugfunksjon
-					//platform.color = constants.envColors[0];
 					break;
 				}
-				//else
-				//{
-				//	//Tilbakestiller til vanleg farge. Debugfunksjon
-				//	if(platform != currentEnv.platforms[0]) {
-				//		platform.color = 'white';
-				//	}
-				//}
 			}
 		}
 
@@ -1169,10 +1221,6 @@ function handle_frog() {
 			}
 		}
 		
-
-		
-		
-
 		//Frosken er i vatnet eller truffen av ein bil.
 		if(safe == false) {
 			frog.inputCooldown = Math.round(game.fps/2);
