@@ -12,6 +12,8 @@ var constants = {
 	tileCount	: 12, //Kor mange "tiles" som er synlege på canvas. Vert nytta til å rekna ut størrelsen ved teikning på canvas.
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"],
 
+	sinkTime	: 3000,
+	sinkChance	: 0.0005,
 		//Oppsett av vanskegrad. Større fart og akselerasjon vil vera vanskelegare. Større avstand på platformar vil vera vanskelegare. Større avstand på hinder vil vera lettare.
 	difficulty	: {
 		easy	: {
@@ -526,8 +528,9 @@ function handle_enviroment() {
 
 		if(env.hasOwnProperty("platforms")) {
 			move_objects(env.platforms);
-			for(obj of env.platforms) {
-				draw_object(obj);
+			for(platform of env.platforms) {
+				handle_sinking(platform);
+				draw_object(platform);
 			}
 		}
 		if(env.hasOwnProperty("items")) {
@@ -870,6 +873,8 @@ function create_platforms_in(env) {
 				speed	: game.difficulty.platformSpeed +
 						  game.difficulty.platformAccel * row,
 
+				sinking : 0,
+
 				color	: "white",
 				image	: logTypes[0]
 			};
@@ -923,6 +928,8 @@ function create_safe_platform(row) {
 		width : game.width * 2,
 		height : 1.05,
 
+		safe	: true,
+
 		speed : 0,
 		color : constants.envColors[0],
 		image : document.getElementById("piano"),
@@ -931,6 +938,44 @@ function create_safe_platform(row) {
 	return platform;
 }
 
+function handle_sinking(platform) {
+	if(platform.sinking > 0)
+	{
+		var sinking = game.frameTime - platform.sinking;
+		if(sinking < constants.sinkTime) {
+			//Sinking
+			var ratio = (constants.sinkTime - sinking) / constants.sinkTime;
+
+			platform.width = platform.originalWidth * ratio;
+			platform.scaleY = 2.5 * ratio;
+		}
+		else if(sinking < 2*constants.sinkTime) {
+			//Sunk
+		}
+		else if(sinking < 3*constants.sinkTime) {
+			//Rising
+			var ratio = 1 - ((3*constants.sinkTime - sinking) / constants.sinkTime);
+
+			platform.width = platform.originalWidth * ratio;
+			platform.scaleY = 2.5 * ratio;
+		}
+		else {
+			//Floating
+			platform.width = platform.originalWidth;
+			platform.scaleY = 2.5;
+			platform.sinking = 0;
+		}
+
+	}
+	else if (Math.random() < constants.sinkChance)
+	{
+		//Plattformen startar å synke
+		if(!platform.hasOwnProperty("safe")) {
+			platform.originalWidth = platform.width;
+			platform.sinking = game.frameTime;
+		}
+	}
+}
 
 
 
