@@ -168,7 +168,7 @@ er lånt fra https://www.w3schools.com/css/tryit.asp?filename=trycss_template2_f
 #header {
     font-family: "Comic Sans MS", cursive, sans-serif;
     font-size: 7em;
-    font-weight: bold;
+    font-weight: bolder;
 	text-align: center;
 	color: #FF00DD;
 	-webkit-text-stroke: 3px #0058FF;
@@ -176,7 +176,7 @@ er lånt fra https://www.w3schools.com/css/tryit.asp?filename=trycss_template2_f
 }
 
 .page-header {
-	color: green;
+	color: #00A801;
 	margin: 30px auto;
 }
 
@@ -276,8 +276,8 @@ canvas {
 .game-button {
 	padding: 5px 10px;
 	background-color: #ffffff;
-	border: solid 2px blue;
-	background-color: blue;
+	border: solid 2px #0583FA;
+	background-color: #0583FA;
 	color: white;
 	border-radius: 2px;
 	cursor: pointer;
@@ -289,8 +289,8 @@ canvas {
 }
 
 .game-button:hover {
-	background-color: #ff40a9;
-	border-color: #ff40a9;
+	background-color: #FA08D0;
+	border-color: #FA08D0;
 }
 
 
@@ -300,21 +300,24 @@ canvas {
 }
 
 .statusbar {
-	color: green;
+	color: #00A801;
 	margin: 20px auto;
-	
+	font-weight: bold;
 }
 
 @media screen and (max-width: 420px) {
-	.statusbar-item, .game-button {
+	.statusbar-item, .game-button  {
 		font-size: 0.8rem;
+	}
+	.page-header {
+		font-size: 1.8rem;
 	}
 	
 }
 
 .statusbar-item {
-	border-top: solid green 2px;
-	border-bottom: solid green 2px;
+	border-top: solid #00A801 2px;
+	border-bottom: solid #00A801 2px;
 	padding: 10px;
 	text-align: center;
 	margin: 0px 0px;
@@ -323,18 +326,18 @@ canvas {
 #score {
 	border-bottom-left-radius: 5px;
 	border-top-left-radius: 5px;
-	border-left: solid green 2px;
+	border-left: solid #00A801 2px;
 }
 
 #highscore {
-	border-right: solid 2px green;
+	border-right: solid 2px #00A801;
 	border-top-right-radius: 5px;
 	border-bottom-right-radius: 5px;
 }
 
 .life {
 	margin: 0px 5px;
-	color: red;
+	color: #FA3254;
 }
 
 
@@ -375,7 +378,7 @@ fra https://www.w3schools.com/css/css_table.asp */
 
 .game-rules, .backstory {
 	padding: 20px;
-	border: 2px dashed green;
+	border: 2px dashed #00A801;
 }
 
 /*************************/
@@ -391,7 +394,7 @@ fra https://www.w3schools.com/css/css_table.asp */
 }
 
 .section__div--rectangle {
-	border: 2px solid green;
+	border: 2px solid #00A801;
 	padding: 10px;
 	border-radius: 5px;
 	margin-bottom: 20px;

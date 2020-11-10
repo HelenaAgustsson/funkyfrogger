@@ -548,13 +548,6 @@ function handle_enviroment() {
 			draw_special_items_in(env);
 		}
 
-    /*
-		if(env.hasOwnProperty("items")) {
-			draw_items_in(env);
-		}
-		
-    */
-
 	}
 }
 
@@ -747,8 +740,9 @@ function create_item_in(env) {
 }
 
 function create_special_item_in(env) {
-
+	
 	var row = get_random(0, env.tiles);
+
 	var item = {
 		x		: Math.random() * 10 - 5,
 		y		: env.start + row + 0.5,
@@ -773,46 +767,58 @@ function draw_items_in(env) {
 }
 
 function draw_special_items_in(env) {
+	handle_specialItems();
 	for (item of env.specialItems) {
 		draw_object(item);
 	}
 }
 
+function handle_specialItems(){
+	let frog = game.frog;
+	let i = 0;
+	let currentEnv = game.env[i];
+	while(frog.y > currentEnv.end)
+	{
+		currentEnv = game.env[++i];
+	}
+	//tester om spesialnote kolliderer med platform	
+	
+	if(currentEnv.hasOwnProperty("platforms"))
+	{
+		for(item of currentEnv.specialItems)
+		{
+			
+			for(platform of currentEnv.platforms){
+			if(collision_detect(item, platform, 1)){
+				item.x += platform.speed;
+				break;
+			}
+			/*
+			else if(!collision_detect(item, platform, 1)){
+				item.x=Math.random() * 10 - 5;
+				console.log("collisjon");
+			} 
+			*/
+			
+			}
+			
+			
+			
+		}
+	}
+}
+
 function handle_items(){
-	var frog = game.frog;
-	var i = 0;
-	var currentEnv = game.env[i];
+	let frog = game.frog;
+	let i = 0;
+	let currentEnv = game.env[i];
 	while(frog.y > currentEnv.end)
 	{
 		currentEnv = game.env[++i];
 	}
 
-	//tester om spesialnote kolliderer med platform	
-	if(currentEnv.hasOwnProperty("platforms"))
-	{
-		for(item of currentEnv.specialItems)
-		{
-			for(platform of currentEnv.platforms){
-			//Collision detect med 1
-			if(collision_detect(item, platform, 1))
-			{ 
-				//logger kollisjon
-				item.x += platform.speed;
-				console.log("collisjon");
-				break;
-			} else {
-				
-
-			}
-			}
-			
-			
-		}
-	}
-
 	// tester om frosken kolliderer med note
-	if(currentEnv.hasOwnProperty("items"))
-	{
+	
 		for(item of currentEnv.items)
 		{
 			//Collision detect med 1
@@ -827,11 +833,10 @@ function handle_items(){
 			}
 			
 		}
-	}
+	
 
 	//tester om frosken kolliderer med spesialnote
-	if(currentEnv.hasOwnProperty("specialItems"))
-	{
+	
 		for(item of currentEnv.specialItems)
 		{
 			//Collision detect med 1
@@ -846,7 +851,7 @@ function handle_items(){
 			}
 			
 		}
-	}
+	
 }
 
 //************************//
