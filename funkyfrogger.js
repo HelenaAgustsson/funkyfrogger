@@ -415,39 +415,50 @@ function key_down_logger(event) {
 			break;
 		// Hopp med mellomtast
 		case " ":
-			if(frog.down) {
-				//Hopp bakover
-				frog.jump = true;
-				frog.jumpTarget = Math.floor(frog.y) - 0.5;
-			}
-			else {
+			event.preventDefault();
+			//if(frog.down) {
+			//	//Hopp bakover
+			//	frog.jump = true;
+			//	frog.jumpTarget = Math.floor(frog.y) - 0.5;
+			//}
+			//else {
 				//Hopp framover
 				frog.jump = true;
 				frog.jumpTarget = Math.ceil(frog.y) + 0.5;
-			}
+			//}
 			break;
 
 		// Når me trykkjer ned ein tast vil frosken flytta på seg. 
 		case "ArrowUp":
 		case "w":
-			frog.up = true;
-			frog.ySpeed = frog.walkSpeed;
+			event.preventDefault();
+			//Hopp framover
+			frog.jump = true;
+			frog.jumpTarget = Math.ceil(frog.y) + 0.5;
+			//frog.up = true;
+			//frog.ySpeed = frog.walkSpeed;
 			break;
 
 		case "ArrowDown":
 		case "s":
-			frog.down = true;
-			frog.ySpeed = -frog.walkSpeed;
+			event.preventDefault();
+			//Hopp bakover
+			frog.jump = true;
+			frog.jumpTarget = Math.floor(frog.y) - 0.5;
+			//frog.down = true;
+			//frog.ySpeed = -frog.walkSpeed;
 			break;
 
 		case "ArrowLeft":
 		case "a":
+			event.preventDefault();
 			frog.left = true;
 			frog.xSpeed = -frog.walkSpeed;
 			break;
 
 		case "ArrowRight":
 		case "d":
+			event.preventDefault();
 			frog.right = true;
 			frog.xSpeed = frog.walkSpeed;
 		default:
@@ -458,25 +469,25 @@ function key_up_logger(event) {
 	var frog = game.frog;
 	switch(event.key) {
 		//Når me slepp opp ein tast vil frosken stoppa opp.
-		case "ArrowUp":
-		case "w":
-			frog.up = false;
-			if(frog.down == true) {
-				frog.y = -frog.walkSpeed;
-			}
-			else {
-				frog.ySpeed = 0;
-			}
-		case "ArrowDown":
-		case "s":
-			frog.down = false;
-			if(frog.up == true) {
-				frog.ySpeed = frog.walkSpeed;
-			}
-			else {
-				frog.ySpeed = 0;
-			}
-			break;
+		//case "ArrowUp":
+		//case "w":
+		//	frog.up = false;
+		//	if(frog.down == true) {
+		//		frog.y = -frog.walkSpeed;
+		//	}
+		//	else {
+		//		frog.ySpeed = 0;
+		//	}
+		//case "ArrowDown":
+		//case "s":
+		//	frog.down = false;
+		//	if(frog.up == true) {
+		//		frog.ySpeed = frog.walkSpeed;
+		//	}
+		//	else {
+		//		frog.ySpeed = 0;
+		//	}
+		//	break;
 
 		case "ArrowLeft":
 		case "a":
@@ -1141,8 +1152,6 @@ function create_frog() {
 	game.frog = frog;
 }
 
-
-
 function handle_frog() {
 	var frog = game.frog;
 
@@ -1164,23 +1173,43 @@ function handle_frog() {
 	}
 	else {
 		if(frog.jump == true) {
-			frog.y += frog.jumpSpeed * 2;
+			if(frog.jumpTarget >= frog.y) {
+				frog.y += frog.jumpSpeed;
 
-			//Om han har nådd målet, er han ferdig med å hoppe.
-			if(frog.y >= frog.jumpTarget) {
-				frog.y = frog.jumpTarget;
-				frog.jump = false;
-				frog.inputCooldown = 2;
+				//Om han har nådd målet, er han ferdig med å hoppe.
+				if(frog.y >= frog.jumpTarget) {
+					frog.y = frog.jumpTarget;
+					frog.jump = false;
+					frog.inputCooldown = 2;
+				}
 			}
+
+			else if(frog.jumpTarget <= frog.y) {
+				if(frog.jumpTarget < currentEnv.start) {
+					//Frosken kan ikkje hoppa tilbake til førre miljø
+					frog.jump = false;
+				}
+				else {
+					frog.y -= frog.jumpSpeed;
+
+					//Om han har nådd målet, er han ferdig med å hoppe.
+					if(frog.y <= frog.jumpTarget) {
+						frog.y = frog.jumpTarget;
+						frog.jump = false;
+						frog.inputCooldown = 2;
+					}
+				}
+			}
+
 		}
 		else {
-			//Me oppdaterar frosken sin posisjon med farten dei har i x eller y retning
+			//Me oppdaterar frosken sin posisjon med farten dei har i x retning
 			if(frog.inputCooldown > 0) {
 				frog.inputCooldown -= 1;
 			}
 			else {
 				frog.x += frog.xSpeed;
-				frog.y += frog.ySpeed;
+				//frog.y += frog.ySpeed;
 			}
 		}
 
