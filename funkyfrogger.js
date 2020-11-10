@@ -9,7 +9,7 @@ var time = 0;
 //Faste konstantar me ikkje forventar skal endre seg i løpet av spelet. 
 var constants = {
 	scrollSpeed	: 0.5,
-	tileCount	: 12, //Kor mange "tiles" som er synlege på canvas. Vert nytta til å rekna ut størrelsen ved teikning på canvas.
+	tileCount	: 13, //Kor mange "tiles" som er synlege på canvas. Vert nytta til å rekna ut størrelsen ved teikning på canvas.
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"],
 
 	sinkTime	: 3000,
@@ -608,6 +608,7 @@ function add_environment(start = undefined) {
 	env.platforms = [];
 	env.obstacles = [];
 
+	env.platforms.push(create_safe_platform(env.start));
 	//Sjekkar om miljøet er eit vått miljø (env.type er oddetal) og dermed lagar plattformar
 	if(env.type % 2 == 1)
 	{
