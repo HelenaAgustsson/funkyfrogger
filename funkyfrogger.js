@@ -73,8 +73,7 @@ var game = {
 		{
 			this.fps = fps;
 			this.started = setInterval(this.update, 1000/fps);
-			this.audio.play();
-			this.audio.volume = 0.3;
+			this.audio.music.play();
 		}
 		else
 		{
@@ -87,7 +86,7 @@ var game = {
 		{
 			clearInterval(this.started);
 			this.started = 0;
-			this.audio.pause();
+			this.audio.music.pause();
 		}
 	},
 
@@ -124,11 +123,15 @@ function reset_game() {
 	//fyller opp til tre liv igjen
 	$(".life").removeClass("fa-heart-o").addClass("fa-heart");
 
+	set_canvas();
+
+	//Fjerner gamle miljø og lager nye
 	game.distance = 0;
 	game.env = [];
-
-	set_canvas();
 	add_environment(0);
+
+	//Set musikken tilbake til start
+	game.audio.music.currentTime = 0;
 
 	//Lagar ny frosk, gamle vert sletta
 	create_frog();
@@ -144,6 +147,7 @@ window.onload = function() {
 	let startButton = $("#start-btn");
 	let stopButton = $("#stop-btn");
 	let pauseButton = $("#pause-btn");
+	let volumeSlider = $("#volume-slider");
 	let gameScore = $("#score > span");
 
 	//Legg til interaktivitet
@@ -162,6 +166,16 @@ window.onload = function() {
 	pauseButton.on('click', function(){
 		game.pause();
 	});
+
+	volumeSlider.value = "50";
+	volumeSlider.on('input', function(){
+		for(audio in game.audio) {
+			game.audio[audio].volume = this.value / 100;
+		}
+	});
+	for(audio in game.audio) {
+		game.audio[audio].volume = volumeSlider.value / 100;
+	}
 
 	reset_game();
 }
@@ -197,6 +211,7 @@ function update_game() {
 
 function end_game() {
 	//Vis sluttskjerm med poengsum og "Vil du spille igjen?"
+	
 
 	add_high_score("Froggy", game.score);
 	let lastHighscore = parseInt( $("#highscore > span").text());
@@ -377,68 +392,74 @@ function move_objects(objects) {
 	}
 }
 
-// Testfunksjon for å visualisere bruken av draw_object(object)
-function debug_draw_test() {
-	//Array med testobjekt
-	var testObjects = [{
-		x : -2,
-		y : 0.5,
-		width: 1,
-		height: 1,
-	}, {
-		x : -1,
-		y : 1,
-		width: 1,
-		height: 1,
-	}, {
-		x : 0,
-		y : 2,
-		width: 0.5,
-		height: 1.5,
-		color: "purple"
-	}, {
-		x : 1,
-		y : 2.5,
-		width: 0.2,
-		height: 0.2,
-	}, {
-		x : 2,
-		y : 0,
-		width: 1,
-		height: 1,
-	}];
-
-	var topLeftCornerX = 0.5 - (game.canvas.width / game.tileSize)/2;
-	var topLeftCornerY = 11.5;
-	var testObjectTopLeft = {
-		x : topLeftCornerX,
-		y : topLeftCornerY,
-		width: 1,
-		height: 1,
-		color: "red"
-		};
-
-	var topRightCornerX = (game.canvas.width / game.tileSize)/2 - 0.5;
-	var topRightCornerY = 11.5;
-	var testObjectTopRight = {
-		x : topRightCornerX,
-		y : topRightCornerY,
-		width: 1,
-		height: 1,
-		color: "green"
-		};
-
-	for (object of testObjects){
-		draw_object(object);
-	}
-
-	draw_object(testObjectTopLeft);
-	draw_object(testObjectTopRight);
-}
+//// Testfunksjon for å visualisere bruken av draw_object(object)
+//function debug_draw_test() {
+//	//Array med testobjekt
+//	var testObjects = [{
+//		x : -2,
+//		y : 0.5,
+//		width: 1,
+//		height: 1,
+//	}, {
+//		x : -1,
+//		y : 1,
+//		width: 1,
+//		height: 1,
+//	}, {
+//		x : 0,
+//		y : 2,
+//		width: 0.5,
+//		height: 1.5,
+//		color: "purple"
+//	}, {
+//		x : 1,
+//		y : 2.5,
+//		width: 0.2,
+//		height: 0.2,
+//	}, {
+//		x : 2,
+//		y : 0,
+//		width: 1,
+//		height: 1,
+//	}];
+//
+//	var topLeftCornerX = 0.5 - (game.canvas.width / game.tileSize)/2;
+//	var topLeftCornerY = 11.5;
+//	var testObjectTopLeft = {
+//		x : topLeftCornerX,
+//		y : topLeftCornerY,
+//		width: 1,
+//		height: 1,
+//		color: "red"
+//		};
+//
+//	var topRightCornerX = (game.canvas.width / game.tileSize)/2 - 0.5;
+//	var topRightCornerY = 11.5;
+//	var testObjectTopRight = {
+//		x : topRightCornerX,
+//		y : topRightCornerY,
+//		width: 1,
+//		height: 1,
+//		color: "green"
+//		};
+//
+//	for (object of testObjects){
+//		draw_object(object);
+//	}
+//
+//	draw_object(testObjectTopLeft);
+//	draw_object(testObjectTopRight);
+//}
 
 //************************//
 //         Input          //
 //************************//
+
+function jump(target) {
+	game.audio.hop.play();
+	game.frog.jump = true;
+	game.frog.jumpTarget = target;
+}
 
 function key_down_logger(event) {
 	var frog = game.frog;
@@ -450,6 +471,7 @@ function key_down_logger(event) {
 		// Hopp med mellomtast
 		case " ":
 			event.preventDefault();
+			jump(Math.ceil(frog.y) + 0.5);
 			//if(frog.down) {
 			//	//Hopp bakover
 			//	frog.jump = true;
@@ -457,8 +479,8 @@ function key_down_logger(event) {
 			//}
 			//else {
 				//Hopp framover
-				frog.jump = true;
-				frog.jumpTarget = Math.ceil(frog.y) + 0.5;
+				//frog.jump = true;
+				//frog.jumpTarget = Math.ceil(frog.y) + 0.5;
 			//}
 			break;
 
@@ -466,9 +488,8 @@ function key_down_logger(event) {
 		case "ArrowUp":
 		case "w":
 			event.preventDefault();
+			jump(Math.ceil(frog.y) + 0.5);
 			//Hopp framover
-			frog.jump = true;
-			frog.jumpTarget = Math.ceil(frog.y) + 0.5;
 			//frog.up = true;
 			//frog.ySpeed = frog.walkSpeed;
 			break;
@@ -477,8 +498,7 @@ function key_down_logger(event) {
 		case "s":
 			event.preventDefault();
 			//Hopp bakover
-			frog.jump = true;
-			frog.jumpTarget = Math.floor(frog.y) - 0.5;
+			jump(Math.floor(frog.y) - 0.5)
 			//frog.down = true;
 			//frog.ySpeed = -frog.walkSpeed;
 			break;
@@ -1025,8 +1045,11 @@ function handle_sinking(platform) {
 //       Multimedia       //
 //************************//
 
-game.audio = new Audio("audio/aces-high.mp3");
-game.audio.loop = true;
+game.audio = {
+	music	: new Audio("audio/the_monarch_full.mp3"),
+	hop		: new Audio("audio/hop9.wav"),
+}
+game.audio.music.loop = true;
 
 //************************//
 //       High Score       //
