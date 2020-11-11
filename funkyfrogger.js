@@ -12,6 +12,7 @@ var constants = {
 	tileCount	: 12, //Kor mange "tiles" som er synlege på canvas. Vert nytta til å rekna ut størrelsen ved teikning på canvas.
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"],
 
+	rockSinkTime	: 1500,
 	sinkTime	: 3000,
 	sinkChance	: 0.0005,
 		//Oppsett av vanskegrad. Større fart og akselerasjon vil vera vanskelegare. Større avstand på platformar vil vera vanskelegare. Større avstand på hinder vil vera lettare.
@@ -188,21 +189,7 @@ function update_game() {
 	// Miljø
 	handle_enviroment();
 
-	// Hindre og plattformer
-	//move_obstacles();
-	//draw_obstacles();
-
-	//Eksempelfunksjonar
-	//handle_enemies();
-	//collision_detect();
-	//add_score();
-
 	handle_frog();
-	//handle_items();
-
-	//Automatisk scrolling ved å auka distance
-	//time += 1;
-	//game.distance += 5 * (1 - 1 * Math.cos(time/10))
 
 	if(game.frog.lifepoints < 1) {
 		game.end();
@@ -247,8 +234,6 @@ function end_game() {
 	});
 }
 
-
-
 //************************//
 //    Hjelpefunksjonar    //
 //************************//
@@ -278,19 +263,19 @@ function draw_object(object) {
 		scaleY = object.scaleY;
 	}
 
-	var width  = Math.round(object.width  * game.tileSize * scaleX);
-	var height = Math.round(object.height * game.tileSize * scaleY);
+	var width  = object.width  * game.tileSize * scaleX;
+	var height = object.height * game.tileSize * scaleY;
 
-	var x = Math.round(game.canvas.width/2 + (object.x * game.tileSize) - width/2);
-	var y = Math.round(game.canvas.height  - ((object.y - game.distance) * game.tileSize) - height/2);
+	var x = game.canvas.width/2 + (object.x * game.tileSize) - width/2;
+	var y = game.canvas.height  - ((object.y - game.distance) * game.tileSize) - height/2;
 
 	//Debug teiknefunksjon. Teiknar ein kvit firkant under objektet
 	if(game.debug == true) {
-		var dwidth  = Math.round(object.width  * game.tileSize);
-		var dheight = Math.round(object.height * game.tileSize);
+		var dwidth  = object.width  * game.tileSize;
+		var dheight = object.height * game.tileSize;
 
-		var dx = Math.round(game.canvas.width/2 + (object.x * game.tileSize) - dwidth/2);
-		var dy = Math.round(game.canvas.height  - ((object.y - game.distance) * game.tileSize) - dheight/2);
+		var dx = game.canvas.width/2 + (object.x * game.tileSize) - dwidth/2;
+		var dy = game.canvas.height  - ((object.y - game.distance) * game.tileSize) - dheight/2;
 
 		context.fillStyle = "white";
 		context.fillRect(dx, dy, dwidth, dheight);
@@ -600,12 +585,11 @@ function handle_enviroment() {
 			draw_object(platform);
 		}
 
-		move_objects(env.specialItems);
-
 		handle_items(env.items);
-		handle_items(env.specialItems);
-
 		animate_objects(env.items);
+
+		move_objects(env.specialItems);
+		handle_items(env.specialItems);
 		draw_objects(env.specialItems);
 		
 		move_objects(env.obstacles)
@@ -619,26 +603,18 @@ function draw_environment(env) {
 
 	var y = game.canvas.height - (env.end - game.distance) * game.tileSize;
 
-	if(env.type == "road") {
-		var width = 2 * game.tileSize;
-
+	if(env.type == "river") {
 		var x = 0;
-		var i = 3; 
-		while (i--) 
-		{
-			while (x < game.canvas.width)
-			{
-				context.drawImage(env.image, x, y, width, width);
+		var y = game.canvas.height - (env.end + 0.5 - game.distance) * game.tileSize;
+		
+		var width = game.canvas.width;
+		var height = env.tiles * (game.tileSize);
 
-				x += width;
-			}
-			x = 0;
-			y += width;
-		}
+		context.drawImage(env.image, x, y, width, height);
 	}
 	else if(env.type == "lava") {
 		var totalAnimationTime = 0;
-
+ 
 		for(animationFrame of env.animation) {
 			totalAnimationTime -= -animationFrame.name;
 		}
@@ -653,29 +629,41 @@ function draw_environment(env) {
 			++i;
 		}
 
-		var width = 2 * game.tileSize;
+		var size = 2 * game.tileSize;
 
+		//Flislegger lava med lavatiles.
 		var x = 0;
 		var j = 3; 
 		while (j--) 
 		{
 			while (x < game.canvas.width)
 			{
-				context.drawImage(env.animation[i], x, y, width, width);
+				context.drawImage(env.animation[i], x, y, size, size);
 
-				x += width;
+				x += size -1;
 			}
 			x = 0;
-			y += width;
+			y += size -1;
 		}
 	}
+	//Ellers er det ein veg.
 	else {
-		var width = game.canvas.width;
-		var height = env.tiles * game.tileSize;
+		var width = 2 * game.tileSize;
 
-		//Teiknar berre rein farge. Trend meir avansert grafikk
-		context.fillStyle = constants.envColors[env.type];
-		context.fillRect(0, y, width, height);
+		//Legger ned asfalt.
+		var x = 0;
+		var i = 3; 
+		while (i--) 
+		{
+			while (x < game.canvas.width)
+			{
+				context.drawImage(env.image, x, y, width, width);
+
+				x += width -1;
+			}
+			x = 0;
+			y += width -1;
+		}
 	}
 }
 
@@ -693,7 +681,7 @@ function add_environment(start = undefined) {
 		start	: start,
 		tiles	: 6,
 		//tiles	: get_random(3,8),
-		type	: get_random(0,5)
+		//type	: get_random(0,5)
 	};
 	env.end = env.start + env.tiles;
 
@@ -711,22 +699,26 @@ function add_environment(start = undefined) {
 //		//Nyttar difor try-catch blokk for å ignorera error sidan me ikkje bryr oss.
 //	}
 
-
 	env.safePlatforms = [];
 	env.platforms = [];
 	env.obstacles = [];
 
 	env.safePlatforms.push(create_safe_platform(env.start));
+
 	//Sjekkar om miljøet er eit vått miljø (env.type er oddetal) og dermed lagar plattformar
 	if(env.type % 2 == 1)
 	{
-		if(env.type % 4 == 1) 
-		{
+		if(env.type % 4 == 3) {
 			env.animation = document.getElementsByClassName("lava");
 			env.type = "lava";
+			create_lava_platforms(env);
+		}
+		else {
+			env.image = document.getElementById("waves");
+			env.type = "river";
+			create_river_platforms(env);
 		}
 
-		create_platforms_in(env);
 	}
 	//For tørt miljø lagar me bilar
 	else
@@ -776,8 +768,6 @@ function create_obstacles_in(env) {
 		//	car2 = document.getElementById("car2"),
 		//	bus = document.getElementById("bus")
 		//];
-
-
 
 		var x = -game.width - 4;
 
@@ -837,8 +827,32 @@ function create_obstacles_in(env) {
 	}
 }
 
+function add_dragons_to_env(env) {
+	for(var row = 2; row < env.tiles; row += 2) {
+		var dragon = {
+			x		: game.width + 3,
+			y		: env.start + row + 0.5,
+
+			width	: 1,
+			height	: 0.8,
+			scaleY	: 1.25,
+
+			speed	: game.difficulty.obstacleSpeed +
+				game.difficulty.obstacleAccel * row,
+
+			image	: document.getElementById("dragonblue")
+		}
+
+		if(row < 3) {
+			dragon.image = document.getElementById("dragongray");
+		}
+
+		env.obstacles.push(dragon);
+	}
+}
+
 //************************//
-//        items           //
+//        Items           //
 //************************//
 
 //Legg til vanlege noter
@@ -915,11 +929,34 @@ function handle_items(items){
 //************************//
 
 //Funksjon til å lage platformer til eit miljø.
-function create_platforms_in(env) {
-	for(var row = 1; row < env.tiles; ++row) {
-		var logTypes = [
-			log1 = document.getElementById("log1"),
-		];
+function create_lava_platforms(env) {
+
+	//Legger til trommer
+	for(var row = 2; row < env.tiles; row += 2) {
+		for(var i = -1; i < 2; ++i)
+		{
+			var platform = {
+				x		: i * game.width / 2,
+				y		: env.start + row + 0.5,
+
+				width	: 1,
+				height	: 1.05,
+				scaleY	: 1,
+
+				speed	: 0,
+
+				sinking : 0,
+
+				type	: 'drum',
+				image	: document.getElementById("drum")
+			};
+
+			env.safePlatforms.push(platform);
+		}
+	}
+
+	//Lager lavasteiner
+	for(var row = 1; row < env.tiles; row += 2) {
 
 		var x = -game.width - 4;
 		while(x < game.width + 4) {
@@ -927,54 +964,96 @@ function create_platforms_in(env) {
 				x		: x,
 				y		: env.start + row + 0.5,
 
-				width	: 1.5 + 2 * Math.random(),
+				width	: 1.05,
 				height	: 1.05,
-				scaleY	: 2.5,
+				scaleY	: 1,
 
-				//speed	: 0.05 + 0.04*row,
 				speed	: game.difficulty.platformSpeed +
 						  game.difficulty.platformAccel * row,
 
 				sinking : 0,
 
-				color	: "white",
-				image	: logTypes[0]
+				type	: 'rock',
+				image	: document.getElementById("rock")
 			};
 
-
-			//Alternerer fartsretning
-			if(row % 2 == 0) {
+			//Alternerer fartsretning per rad
+			if(row == 3) {
 				platform.speed = -platform.speed;
 			}
 
 			platform.x += platform.width/2;
-			x += platform.width/2 + game.difficulty.platformGap + 2 * Math.random();
+			x += platform.width/2 + game.difficulty.platformGap + Math.random() - 2;
 
-			//Krokodille
-			if(Math.random() < 0.05) {
-				platform.width = 1.5;
+			env.platforms.push(platform);
+		}
+	}
 
-				var crocHead = {
-					x		: platform.x,
-					y		: platform.y,
+	//Legg til eit par dragar.
+	add_dragons_to_env(env);
+}
 
-					width	: 0.4,
-					height	: 0.8,
+//Funksjon til å lage platformer til eit miljø.
+function create_river_platforms(env) {
+	for(var row = 1; row < env.tiles; ++row) {
 
-					speed	: platform.speed,
+		var x = -game.width - 4;
+		while(x < game.width + 4) {
+			var platform = {
+				x		: x,
+				y		: env.start + row + 0.5,
 
-					color	: "grey"
-				};
+				speed	: game.difficulty.platformSpeed +
+						  game.difficulty.platformAccel * row,
 
-				if(crocHead.speed < 0) {
-					crocHead.x -= (platform.width + crocHead.width)/2
+				sinking : 0,
+			};
+
+			//Alternerer fartsretning per rad
+			if(row % 2 == 0) {
+				platform.speed = -platform.speed;
+			}
+
+			var type = Math.random();
+			if(type < 0.1) {
+				//Krokodille
+				
+				platform.width = 2;
+				platform.height = 0.9;
+				platform.scaleY = 2;
+
+				platform.type = 'crocodile';
+
+				if(platform.speed < 0) {
+					platform.image = document.getElementById("crocodile");
 				}
 				else {
-					crocHead.x += (platform.width + crocHead.width)/2
+					platform.image = document.getElementById("alligator");
 				}
-
-				env.obstacles.push(crocHead);
 			}
+			else if(type < 0.2) {
+				//Trompet
+
+				platform.width = 1.5;
+				platform.height = 1.05;
+				platform.scaleY = 1.5;
+
+				platform.type = 'trumpet';
+				platform.image = document.getElementById("trumpet");
+			}
+			else {
+				//Tømmerstokk
+
+				platform.width = 2.5 + Math.random();
+				platform.height = 1.05;
+				platform.scaleY = 2.5;
+
+				platform.type = 'log';
+				platform.image = document.getElementById("log1");
+			}
+
+			platform.x += platform.width/2;
+			x += platform.width/2 + game.difficulty.platformGap + 2 * Math.random();
 
 			env.platforms.push(platform);
 		}
@@ -993,7 +1072,6 @@ function create_safe_platform(row) {
 		safe	: true,
 
 		speed : 0,
-		color : constants.envColors[0],
 		image : document.getElementById("piano"),
 	};
 
@@ -1004,42 +1082,63 @@ function handle_sinking(platform) {
 	if(platform.sinking > 0)
 	{
 		var sinking = game.frameTime - platform.sinking;
-		if(sinking < constants.sinkTime) {
-			//Sinking
-			var ratio = (constants.sinkTime - sinking) / constants.sinkTime;
 
-			platform.width = platform.originalWidth * ratio;
-			platform.scaleY = 2.5 * ratio;
-		}
-		else if(sinking < 2*constants.sinkTime) {
-			//Sunk
-		}
-		else if(sinking < 3*constants.sinkTime) {
-			//Rising
-			var ratio = 1 - ((3*constants.sinkTime - sinking) / constants.sinkTime);
+		if(platform.type == "rock") {
+			if(sinking < constants.sinkTime) {
+				//Sinking
+				var ratio = (constants.sinkTime - sinking) / constants.sinkTime;
 
-			platform.width = platform.originalWidth * ratio;
-			platform.scaleY = 2.5 * ratio;
+				platform.width = platform.originalWidth * ratio;
+				platform.scaleY = ratio;
+			}
+			else {
+				//Lavasteinen er smelta vekk!!
+				platform.height = 0;
+				platform.width = 0;
+				platform.sinking = 0;
+			}
 		}
 		else {
-			//Floating
-			platform.width = platform.originalWidth;
-			platform.scaleY = 2.5;
-			platform.sinking = 0;
-		}
+			//Plattform som synker og dukker opp att.
+			if(sinking < constants.sinkTime) {
+				//Sinking
+				var ratio = (constants.sinkTime - sinking) / constants.sinkTime;
 
+				platform.width = platform.originalWidth * ratio;
+				platform.scaleY = platform.originalScale * ratio;
+			}
+			else if(sinking < 2*constants.sinkTime) {
+				//Sunk
+			}
+			else if(sinking < 3*constants.sinkTime) {
+				//Rising
+				var ratio = 1 - ((3*constants.sinkTime - sinking) / constants.sinkTime);
+
+				platform.width = platform.originalWidth * ratio;
+				platform.scaleY = 2.5 * ratio;
+			}
+			else {
+				//Floating
+				platform.width = platform.originalWidth;
+				platform.scaleY = 2.5;
+				platform.sinking = 0;
+			}
+		}
 	}
-	else if (Math.random() < constants.sinkChance)
+	else if(platform.type == "log" || platform.type == "crocodile")
 	{
-		//Plattformen startar å synke
-		if(!platform.hasOwnProperty("safe")) {
-			platform.originalWidth = platform.width;
-			platform.sinking = game.frameTime;
+		if(Math.random() < constants.sinkChance)
+		{
+			start_to_sink(platform);
 		}
 	}
 }
 
-
+function start_to_sink(platform) {
+	platform.originalWidth = platform.width;
+	platform.originalScale = platform.scaleY;
+	platform.sinking = game.frameTime;
+}
 
 //************************//
 //       Multimedia       //
@@ -1122,15 +1221,15 @@ function create_frog() {
 		inputCooldown : 0,
 		lifepoints : 3,
 
-		up		: false,
-		down	: false,
+		//up		: false,
+		//down	: false,
 		left	: false,
 		right	: false,
 
 		jump	: false,
 
 		//https://www.flaticon.com/free-icon/frog_1036001
-		image : document.getElementById("frog"),
+		//image : document.getElementById("frog"),
 		animation : document.getElementsByClassName("froganimation"),
 		animationStart : 0
 	};
@@ -1209,11 +1308,26 @@ function handle_frog() {
 			safe = false;
 			for(platform of currentEnv.platforms.concat(currentEnv.safePlatforms))
 			{
-				//Collision detect med 0.5 for at mesteparten av frosken må vera oppå platformen.
+				//Collision detect med 0.1 for at mesteparten av frosken må vera oppå platformen.
 				if(collision_detect(frog, platform, 0.1))
 				{
 					safe = true;
 					frog.x += platform.speed;
+
+					//Lavasteiner synker!
+					if(platform.type == "rock" && !platform.sinking) {
+						start_to_sink(platform);
+					}
+
+					//Er det ein farleg krokodille?
+					if(platform.type == "crocodile") {
+						if(platform.speed < 0 && frog.x < platform.x) {
+							safe = false;
+						}
+						else if(platform.speed > 0 && frog.x > platform.x) {
+							safe = false;
+						}
+					}
 					break;
 				}
 			}
@@ -1230,7 +1344,7 @@ function handle_frog() {
 					safe = false;
 
 					//Endrar farge for å visa kontakt. Debugfunksjon
-					obstacle.color = "red";
+					//obstacle.color = "red";
 					break;
 				}
 			}
@@ -1238,7 +1352,7 @@ function handle_frog() {
 		
 		//Frosken er i vatnet eller truffen av ein bil.
 		if(safe == false) {
-			frog.inputCooldown = Math.round(game.fps/2);
+			frog.inputCooldown = game.fps/2;
 			frog.lifepoints -= 1;
 			if(frog.lifepoints==2){
 				$("#life3").removeClass("fa-heart").addClass("fa-heart-o");
