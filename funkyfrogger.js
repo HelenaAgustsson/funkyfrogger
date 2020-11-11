@@ -184,7 +184,7 @@ function update_game() {
 	//add_score();
 
 	handle_frog();
-	handle_items();
+	//handle_items();
 
 	//Automatisk scrolling ved å auka distance
 	//time += 1;
@@ -205,11 +205,11 @@ function end_game() {
 		$("#highscore > span").text(game.score);
 	}
 	
-	var highScore = get_high_score_list();
-	//console.log("High scores");
-	for(hs of highScore) {
-		console.log(hs);
-	}
+//	var highScore = get_high_score_list();
+//	//console.log("High scores");
+//	for(hs of highScore) {
+//		console.log(hs);
+//	}
 	
 	game.reset();
 	game.stop();
@@ -301,8 +301,13 @@ function animate_object(object) {
 		totalAnimationTime -= -animationFrame.name;
 	}
 
+	var animationStart = 0;
+	if(object.hasOwnProperty("animationStart")) {
+		animationStart = object.animationStart;
+	}
+
 	//Finner ut kor langt objektet er kommen i animasjonen
-	var animationTime = (game.frameTime - object.animationStart) % totalAnimationTime;
+	var animationTime = (game.frameTime - animationStart) % totalAnimationTime;
 
 	//Finner ut kva animasjonframe me skal bruke
 	var i= 0;
@@ -316,6 +321,18 @@ function animate_object(object) {
 	draw_object(object);
 }
 
+
+function draw_objects(objects) {
+	for(object of objects) {
+		draw_object(object);
+	}
+}
+
+function animate_objects(objects) {
+	for(object of objects) {
+		animate_object(object);
+	}
+}
 
 //Funksjon for å sjekke om to objekt er borti kvarandre. Kan nyttast til platformar, hinder, mynter og anna
 //Hitbox definerar kor stor kontaktboksen til frosken skal vera. Mindre enn 1 betyr dei må overlappe, meir enn 1
@@ -554,30 +571,25 @@ function handle_enviroment() {
 	for (env of game.env) {
 		draw_environment(env);
 
-		//Teiknar opp platformar
+		//Flyttar og teiknar opp objekt i miljøet
+		draw_objects(env.safePlatforms);
+
 		move_objects(env.platforms);
-		for(platform of env.safePlatforms) {
-			draw_object(platform);
-		}
 		for(platform of env.platforms) {
 			handle_sinking(platform);
 			draw_object(platform);
 		}
-		if(env.hasOwnProperty("items")) {
-			draw_items_in(env);
-		}
 
-		if(env.hasOwnProperty("obstacles")) {
-			move_objects(env.obstacles);
-			for(obj of env.obstacles) {
-				draw_object(obj);
-			}
-		}
+		move_objects(env.specialItems);
 
-		if(env.hasOwnProperty("specialItems")) {
-			draw_special_items_in(env);
-		}
+		handle_items(env.items);
+		handle_items(env.specialItems);
 
+		animate_objects(env.items);
+		draw_objects(env.specialItems);
+		
+		move_objects(env.obstacles)
+		draw_objects(env.obstacles);
 	}
 }
 
@@ -708,20 +720,18 @@ function add_environment(start = undefined) {
 	// lager items uansett type miljø foreløpig
 	
 	env.items = [];
-	var totalItems = 4;
-	for(var i = 0; i<totalItems; ++i)
-		{
-			create_item_in(env);
-		}
+	env.specialItems = [];
 
-		env.specialItems = [];
-		var totalspecialItems = 2;
-		for(var i = 0; i<totalspecialItems; ++i)
-			{
-				create_special_item_in(env);
-			}
+	var totalItems = 4;
+	for(var i = 0; i<totalItems; ++i) {
+		create_item_in(env);
+	}
+
+	var totalSpecialItems = 2;
+	for(var i = 0; i<totalSpecialItems; ++i) {
+		create_special_item_in(env);
+	}
 		
-	
 	game.env.push(env);	
 }
 
@@ -811,137 +821,73 @@ function create_obstacles_in(env) {
 //        items           //
 //************************//
 
+//Legg til vanlege noter
 function create_item_in(env) {
-
-	var row = get_random(0, env.tiles);
+	var row = get_random(1, env.tiles);
 	var item = {
-		x		: Math.random() * 10 - 5,
+		x		: Math.random() * game.width * 1.8 - game.width,
 		y		: env.start + row + 0.5,
 
 		width	: 0.5,
 		height	: 0.5,
 
-		speed	: 0,
+		points	: 10,
 
-		image	: document.getElementById('musicnote')
+		animation : document.getElementsByClassName('musicnote'),
+		animationStart : Math.random() * 2000
 	}
 
 	env.items.push(item);
 }
 
+//Legg til noter med meir poeng
 function create_special_item_in(env) {
-	
-	var row = get_random(0, env.tiles);
-
+	var row = get_random(1, env.tiles);
 	var item = {
-		x		: Math.random() * 10 - 5,
+		x		: Math.random() * game.width * 1.8 - game.width,
 		y		: env.start + row + 0.5,
 
 		width	: 0.5,
 		height	: 0.5,
 
+		points	: 30,
+
 		speed	: 0,
 
-		image	: document.getElementById('musicnote-purple')
+		image	: document.getElementById('clef')
 	}
 
+	if(env.platforms.length > 0) {
+		var index = get_random(0, env.platforms.length-1);
+		var platform = env.platforms[index];
 
+		item.x = platform.x;
+		item.y = platform.y;
+		item.speed = platform.speed;
+	}
 
 	env.specialItems.push(item);
 }
 
-function draw_items_in(env) {
-	for (item of env.items) {
-		draw_object(item);
-	}
-}
-
-function draw_special_items_in(env) {
-	handle_specialItems();
-	for (item of env.specialItems) {
-		draw_object(item);
-	}
-}
-
-function handle_specialItems(){
+//Sjekker om froggy har plukket opp noen mynter
+function handle_items(items){
 	let frog = game.frog;
-	let i = 0;
-	let currentEnv = game.env[i];
-	while(frog.y > currentEnv.end)
-	{
-		currentEnv = game.env[++i];
-	}
-	//tester om spesialnote kolliderer med platform	
-	
-	if(currentEnv.hasOwnProperty("platforms"))
-	{
-		for(item of currentEnv.specialItems)
-		{
-			
-			for(platform of currentEnv.platforms){
-			if(collision_detect(item, platform, 1)){
-				item.x += platform.speed;
-				break;
-			}
-			/*
-			else if(!collision_detect(item, platform, 1)){
-				item.x=Math.random() * 10 - 5;
-				console.log("collisjon");
-			} 
-			*/
-			
-			}
-			
-			
-			
-		}
-	}
-}
-
-function handle_items(){
-	let frog = game.frog;
-	let i = 0;
-	let currentEnv = game.env[i];
-	while(frog.y > currentEnv.end)
-	{
-		currentEnv = game.env[++i];
-	}
 
 	// tester om frosken kolliderer med note
-	
-		for(item of currentEnv.items)
-		{
-			//Collision detect med 1
-			if(collision_detect(frog, item, 1))
-			{ 
-				//fjerner myntene frosken har plukket opp fra spillbrettet
-				var idx = currentEnv.items.indexOf(item);
-				currentEnv.items.splice(idx, 1);
-				game.score+=10;
-				$("#score > span").text(game.score);
-				break;
-			}
-			
-		}
-	
+	for(item of items)
+	{
+		//Collision detect med 1
+		if(collision_detect(frog, item, 1))
+		{ 
+			//fjerner notene frosken har plukket opp fra spillbrettet
+			var idx = items.indexOf(item);
+			items.splice(idx, 1);
 
-	//tester om frosken kolliderer med spesialnote
-	
-		for(item of currentEnv.specialItems)
-		{
-			//Collision detect med 1
-			if(collision_detect(frog, item, 1))
-			{ 
-				//fjerner myntene frosken har plukket opp fra spillbrettet
-				var idx = currentEnv.specialItems.indexOf(item);
-				currentEnv.specialItems.splice(idx, 1);
-				game.score+=30;
-				$("#score > span").text(game.score);
-				break;
-			}
-			
+			game.score += item.points;
+			$("#score > span").text(game.score);
+			break;
 		}
-	
+	}
 }
 
 //************************//
