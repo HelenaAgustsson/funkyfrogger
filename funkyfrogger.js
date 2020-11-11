@@ -211,8 +211,25 @@ function end_game() {
 		console.log(hs);
 	}
 	
-	//game.stop();
 	game.reset();
+	game.stop();
+
+	context = game.canvas.getContext("2d");
+	context.fillStyle = "#ffffff";
+	let w = $("#gamecanvas").width();
+	let h = $("#gamecanvas").height();
+	context.fillRect(0,0,w,h);
+	context.fillStyle = "#0583FA";
+	context.font = "120px calibri";
+	context.textAlign = "center";
+	context.fillText("Game Over!!", w/2, h/2);
+	
+	context.fillStyle = "#FA08D0";
+	context.font = "80px calibri";
+	context.fillText("Restart", w/2, h-h/4);
+	$("#gamecanvas").on('click', function(){
+		game.start();
+	});
 }
 
 
@@ -1260,7 +1277,7 @@ function handle_frog() {
 				$("#life2").removeClass("fa-heart").addClass("fa-heart-o");
 			} else if(frog.lifepoints==0){
 				$("#life1").removeClass("fa-heart").addClass("fa-heart-o");
-			}
+			} 
 
 			frog.x = 0;
 			frog.y = currentEnv.start + 0.5;
