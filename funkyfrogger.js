@@ -24,7 +24,7 @@ var constants = {
 		//Oppsett av vanskegrad. Større fart og akselerasjon vil vera vanskelegare. Større avstand på platformar vil vera vanskelegare. Større avstand på hinder vil vera lettare.
 	difficulty	: {
 		easy	: {
-			pointLimit		: 0,
+			pointLimit		: 200,
 			platformSpeed	: 0.02,
 			platformAccel	: 0.02,
 			platformGap		: 4,
@@ -33,7 +33,7 @@ var constants = {
 			obstacleGap		: 6,
 		},
 		normal	: {
-			pointLimit		: 200,
+			pointLimit		: 500,
 			platformSpeed	: 0.03,
 			platformAccel	: 0.03,
 			platformGap		: 6,
@@ -42,7 +42,7 @@ var constants = {
 			obstacleGap		: 5,
 		},
 		hard	: {
-			pointLimit		: 500,
+			pointLimit		: 1000,
 			platformSpeed	: 0.04,
 			platformAccel	: 0.04,
 			platformGap		: 8,
@@ -51,7 +51,6 @@ var constants = {
 			obstacleGap		: 4,
 		},
 		impossible	: {
-			pointLimit		: 1000,
 			platformSpeed	: 0.05,
 			platformAccel	: 0.05,
 			platformGap		: 10,
@@ -225,7 +224,7 @@ function update_game() {
 
 	handle_frog();
 
-	if(game.frog.lifepoints < 1) {
+	if(game.frog.lifePoints < 1) {
 		game.end();
 	}
 }
@@ -1207,14 +1206,30 @@ function add_points(points) {
 	game.score += points;
 	$("#score > span").text(game.score);
 
-	if(game.score > constants.difficulty.impossible.pointLimit) {
-		game.difficulty = constants.difficulty.impossible;
-	}
-	else if(game.score > constants.difficulty.hard.pointLimit) {
-		game.difficulty = constants.difficulty.hard;
-	}
-	else if(game.score > constants.difficulty.normal.pointLimit) {
-		game.difficulty = constants.difficulty.normal;
+	//Sjekker om poengsummen har overgått poenggrensa for gjeldande vanskegrad.
+	if(game.difficulty.hasOwnProperty("pointLimit") &&
+			game.score > game.difficulty.pointLimit) {
+		//Vanskegraden går opp!
+		switch(game.difficulty) {
+			case constants.difficulty.easy:
+				game.difficulty = constants.difficulty.normal;
+				break;
+			case constants.difficulty.normal:
+				game.difficulty = constants.difficulty.hard;
+				break;
+			case constants.difficulty.hard:
+				game.difficulty = constants.difficulty.impossible;
+				break;
+			default:
+		}
+
+		//Når vanskegraden aukar får froggy tilbake eit liv (dersom han har mista eitt.)
+		if(game.frog.lifePoints < 3) {
+			game.frog.lifePoints += 1;
+
+			var lifePointID = "#life" + game.frog.lifePoints;
+			$(lifePointID).removeClass("fa-heart-o").addClass("fa-heart");
+		}
 	}
 }
 
@@ -1283,7 +1298,7 @@ function create_frog() {
 		jumpSpeed : 0.3,
 
 		inputCooldown : 0,
-		lifepoints : 3,
+		lifePoints : 3,
 
 		//up		: false,
 		//down	: false,
@@ -1425,12 +1440,12 @@ function handle_frog() {
 		//Frosken er i vatnet eller truffen av ein bil.
 		if(safe == false) {
 			frog.inputCooldown = game.fps/2;
-			frog.lifepoints -= 1;
-			if(frog.lifepoints==2){
+			frog.lifePoints -= 1;
+			if(frog.lifePoints==2){
 				$("#life3").removeClass("fa-heart").addClass("fa-heart-o");
-			} else if(frog.lifepoints==1){
+			} else if(frog.lifePoints==1){
 				$("#life2").removeClass("fa-heart").addClass("fa-heart-o");
-			} else if(frog.lifepoints==0){
+			} else if(frog.lifePoints==0){
 				$("#life1").removeClass("fa-heart").addClass("fa-heart-o");
 			} 
 
