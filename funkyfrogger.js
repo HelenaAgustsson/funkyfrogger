@@ -1386,7 +1386,7 @@ function handle_frog() {
 
 					//Om han har nådd målet, er han ferdig med å hoppe.
 					if(frog.y <= frog.jumpTarget) {
-						jump.done();
+						jump_done();
 					}
 				}
 			}
