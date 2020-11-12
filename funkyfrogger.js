@@ -12,6 +12,9 @@ var constants = {
 	tileCount	: 12, //Kor mange "tiles" som er synlege på canvas. Vert nytta til å rekna ut størrelsen ved teikning på canvas.
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"],
 
+	//Tomt objekt
+	none		: {type : "none"},
+
 	carLeft		: [],
 	carRight	: [],
 
@@ -967,6 +970,10 @@ function handle_items(items){
 			items.splice(idx, 1);
 
 			add_points(item.points);
+
+			if(item.points < 0) {
+				game.audio.badNote.play();
+			}
 			break;
 		}
 	}
@@ -1195,6 +1202,8 @@ function start_to_sink(platform) {
 game.audio = {
 	music	: new Audio("audio/the_monarch_full.mp3"),
 	hop		: new Audio("audio/hop9.wav"),
+	drum	: new Audio("audio/tromme_cartoon_timpani.mp3"),
+	badNote	: new Audio("audio/bomlyd_sirene.mp3")
 }
 game.audio.music.loop = true;
 
@@ -1309,6 +1318,7 @@ function create_frog() {
 
 		bestY	: 0,
 
+		platform : constants.none,
 		//https://www.flaticon.com/free-icon/frog_1036001
 		//image : document.getElementById("frog"),
 		animation : document.getElementsByClassName("froganimation"),
@@ -1316,6 +1326,24 @@ function create_frog() {
 	};
 
 	game.frog = frog;
+}
+
+function jump_done() {
+	var frog = game.frog;
+
+	frog.y = frog.jumpTarget;
+	frog.jump = false;
+	frog.inputCooldown = 2;
+
+	//Eitt poeng per rad frosken har overvunne.
+	if(frog.y > frog.bestY) {
+		add_points(1);
+		frog.bestY = frog.y;
+	}
+
+	if(frog.platform.type == "drum") {
+		game.audio.drum.play();
+	}
 }
 
 function handle_frog() {
@@ -1344,15 +1372,7 @@ function handle_frog() {
 
 				//Om han har nådd målet, er han ferdig med å hoppe.
 				if(frog.y >= frog.jumpTarget) {
-					frog.y = frog.jumpTarget;
-					frog.jump = false;
-					frog.inputCooldown = 2;
-
-					//Eitt poeng per rad frosken har overvunne.
-					if(frog.y > frog.bestY) {
-						add_points(1);
-						frog.bestY = frog.y;
-					}
+					jump_done();
 				}
 			}
 
@@ -1366,9 +1386,7 @@ function handle_frog() {
 
 					//Om han har nådd målet, er han ferdig med å hoppe.
 					if(frog.y <= frog.jumpTarget) {
-						frog.y = frog.jumpTarget;
-						frog.jump = false;
-						frog.inputCooldown = 2;
+						jump.done();
 					}
 				}
 			}
@@ -1386,6 +1404,7 @@ function handle_frog() {
 		}
 
 		var safe = true;
+		frog.platform = constants.none;
 
 		//Dersom frosken er i eit vått miljø med platformar itererar me over plattformane for å sjå om han står på ein.
 		//Dersom han gjer det, så seglar han bortetter saman med plattformen.
@@ -1415,6 +1434,8 @@ function handle_frog() {
 							safe = false;
 						}
 					}
+
+					frog.platform = platform;
 					break;
 				}
 			}
