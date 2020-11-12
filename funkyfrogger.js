@@ -15,12 +15,16 @@ var constants = {
 	carLeft		: [],
 	carRight	: [],
 
+	noteCount	: 4,
+	specialNoteCount : 3,
+
 	rockSinkTime	: 1500,
 	sinkTime	: 3000,
 	sinkChance	: 0.0005,
 		//Oppsett av vanskegrad. Større fart og akselerasjon vil vera vanskelegare. Større avstand på platformar vil vera vanskelegare. Større avstand på hinder vil vera lettare.
 	difficulty	: {
 		easy	: {
+			pointLimit		: 0,
 			platformSpeed	: 0.02,
 			platformAccel	: 0.02,
 			platformGap		: 4,
@@ -29,6 +33,7 @@ var constants = {
 			obstacleGap		: 6,
 		},
 		normal	: {
+			pointLimit		: 200,
 			platformSpeed	: 0.03,
 			platformAccel	: 0.03,
 			platformGap		: 6,
@@ -37,6 +42,7 @@ var constants = {
 			obstacleGap		: 5,
 		},
 		hard	: {
+			pointLimit		: 500,
 			platformSpeed	: 0.04,
 			platformAccel	: 0.04,
 			platformGap		: 8,
@@ -45,6 +51,7 @@ var constants = {
 			obstacleGap		: 4,
 		},
 		impossible	: {
+			pointLimit		: 1000,
 			platformSpeed	: 0.05,
 			platformAccel	: 0.05,
 			platformGap		: 10,
@@ -761,13 +768,11 @@ function add_environment(start = undefined) {
 	env.items = [];
 	env.specialItems = [];
 
-	var totalItems = 4;
-	for(var i = 0; i<totalItems; ++i) {
+	for(var i = 0; i<constants.noteCount; ++i) {
 		create_item_in(env);
 	}
 
-	var totalSpecialItems = 2;
-	for(var i = 0; i<totalSpecialItems; ++i) {
+	for(var i = 0; i<constants.specialNoteCount; ++i) {
 		create_special_item_in(env);
 	}
 		
@@ -895,9 +900,9 @@ function add_dragons_to_env(env) {
 
 //Legg til vanlege noter
 function create_item_in(env) {
-	var row = get_random(1, env.tiles);
+	var row = get_random(1, env.tiles-1);
 	var item = {
-		x		: Math.random() * game.width * 1.8 - game.width,
+		x		: (Math.random() * game.width - game.width/2) * 1.8,
 		y		: env.start + row + 0.5,
 
 		width	: 0.5,
@@ -914,19 +919,26 @@ function create_item_in(env) {
 
 //Legg til noter med meir poeng
 function create_special_item_in(env) {
-	var row = get_random(1, env.tiles);
+	var row = get_random(1, env.tiles-1);
 	var item = {
-		x		: Math.random() * game.width * 1.8 - game.width,
+		x		: (Math.random() * game.width - game.width/2) * 1.8,
 		y		: env.start + row + 0.5,
 
 		width	: 0.5,
 		height	: 0.5,
 
-		points	: 30,
-
 		speed	: 0,
+	}
 
-		image	: document.getElementById('clef')
+	if(Math.random() < 0.3) {
+		//Sur note
+		item.points = -30;
+		item.image	= document.getElementById('mute');
+	}
+	else {
+		//Supernote
+		item.points	= 30;
+		item.image	= document.getElementById('clef');
 	}
 
 	if(env.platforms.length > 0) {
@@ -955,8 +967,7 @@ function handle_items(items){
 			var idx = items.indexOf(item);
 			items.splice(idx, 1);
 
-			game.score += item.points;
-			$("#score > span").text(game.score);
+			add_points(item.points);
 			break;
 		}
 	}
@@ -1192,6 +1203,21 @@ game.audio.music.loop = true;
 //       High Score       //
 //************************//
 
+function add_points(points) {
+	game.score += points;
+	$("#score > span").text(game.score);
+
+	if(game.score > constants.difficulty.impossible.pointLimit) {
+		game.difficulty = constants.difficulty.impossible;
+	}
+	else if(game.score > constants.difficulty.hard.pointLimit) {
+		game.difficulty = constants.difficulty.hard;
+	}
+	else if(game.score > constants.difficulty.normal.pointLimit) {
+		game.difficulty = constants.difficulty.normal;
+	}
+}
+
 //Poengsum vert lagra i window.localStorage. Då vert han "permanent" lagra i nettlesaren og kan hentast fram ved seinare tilhøve.
 //Nyttar JSON format for å lagra ein "array" av "high scores" som eit "string" objekt.
 
@@ -1266,6 +1292,8 @@ function create_frog() {
 
 		jump	: false,
 
+		bestY	: 0,
+
 		//https://www.flaticon.com/free-icon/frog_1036001
 		//image : document.getElementById("frog"),
 		animation : document.getElementsByClassName("froganimation"),
@@ -1304,6 +1332,12 @@ function handle_frog() {
 					frog.y = frog.jumpTarget;
 					frog.jump = false;
 					frog.inputCooldown = 2;
+
+					//Eitt poeng per rad frosken har overvunne.
+					if(frog.y > frog.bestY) {
+						add_points(1);
+						frog.bestY = frog.y;
+					}
 				}
 			}
 
