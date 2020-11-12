@@ -253,11 +253,11 @@ function end_game() {
 	game.stop();
 
 	context = game.canvas.getContext("2d");
-	context.fillStyle = "#ffffff";
+	context.fillStyle = "black";
 	let w = $("#gamecanvas").width();
 	let h = $("#gamecanvas").height();
 	context.fillRect(0,0,w,h);
-	context.fillStyle = "#0583FA";
+	context.fillStyle = "#28E322";
 	context.font = "120px calibri";
 	context.textAlign = "center";
 	context.fillText("Game Over!!", w/2, h/2);
