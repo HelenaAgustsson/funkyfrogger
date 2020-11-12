@@ -12,6 +12,9 @@ var constants = {
 	tileCount	: 12, //Kor mange "tiles" som er synlege på canvas. Vert nytta til å rekna ut størrelsen ved teikning på canvas.
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"],
 
+	carLeft		: [],
+	carRight	: [],
+
 	rockSinkTime	: 1500,
 	sinkTime	: 3000,
 	sinkChance	: 0.0005,
@@ -141,6 +144,28 @@ function reset_game() {
 	update_game();
 }
 
+function load_resources() {
+
+	//Utvalg av køyretøy. Er satt opp som array med:
+	//[ image, width, scaleY ]
+	constants.carLeft = [
+		[ document.getElementById("bus"), 3, 3 ],
+		[ document.getElementById("car1"), 2, 2 ],
+		[ document.getElementById("purplecar"), 1.5, 1.5 ],
+		[ document.getElementById("redcar"), 1.5, 1.5 ],
+		[ document.getElementById("yellowcar"), 1.5, 1.5 ],
+		[ document.getElementById("yellowcar2"), 1.5, 1.5 ]
+	];
+
+	constants.carRight = [
+		[ document.getElementById("car2"), 2, 2 ],
+		[ document.getElementById("police"), 1, 1 ],
+		[ document.getElementById("sportscar"), 2, 2 ],
+		[ document.getElementById("truck"), 1, 1 ],
+		[ document.getElementById("redcar2"), 1.5, 1.5 ]
+	];
+}
+
 //Vent til nettsida er lasta før ein hentar canvas og koplar opp funksjonar
 window.onload = function() {
 	game.canvas = document.getElementById("gamecanvas");
@@ -177,6 +202,8 @@ window.onload = function() {
 	for(audio in game.audio) {
 		game.audio[audio].volume = volumeSlider.value / 100;
 	}
+
+	load_resources();
 
 	reset_game();
 }
@@ -789,35 +816,46 @@ function create_obstacles_in(env) {
 			//Alternerer fartsretning
 			if(row % 2 == 0) {
 				obstacle.speed = -obstacle.speed;
+
+				var type = get_random(0, constants.carLeft.length-1);
+				obstacle.image = constants.carLeft[type][0]
+				obstacle.width = constants.carLeft[type][1]
+				obstacle.scaleY = constants.carLeft[type][2]
+			}
+			else {
+				var type = get_random(0, constants.carRight.length-1);
+				obstacle.image = constants.carRight[type][0]
+				obstacle.width = constants.carRight[type][1]
+				obstacle.scaleY = constants.carRight[type][2]
 			}
 
-			switch(get_random(0,2)) {
-				case 0:
-					if(obstacle.speed > 0) {
-						obstacle.image = document.getElementById("redcarright");
-					}
-					else {
-						obstacle.image = document.getElementById("yellowcarleft");
-					}
-					obstacle.width = 2;
-					obstacle.scaleY = 2;
-					break;
-				case 1:
-					if(obstacle.speed > 0) {
-						obstacle.image = document.getElementById("car2");
-					}
-					else {
-						obstacle.image = document.getElementById("car1");
-					}
-					obstacle.width = 2;
-					obstacle.scaleY = 2;
-					break;
-				case 2:
-					obstacle.image = document.getElementById("bus");
-					obstacle.width = 3;
-					obstacle.scaleY = 3;
-					break;
-			}
+			//switch(get_random(0,2)) {
+			//	case 0:
+			//		if(obstacle.speed > 0) {
+			//			obstacle.image = document.getElementById("redcarright");
+			//		}
+			//		else {
+			//			obstacle.image = document.getElementById("yellowcarleft");
+			//		}
+			//		obstacle.width = 2;
+			//		obstacle.scaleY = 2;
+			//		break;
+			//	case 1:
+			//		if(obstacle.speed > 0) {
+			//			obstacle.image = document.getElementById("car2");
+			//		}
+			//		else {
+			//			obstacle.image = document.getElementById("car1");
+			//		}
+			//		obstacle.width = 2;
+			//		obstacle.scaleY = 2;
+			//		break;
+			//	case 2:
+			//		obstacle.image = document.getElementById("bus");
+			//		obstacle.width = 3;
+			//		obstacle.scaleY = 3;
+			//		break;
+			//}
 
 			obstacle.x += obstacle.width/2;
 			x += obstacle.width/2 + game.difficulty.obstacleGap + 2 * Math.random();
