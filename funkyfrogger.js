@@ -762,7 +762,7 @@ function add_environment(start = undefined) {
 		env.image = document.getElementById("road");
 		env.type = "road";
 
-		create_obstacles_in(env);
+		create_cars_in(env);
 	}
 
 	// lager items uansett type miljø foreløpig
@@ -794,7 +794,7 @@ function enviroment_is_complete() {
 //************************//
 
 //Funksjon til å lage hindringar til eit miljø.
-function create_obstacles_in(env) {
+function create_cars_in(env) {
 	for(var row = 1; row < env.tiles; ++row) {
 		//var carColors = ["blue", "purple", "black"];
 		//var carTypes = [
@@ -815,6 +815,8 @@ function create_obstacles_in(env) {
 
 				speed	: game.difficulty.obstacleSpeed +
 						  game.difficulty.obstacleAccel * row,
+
+				type	: "car"
 
 				//color	: carColors[get_random(0,2)],
 				//image	: carTypes[get_random(0,2)]
@@ -1202,6 +1204,9 @@ function start_to_sink(platform) {
 game.audio = {
 	music	: new Audio("audio/the_monarch_full.mp3"),
 	hop		: new Audio("audio/hop9.wav"),
+	splash	: new Audio("audio/splash.wav"),
+	burn	: new Audio("audio/tree-burns-down.wav"),
+	crash	: new Audio("audio/car_crash.mp3"),
 	drum	: new Audio("audio/tromme_cartoon_timpani.mp3"),
 	badNote	: new Audio("audio/bomlyd_sirene.mp3")
 }
@@ -1439,6 +1444,15 @@ function handle_frog() {
 					break;
 				}
 			}
+
+			if(!safe) {
+				if(currentEnv.type == "river") {
+					game.audio.splash.play();
+				}
+				else if(currentEnv.type == "lava") {
+					game.audio.burn.play();
+				}
+			}
 		}
 
 		//Tester om frosken kolliderar med ein bil
@@ -1450,6 +1464,10 @@ function handle_frog() {
 				if(collision_detect(frog, obstacle, 0.9))
 				{
 					safe = false;
+
+					if(obstacle.type == "car") {
+						game.audio.crash.play();
+					}
 
 					//Endrar farge for å visa kontakt. Debugfunksjon
 					//obstacle.color = "red";

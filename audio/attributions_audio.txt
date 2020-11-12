@@ -40,3 +40,12 @@ http://creativecommons.org/licenses/by/3.0/
 
 hop9
 https://freesound.org/people/felixyadomi/sounds/456373/
+
+splash
+https://freesound.org/people/petenice/sounds/9508/
+
+tree-falls-burn
+https://freesound.org/people/qubodup/sounds/442676/
+
+tree-burns
+https://freesound.org/people/qubodup/sounds/442677/
