@@ -1303,8 +1303,8 @@ function create_frog() {
 	var frog = {
 		x : 0,
 		y : 0.5,
-		width  : 0.75,
-		height : 0.75,
+		width  : 0.95,
+		height : 0.95,
 
 		xSpeed : 0,
 		ySpeed : 0,
@@ -1322,6 +1322,8 @@ function create_frog() {
 		jump	: false,
 
 		bestY	: 0,
+
+		dying : 0,
 
 		platform : constants.none,
 		//https://www.flaticon.com/free-icon/frog_1036001
@@ -1362,147 +1364,161 @@ function handle_frog() {
 		currentEnv = game.env[++i];
 	}
 
-	//Dersom frosken har vandra over i neste miljø vil skjermen scrolla nedover
-	//fram til førre miljø forsvinner ut av canvas og vert sletta i handle_enviroment.
-	//Når dette skjer kan me ikkje flytta på frosken og han vil ikkje kollidera med noko.
-	if(currentEnv != game.env[0])
-	{
-		game.distance += constants.scrollSpeed;
-		frog.y = currentEnv.start + 1;
-	}
-	else {
-		if(frog.jump == true) {
-			if(frog.jumpTarget >= frog.y) {
-				frog.y += frog.jumpSpeed;
-
-				//Om han har nådd målet, er han ferdig med å hoppe.
-				if(frog.y >= frog.jumpTarget) {
-					jump_done();
-				}
-			}
-
-			else if(frog.jumpTarget <= frog.y) {
-				if(frog.jumpTarget < currentEnv.start) {
-					//Frosken kan ikkje hoppa tilbake til førre miljø
-					frog.jump = false;
-				}
-				else {
-					frog.y -= frog.jumpSpeed;
-
-					//Om han har nådd målet, er han ferdig med å hoppe.
-					if(frog.y <= frog.jumpTarget) {
-						jump_done();
-					}
-				}
-			}
-
-		}
-		else {
-			//Me oppdaterar frosken sin posisjon med farten dei har i x retning
-			if(frog.inputCooldown > 0) {
-				frog.inputCooldown -= 1;
-			}
-			else {
-				frog.x += frog.xSpeed;
-				//frog.y += frog.ySpeed;
-			}
-		}
-
-		var safe = true;
-		frog.platform = constants.none;
-
-		//Dersom frosken er i eit vått miljø med platformar itererar me over plattformane for å sjå om han står på ein.
-		//Dersom han gjer det, så seglar han bortetter saman med plattformen.
-		//Dersom han ikkje gjer det, så må han mista eit liv.
-		if(currentEnv.platforms.length > 0 && frog.y < currentEnv.end)
-		{
-			safe = false;
-			for(platform of currentEnv.platforms.concat(currentEnv.safePlatforms))
-			{
-				//Collision detect med 0.1 for at mesteparten av frosken må vera oppå platformen.
-				if(collision_detect(frog, platform, 0.1))
-				{
-					safe = true;
-					frog.x += platform.speed;
-
-					//Lavasteiner synker!
-					if(platform.type == "rock" && !platform.sinking) {
-						start_to_sink(platform);
-					}
-
-					//Er det ein farleg krokodille?
-					if(platform.type == "crocodile") {
-						if(platform.speed < 0 && frog.x < platform.x) {
-							safe = false;
-						}
-						else if(platform.speed > 0 && frog.x > platform.x) {
-							safe = false;
-						}
-					}
-
-					frog.platform = platform;
-					break;
-				}
-			}
-
-			if(!safe) {
-				if(currentEnv.type == "river") {
-					game.audio.splash.play();
-				}
-				else if(currentEnv.type == "lava") {
-					game.audio.burn.play();
-				}
-			}
-		}
-
-		//Tester om frosken kolliderar med ein bil
-		if(safe == true && currentEnv.hasOwnProperty("obstacles"))
-		{
-			for(obstacle of currentEnv.obstacles)
-			{
-				//Collision detect med 0.9 for å gje litt slark med kollisjonen.
-				if(collision_detect(frog, obstacle, 0.9))
-				{
-					safe = false;
-
-					if(obstacle.type == "car") {
-						game.audio.crash.play();
-					}
-
-					//Endrar farge for å visa kontakt. Debugfunksjon
-					//obstacle.color = "red";
-					break;
-				}
-			}
-		}
-		
-		//Frosken er i vatnet eller truffen av ein bil.
-		if(safe == false) {
-			frog.inputCooldown = game.fps/2;
+	if(frog.dying) {
+		if(game.frameTime - frog.dying > 3000) {
+			frog.dying = 0;
 			frog.lifePoints -= 1;
-			if(frog.lifePoints==2){
-				$("#life3").removeClass("fa-heart").addClass("fa-heart-o");
-			} else if(frog.lifePoints==1){
-				$("#life2").removeClass("fa-heart").addClass("fa-heart-o");
-			} else if(frog.lifePoints==0){
-				$("#life1").removeClass("fa-heart").addClass("fa-heart-o");
-			} 
+			frog.animation = document.getElementsByClassName("froganimation");
 
 			frog.x = 0;
 			frog.y = currentEnv.start + 0.5;
 			frog.jump = false;
 		}
 	}
+	else {
 
-	//Stenger frosken inne i spelvindauge.
-	if(frog.y - frog.height/2 < game.distance) {
-		frog.y = game.distance + frog.height/2;
-	}
-	if(frog.x + frog.width/2 > game.width) {
-		frog.x = game.width - frog.width/2;
-	}
-	else if(frog.x - frog.width/2 < -game.width) {
-		frog.x = frog.width/2 - game.width;
+		//Dersom frosken har vandra over i neste miljø vil skjermen scrolla nedover
+		//fram til førre miljø forsvinner ut av canvas og vert sletta i handle_enviroment.
+		//Når dette skjer kan me ikkje flytta på frosken og han vil ikkje kollidera med noko.
+		if(currentEnv != game.env[0])
+		{
+			game.distance += constants.scrollSpeed;
+			frog.y = currentEnv.start + 1;
+		}
+		else {
+			if(frog.jump == true) {
+				if(frog.jumpTarget >= frog.y) {
+					frog.y += frog.jumpSpeed;
+
+					//Om han har nådd målet, er han ferdig med å hoppe.
+					if(frog.y >= frog.jumpTarget) {
+						jump_done();
+					}
+				}
+
+				else if(frog.jumpTarget <= frog.y) {
+					if(frog.jumpTarget < currentEnv.start) {
+						//Frosken kan ikkje hoppa tilbake til førre miljø
+						frog.jump = false;
+					}
+					else {
+						frog.y -= frog.jumpSpeed;
+
+						//Om han har nådd målet, er han ferdig med å hoppe.
+						if(frog.y <= frog.jumpTarget) {
+							jump_done();
+						}
+					}
+				}
+
+			}
+			else {
+				//Me oppdaterar frosken sin posisjon med farten dei har i x retning
+				if(frog.inputCooldown > 0) {
+					frog.inputCooldown -= 1;
+				}
+				else {
+					frog.x += frog.xSpeed;
+					//frog.y += frog.ySpeed;
+				}
+			}
+
+			var safe = true;
+			frog.platform = constants.none;
+
+			//Dersom frosken er i eit vått miljø med platformar itererar me over plattformane for å sjå om han står på ein.
+			//Dersom han gjer det, så seglar han bortetter saman med plattformen.
+			//Dersom han ikkje gjer det, så må han mista eit liv.
+			if(currentEnv.platforms.length > 0 && frog.y < currentEnv.end)
+			{
+				safe = false;
+				for(platform of currentEnv.platforms.concat(currentEnv.safePlatforms))
+				{
+					//Collision detect med 0.1 for at mesteparten av frosken må vera oppå platformen.
+					if(collision_detect(frog, platform, 0.1))
+					{
+						safe = true;
+						frog.x += platform.speed;
+
+						//Lavasteiner synker!
+						if(platform.type == "rock" && !platform.sinking) {
+							start_to_sink(platform);
+						}
+
+						frog.platform = platform;
+
+						//Er det ein farleg krokodille?
+						if(platform.type == "crocodile") {
+							if(platform.speed < 0 && frog.x < platform.x) {
+								safe = false;
+							}
+							else if(platform.speed > 0 && frog.x > platform.x) {
+								safe = false;
+							}
+						}
+
+						break;
+					}
+				}
+
+				//Ingen plattform!!
+				if(frog.platform == constants.none) {
+					if(currentEnv.type == "river") {
+						game.audio.splash.play();
+					}
+					else if(currentEnv.type == "lava") {
+						game.audio.burn.play();
+					}
+				}
+			}
+
+			//Tester om frosken kolliderar med ein bil
+			if(safe == true && currentEnv.hasOwnProperty("obstacles"))
+			{
+				for(obstacle of currentEnv.obstacles)
+				{
+					//Collision detect med 0.9 for å gje litt slark med kollisjonen.
+					if(collision_detect(frog, obstacle, 0.9))
+					{
+						safe = false;
+
+						if(obstacle.type == "car") {
+							game.audio.crash.play();
+						}
+
+						//Endrar farge for å visa kontakt. Debugfunksjon
+						//obstacle.color = "red";
+						break;
+					}
+				}
+			}
+
+			//Frosken er i vatnet eller truffen av ein bil.
+			if(safe == false) {
+				frog.dying = game.frameTime;
+				frog.animation = document.getElementsByClassName("explosion");
+
+				if(frog.lifePoints==3){
+					$("#life3").removeClass("fa-heart").addClass("fa-heart-o");
+				} else if(frog.lifePoints==2){
+					$("#life2").removeClass("fa-heart").addClass("fa-heart-o");
+				} else if(frog.lifePoints==1){
+					$("#life1").removeClass("fa-heart").addClass("fa-heart-o");
+				} 
+			}
+		}
+
+		//Stenger frosken inne i spelvindauge.
+		if(frog.y - frog.height/2 < game.distance) {
+			frog.y = game.distance + frog.height/2;
+		}
+		if(frog.x + frog.width/2 > game.width) {
+			frog.x = game.width - frog.width/2;
+		}
+		else if(frog.x - frog.width/2 < -game.width) {
+			frog.x = frog.width/2 - game.width;
+		}
+
 	}
 
 	//draw_object(frog);
