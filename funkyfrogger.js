@@ -1082,10 +1082,10 @@ function create_river_platforms(env) {
 				platform.type = 'crocodile';
 
 				if(platform.speed < 0) {
-					platform.image = document.getElementById("crocodile");
+					platform.image = document.getElementById("crocodile-l");
 				}
 				else {
-					platform.image = document.getElementById("alligator");
+					platform.image = document.getElementById("alligator-r");
 				}
 			}
 			else if(type < 0.2) {
