@@ -887,7 +887,7 @@ function add_dragons_to_env(env) {
 			speed	: game.difficulty.obstacleSpeed +
 				game.difficulty.obstacleAccel * row,
 
-			image	: document.getElementById("dragonblue")
+			image	: document.getElementById("dragongreen")
 		}
 
 		if(row < 3) {
@@ -1203,12 +1203,14 @@ function start_to_sink(platform) {
 
 game.audio = {
 	music	: new Audio("audio/the_monarch_full.mp3"),
-	hop		: new Audio("audio/hop9.wav"),
+	hop		: new Audio("audio/frog.wav"),
 	splash	: new Audio("audio/splash.wav"),
 	burn	: new Audio("audio/tree-burns-down.wav"),
 	crash	: new Audio("audio/car_crash.mp3"),
 	drum	: new Audio("audio/tromme_cartoon_timpani.mp3"),
-	badNote	: new Audio("audio/bomlyd_sirene.mp3")
+	badNote	: new Audio("audio/bomlyd_sirene.mp3"),
+	cymbal	: new Audio("audio/cymbal.wav"),
+	trumpet	: new Audio("audio/trumpet.wav")
 }
 game.audio.music.loop = true;
 
@@ -1350,6 +1352,10 @@ function jump_done() {
 
 	if(frog.platform.type == "drum") {
 		game.audio.drum.play();
+	}
+
+	if(frog.platform.type == "rock") {
+		game.audio.cymbal.play();
 	}
 }
 
