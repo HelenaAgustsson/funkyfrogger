@@ -12,6 +12,18 @@ var constants = {
 	tileCount	: 12, //Kor mange "tiles" som er synlege på canvas. Vert nytta til å rekna ut størrelsen ved teikning på canvas.
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"],
 
+	cars		: [
+		[ "bus",	3.3, 3.3 ],
+		[ "car1",	2, 2 ],
+		[ "car2",	2, 2 ],
+		[ "cyber",	1.8, 1.8 ],
+		[ "police", 1.8, 1.8 ],
+		[ "police2", 2.25, 2.25 ],
+		[ "scooter", 1, 1 ],
+		[ "sportscar", 2, 2 ],
+		[ "truck",	2, 2 ],
+	],
+
 	//Tomt objekt
 	none		: {type : "none"},
 
@@ -157,21 +169,20 @@ function load_resources() {
 
 	//Utvalg av køyretøy. Er satt opp som array med:
 	//[ image, width, scaleY ]
+
 	constants.carLeft = [
-		[ document.getElementById("bus"), 3, 3 ],
+		[ document.getElementById("bus-l"), 3.3, 3.3 ],
 		[ document.getElementById("car1"), 2, 2 ],
-		[ document.getElementById("purplecar"), 1.5, 1.5 ],
-		[ document.getElementById("redcar"), 1.5, 1.5 ],
-		[ document.getElementById("yellowcar"), 1.5, 1.5 ],
-		[ document.getElementById("yellowcar2"), 1.5, 1.5 ]
+		[ document.getElementById("cyber"), 1.8, 1.8 ],
+		[ document.getElementById("police2"), 2.2, 2.2 ],
+		[ document.getElementById("scooter"), 1, 1 ],
 	];
 
 	constants.carRight = [
 		[ document.getElementById("car2"), 2, 2 ],
-		[ document.getElementById("police"), 1, 1 ],
+		[ document.getElementById("police-r"), 1.8, 1.8 ],
 		[ document.getElementById("sportscar"), 2, 2 ],
-		[ document.getElementById("truck"), 1, 1 ],
-		[ document.getElementById("redcar2"), 1.5, 1.5 ]
+		[ document.getElementById("truck-r"), 2, 2 ],
 	];
 }
 
@@ -356,7 +367,6 @@ function animate_object(object) {
 	object.image = object.animation[i];
 	draw_object(object);
 }
-
 
 function draw_objects(objects) {
 	for(object of objects) {
@@ -615,6 +625,9 @@ function handle_enviroment() {
 
 	//Teikn opp alle miljø på canvas.
 	for (env of game.env) {
+	//for (var i = game.env.length-1; i >= 0; --i) {
+		//var env = game.env[i]
+
 		draw_environment(env);
 
 		//Flyttar og teiknar opp objekt i miljøet
@@ -800,7 +813,8 @@ function enviroment_is_complete() {
 
 //Funksjon til å lage hindringar til eit miljø.
 function create_cars_in(env) {
-	for(var row = 1; row < env.tiles; ++row) {
+	for(var row = env.tiles-1; row > 0; --row) {
+	//for(var row = 0; row < env.tiles; ++row) {
 		//var carColors = ["blue", "purple", "black"];
 		//var carTypes = [
 		//	car1 = document.getElementById("redcar_right"),
@@ -808,7 +822,7 @@ function create_cars_in(env) {
 		//	bus = document.getElementById("bus")
 		//];
 
-		var x = -game.width - 4;
+		var x = -game.width - 2;
 
 		while(x < game.width + 4) {
 			var obstacle = {
@@ -827,20 +841,19 @@ function create_cars_in(env) {
 				//image	: carTypes[get_random(0,2)]
 			}
 
+			var type = get_random(0, constants.cars.length-1);
+
+			obstacle.width = constants.cars[type][1]
+			obstacle.scaleY = constants.cars[type][2]
+
 			//Alternerer fartsretning
 			if(row % 2 == 0) {
 				obstacle.speed = -obstacle.speed;
 
-				var type = get_random(0, constants.carLeft.length-1);
-				obstacle.image = constants.carLeft[type][0]
-				obstacle.width = constants.carLeft[type][1]
-				obstacle.scaleY = constants.carLeft[type][2]
+				obstacle.image = document.getElementById(constants.cars[type][0] + "-l");
 			}
 			else {
-				var type = get_random(0, constants.carRight.length-1);
-				obstacle.image = constants.carRight[type][0]
-				obstacle.width = constants.carRight[type][1]
-				obstacle.scaleY = constants.carRight[type][2]
+				obstacle.image = document.getElementById(constants.cars[type][0] + "-r");
 			}
 
 			//switch(get_random(0,2)) {
@@ -994,7 +1007,8 @@ function handle_items(items){
 function create_lava_platforms(env) {
 
 	//Legger til trommer
-	for(var row = 2; row < env.tiles; row += 2) {
+	//for(var row = 2; row < env.tiles; row += 2) {
+	for(var row = env.tiles-2; row > 0 ; row -= 2) {
 		for(var i = -1; i < 2; ++i)
 		{
 			var platform = {
@@ -1018,9 +1032,10 @@ function create_lava_platforms(env) {
 	}
 
 	//Lager lavasteiner
-	for(var row = 1; row < env.tiles; row += 2) {
+	//for(var row = 1; row < env.tiles; row += 2) {
+	for(var row = env.tiles-1; row > 0 ; row -= 2) {
 
-		var x = -game.width - 4;
+		var x = -game.width - 2;
 		while(x < game.width + 4) {
 			var platform = {
 				x		: x,
@@ -1057,9 +1072,10 @@ function create_lava_platforms(env) {
 
 //Funksjon til å lage platformer til eit miljø.
 function create_river_platforms(env) {
-	for(var row = 1; row < env.tiles; ++row) {
+	//for(var row = 1; row < env.tiles; ++row) {
+	for(var row = env.tiles -1; row > 0; --row) {
 
-		var x = -game.width - 4;
+		var x = -game.width - 2;
 		while(x < game.width + 4) {
 			var platform = {
 				x		: x,
@@ -1085,13 +1101,24 @@ function create_river_platforms(env) {
 				platform.scaleY = 2;
 
 				platform.type = 'crocodile';
+;
+				let animation;
 
-				if(platform.speed < 0) {
-					platform.animation = document.getElementsByClassName("crocodile-l");
+				if(Math.random() < 0.5) {
+					animation = "crocodile";
 				}
 				else {
-					platform.image = document.getElementById("alligator-r");
+					animation = "alligator";
 				}
+
+				if(platform.speed < 0) {
+					animation += "-l";
+				}
+				else {
+					animation += "-r";
+				}
+
+				platform.animation = document.getElementsByClassName(animation);
 			}
 			else if(type < 0.2) {
 				//Trompet
@@ -1101,7 +1128,12 @@ function create_river_platforms(env) {
 				platform.scaleY = 1.5;
 
 				platform.type = 'trumpet';
-				platform.image = document.getElementById("trumpet");
+				if(platform.speed < 0) {
+					platform.image = document.getElementById("trumpet-l");
+				}
+				else {
+					platform.image = document.getElementById("trumpet-r");
+				}
 			}
 			else {
 				//Tømmerstokk
@@ -1111,7 +1143,13 @@ function create_river_platforms(env) {
 				platform.scaleY = 2.5;
 
 				platform.type = 'log';
-				platform.image = document.getElementById("log1");
+
+				if(platform.speed < 0) {
+					platform.image = document.getElementById("log1-l");
+				}
+				else {
+					platform.image = document.getElementById("log1-r");
+				}
 			}
 
 			platform.x += platform.width/2;
@@ -1334,9 +1372,9 @@ function create_frog() {
 
 		platform : constants.none,
 		//https://www.flaticon.com/free-icon/frog_1036001
-		//image : document.getElementById("frog"),
-		animation : document.getElementsByClassName("froganimation"),
-		animationStart : 0
+		image : document.getElementById("frog"),
+		//animation : document.getElementsByClassName("froganimation"),
+		//animationStart : 0
 	};
 
 	game.frog = frog;
@@ -1532,6 +1570,11 @@ function handle_frog() {
 
 	}
 
-	//draw_object(frog);
-	animate_object(frog);
+	if(frog.dying) {
+		animate_object(frog);
+	}
+	else {
+		frog.image = document.getElementById("frog");
+		draw_object(frog);
+	}
 }
