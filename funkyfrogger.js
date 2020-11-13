@@ -360,7 +360,12 @@ function animate_object(object) {
 
 function draw_objects(objects) {
 	for(object of objects) {
-		draw_object(object);
+		if(object.hasOwnProperty("animation")) {
+			animate_object(object);
+		}
+		else {
+			draw_object(object);
+		}
 	}
 }
 
@@ -618,8 +623,8 @@ function handle_enviroment() {
 		move_objects(env.platforms);
 		for(platform of env.platforms) {
 			handle_sinking(platform);
-			draw_object(platform);
 		}
+		draw_objects(env.platforms);
 
 		handle_items(env.items);
 		animate_objects(env.items);
@@ -1082,7 +1087,7 @@ function create_river_platforms(env) {
 				platform.type = 'crocodile';
 
 				if(platform.speed < 0) {
-					platform.image = document.getElementById("crocodile-l");
+					platform.animation = document.getElementsByClassName("crocodile-l");
 				}
 				else {
 					platform.image = document.getElementById("alligator-r");
