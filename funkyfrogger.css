@@ -184,10 +184,8 @@ er lånt fra https://www.w3schools.com/css/tryit.asp?filename=trycss_template2_f
     font-weight: bolder;
 	text-align: center;
 	color: #F500C2;
-	/*
-	får ikke skiftet farge når denne er med, vet ikke hvorfor
 	-webkit-text-stroke: 3px #0058FF;
-	*/
+	
 	
 
 }
