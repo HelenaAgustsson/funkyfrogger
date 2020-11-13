@@ -287,7 +287,6 @@ canvas {
 
 .game-button {
 	padding: 5px 10px;
-	background-color: #ffffff;
 	border: solid 2px #056CF2;
 	background-color: #056CF2;
 	color: white;
@@ -303,6 +302,12 @@ canvas {
 .game-button:hover {
 	background-color: #F500C2;
 	border-color: #F500C2;
+}
+
+.game-volume {
+	margin-top: -15px;
+	padding: 25px 10px;
+	color: #056CF2;
 }
 
 
