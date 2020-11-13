@@ -379,11 +379,12 @@ canvas {
 #scoretable tr:hover {background-color: #ddd;}
 
 #scoretable th {
-	padding-top: 12px;
-	padding-bottom: 12px;
-	text-align: left;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	text-align: center;
 	background-color: #4CAF50;
 	color: white;
+	font-size: 20px;
 }
 
 /* Tabellen er sterkt inspirert fra w3schools, og mye av koden er lånt
