@@ -310,15 +310,7 @@ canvas {
 	font-weight: bold;
 }
 
-@media screen and (max-width: 420px) {
-	.statusbar-item, .game-button  {
-		font-size: 0.8rem;
-	}
-	.page-header {
-		font-size: 1.8rem;
-	}
-	
-}
+
 
 .statusbar-item {
 	border-top: solid #056CF2 2px;
@@ -426,4 +418,20 @@ ul.game-rules.row {
 	padding-top: 12px;
 	font-size: 16px;
 	font-weight: normal;
+}
+
+@media screen and (max-width: 420px) {
+	.statusbar-item, .game-button  {
+		font-size: 0.8rem;
+	}
+	.page-header {
+		font-size: 1.8rem;
+	}
+	#header {
+		font-size: 4rem;
+	}
+	.button {
+		padding: 20px;
+	}
+	
 }
