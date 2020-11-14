@@ -8,9 +8,22 @@ var time = 0;
 
 //Faste konstantar me ikkje forventar skal endre seg i løpet av spelet. 
 var constants = {
-	scrollSpeed	: 0.5,
+	scrollSpeed	: 10,
+	//scrollSpeed	: 0.5,
 	tileCount	: 12, //Kor mange "tiles" som er synlege på canvas. Vert nytta til å rekna ut størrelsen ved teikning på canvas.
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"],
+
+	cars		: [
+		[ "bus",	3.3, 3.3 ],
+		[ "car1",	2, 2 ],
+		[ "car2",	2, 2 ],
+		[ "cyber",	1.8, 1.8 ],
+		[ "police", 1.8, 1.8 ],
+		[ "police2", 2.25, 2.25 ],
+		[ "scooter", 1, 1 ],
+		[ "sportscar", 2, 2 ],
+		[ "truck",	2, 2 ],
+	],
 
 	//Tomt objekt
 	none		: {type : "none"},
@@ -28,40 +41,77 @@ var constants = {
 	difficulty	: {
 		easy	: {
 			pointLimit		: 200,
-			platformSpeed	: 0.02,
-			platformAccel	: 0.02,
+			platformSpeed	: 0.4,
+			platformAccel	: 0.4,
 			platformGap		: 4,
-			obstacleSpeed	: 0.02,
-			obstacleAccel	: 0.02,
+			obstacleSpeed	: 0.4,
+			obstacleAccel	: 0.4,
 			obstacleGap		: 6,
 		},
 		normal	: {
 			pointLimit		: 500,
-			platformSpeed	: 0.03,
-			platformAccel	: 0.03,
+			platformSpeed	: 0.6,
+			platformAccel	: 0.6,
 			platformGap		: 6,
-			obstacleSpeed	: 0.03,
-			obstacleAccel	: 0.03,
+			obstacleSpeed	: 0.6,
+			obstacleAccel	: 0.6,
 			obstacleGap		: 5,
 		},
 		hard	: {
 			pointLimit		: 1000,
-			platformSpeed	: 0.04,
-			platformAccel	: 0.04,
+			platformSpeed	: 0.8,
+			platformAccel	: 0.8,
 			platformGap		: 8,
-			obstacleSpeed	: 0.04,
-			obstacleAccel	: 0.04,
+			obstacleSpeed	: 0.8,
+			obstacleAccel	: 0.8,
 			obstacleGap		: 4,
 		},
 		impossible	: {
-			platformSpeed	: 0.05,
-			platformAccel	: 0.05,
+			platformSpeed	: 1.0,
+			platformAccel	: 1.0,
 			platformGap		: 10,
-			obstacleSpeed	: 0.05,
-			obstacleAccel	: 0.05,
+			obstacleSpeed	: 1.0,
+			obstacleAccel	: 1.0,
 			obstacleGap		: 3,
 		}
 	}
+//	difficulty	: {
+//		easy	: {
+//			pointLimit		: 200,
+//			platformSpeed	: 0.02,
+//			platformAccel	: 0.02,
+//			platformGap		: 4,
+//			obstacleSpeed	: 0.02,
+//			obstacleAccel	: 0.02,
+//			obstacleGap		: 6,
+//		},
+//		normal	: {
+//			pointLimit		: 500,
+//			platformSpeed	: 0.03,
+//			platformAccel	: 0.03,
+//			platformGap		: 6,
+//			obstacleSpeed	: 0.03,
+//			obstacleAccel	: 0.03,
+//			obstacleGap		: 5,
+//		},
+//		hard	: {
+//			pointLimit		: 1000,
+//			platformSpeed	: 0.04,
+//			platformAccel	: 0.04,
+//			platformGap		: 8,
+//			obstacleSpeed	: 0.04,
+//			obstacleAccel	: 0.04,
+//			obstacleGap		: 4,
+//		},
+//		impossible	: {
+//			platformSpeed	: 0.05,
+//			platformAccel	: 0.05,
+//			platformGap		: 10,
+//			obstacleSpeed	: 0.05,
+//			obstacleAccel	: 0.05,
+//			obstacleGap		: 3,
+//		}
+//	}
 };
 
 var game = {
@@ -71,8 +121,9 @@ var game = {
 	score       : 0,
 	tileSize	: 0,
 	distance	: 0,
-	started		: 0,	//Når spelet er i gang vil "started" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
-	fps			: 20,
+	started		: false,	//Når spelet er i gang vil "started" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
+	//started		: 0,	//Når spelet er i gang vil "started" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
+	fps			: 30,
 	env			: [],
 
 	//Spelfunksjonar for å styre spelet.
@@ -81,11 +132,14 @@ var game = {
 	reset	: reset_game,
 	end		: end_game,
 
-	start	: function(fps = 20) {
-		if(this.started == 0)
+	start	: function(fps = 30) {
+		if(!this.started)
+		//if(this.started == 0)
 		{
 			this.fps = fps;
-			this.started = setInterval(this.update, 1000/fps);
+			this.started = true;
+			//this.started = setInterval(this.update, 1000/fps);
+			this.update();
 			this.audio.music.play();
 		}
 		else
@@ -95,16 +149,19 @@ var game = {
 	},
 
 	stop	: function() {
-		if(this.started != 0)
+		if(this.started)
+		//if(this.started != 0)
 		{
-			clearInterval(this.started);
-			this.started = 0;
+			this.started = false;
+			//clearInterval(this.started);
+			//this.started = 0;
 			this.audio.music.pause();
 		}
 	},
 
 	pause	: function() {
-		if(this.started != 0)
+		if(this.started)
+		//if(this.started != 0)
 		{
 			this.stop()
 		}
@@ -153,31 +210,31 @@ function reset_game() {
 	update_game();
 }
 
-function load_resources() {
-
-	//Utvalg av køyretøy. Er satt opp som array med:
-	//[ image, width, scaleY ]
-	constants.carLeft = [
-		[ document.getElementById("bus"), 3, 3 ],
-		[ document.getElementById("car1"), 2, 2 ],
-		[ document.getElementById("purplecar"), 1.5, 1.5 ],
-		[ document.getElementById("redcar"), 1.5, 1.5 ],
-		[ document.getElementById("yellowcar"), 1.5, 1.5 ],
-		[ document.getElementById("yellowcar2"), 1.5, 1.5 ]
-	];
-
-	constants.carRight = [
-		[ document.getElementById("car2"), 2, 2 ],
-		[ document.getElementById("police"), 1, 1 ],
-		[ document.getElementById("sportscar"), 2, 2 ],
-		[ document.getElementById("truck"), 1, 1 ],
-		[ document.getElementById("redcar2"), 1.5, 1.5 ]
-	];
-}
+//function load_resources() {
+//
+//	//Utvalg av køyretøy. Er satt opp som array med:
+//	//[ image, width, scaleY ]
+//
+//	constants.carLeft = [
+//		[ document.getElementById("bus-l"), 3.3, 3.3 ],
+//		[ document.getElementById("car1"), 2, 2 ],
+//		[ document.getElementById("cyber"), 1.8, 1.8 ],
+//		[ document.getElementById("police2"), 2.2, 2.2 ],
+//		[ document.getElementById("scooter"), 1, 1 ],
+//	];
+//
+//	constants.carRight = [
+//		[ document.getElementById("car2"), 2, 2 ],
+//		[ document.getElementById("police-r"), 1.8, 1.8 ],
+//		[ document.getElementById("sportscar"), 2, 2 ],
+//		[ document.getElementById("truck-r"), 2, 2 ],
+//	];
+//}
 
 //Vent til nettsida er lasta før ein hentar canvas og koplar opp funksjonar
 window.onload = function() {
 	game.canvas = document.getElementById("gamecanvas");
+
 	//let coinImg = document.getElementById('coins');
 	let startButton = $("#start-btn");
 	let stopButton = $("#stop-btn");
@@ -212,14 +269,20 @@ window.onload = function() {
 		game.audio[audio].volume = volumeSlider.value / 100;
 	}
 
-	load_resources();
+	//load_resources();
 
 	reset_game();
 }
 
 //Hovudloopen til spelet. Alt starter frå her.
-function update_game() {
-	game.frameTime = Date.now();
+function update_game(frameTime) {
+	game.deltaTime = (frameTime - game.frameTime) / 1000;
+	game.frameTime = frameTime;
+
+	if(isNaN(game.deltaTime)) {
+		game.deltaTime = 0.033;
+	}
+
 	set_canvas();
 
 	// Miljø
@@ -230,15 +293,41 @@ function update_game() {
 	if(game.frog.lifePoints < 1) {
 		game.end();
 	}
+
+	if(game.started) {
+		if(game.fps < 45) {
+			window.requestAnimationFrame(wait_a_frame);
+		}
+		else {
+			window.requestAnimationFrame(game.update);
+		}
+	}
 }
+
+function wait_a_frame() {
+	window.requestAnimationFrame(game.update);
+}
+
+//function update_game() {
+//	game.frameTime = Date.now();
+//	set_canvas();
+//
+//	// Miljø
+//	handle_enviroment();
+//
+//	handle_frog();
+//
+//	if(game.frog.lifePoints < 1) {
+//		game.end();
+//	}
+//}
 
 function end_game() {
 	//Vis sluttskjerm med poengsum og "Vil du spille igjen?"
 	
-
 	add_high_score("Froggy", game.score);
 	let lastHighscore = parseInt( $("#highscore > span").text());
-	console.log(lastHighscore);
+	//console.log(lastHighscore);
 	if(game.score > lastHighscore){
 		$("#highscore > span").text(game.score);
 	}
@@ -249,8 +338,8 @@ function end_game() {
 //		console.log(hs);
 //	}
 	
-	game.reset();
 	game.stop();
+	game.reset();
 
 	context = game.canvas.getContext("2d");
 	context.fillStyle = "black";
@@ -357,10 +446,14 @@ function animate_object(object) {
 	draw_object(object);
 }
 
-
 function draw_objects(objects) {
 	for(object of objects) {
-		draw_object(object);
+		if(object.hasOwnProperty("animation")) {
+			animate_object(object);
+		}
+		else {
+			draw_object(object);
+		}
 	}
 }
 
@@ -397,7 +490,7 @@ function move_objects(objects) {
 
 	for (o of objects) {
 
-		o.x += o.speed;
+		o.x += o.speed * game.deltaTime;
 
 		//Dersom platformen har køyrd ut på eine sida, send han inn att på den andre sida.
 		if(o.x > maxX)
@@ -610,6 +703,9 @@ function handle_enviroment() {
 
 	//Teikn opp alle miljø på canvas.
 	for (env of game.env) {
+	//for (var i = game.env.length-1; i >= 0; --i) {
+		//var env = game.env[i]
+
 		draw_environment(env);
 
 		//Flyttar og teiknar opp objekt i miljøet
@@ -618,8 +714,8 @@ function handle_enviroment() {
 		move_objects(env.platforms);
 		for(platform of env.platforms) {
 			handle_sinking(platform);
-			draw_object(platform);
 		}
+		draw_objects(env.platforms);
 
 		handle_items(env.items);
 		animate_objects(env.items);
@@ -795,7 +891,8 @@ function enviroment_is_complete() {
 
 //Funksjon til å lage hindringar til eit miljø.
 function create_cars_in(env) {
-	for(var row = 1; row < env.tiles; ++row) {
+	for(var row = env.tiles-1; row > 0; --row) {
+	//for(var row = 0; row < env.tiles; ++row) {
 		//var carColors = ["blue", "purple", "black"];
 		//var carTypes = [
 		//	car1 = document.getElementById("redcar_right"),
@@ -803,7 +900,7 @@ function create_cars_in(env) {
 		//	bus = document.getElementById("bus")
 		//];
 
-		var x = -game.width - 4;
+		var x = -game.width - 2;
 
 		while(x < game.width + 4) {
 			var obstacle = {
@@ -822,20 +919,19 @@ function create_cars_in(env) {
 				//image	: carTypes[get_random(0,2)]
 			}
 
+			var type = get_random(0, constants.cars.length-1);
+
+			obstacle.width = constants.cars[type][1]
+			obstacle.scaleY = constants.cars[type][2]
+
 			//Alternerer fartsretning
 			if(row % 2 == 0) {
 				obstacle.speed = -obstacle.speed;
 
-				var type = get_random(0, constants.carLeft.length-1);
-				obstacle.image = constants.carLeft[type][0]
-				obstacle.width = constants.carLeft[type][1]
-				obstacle.scaleY = constants.carLeft[type][2]
+				obstacle.image = document.getElementById(constants.cars[type][0] + "-l");
 			}
 			else {
-				var type = get_random(0, constants.carRight.length-1);
-				obstacle.image = constants.carRight[type][0]
-				obstacle.width = constants.carRight[type][1]
-				obstacle.scaleY = constants.carRight[type][2]
+				obstacle.image = document.getElementById(constants.cars[type][0] + "-r");
 			}
 
 			//switch(get_random(0,2)) {
@@ -989,7 +1085,8 @@ function handle_items(items){
 function create_lava_platforms(env) {
 
 	//Legger til trommer
-	for(var row = 2; row < env.tiles; row += 2) {
+	//for(var row = 2; row < env.tiles; row += 2) {
+	for(var row = env.tiles-2; row > 0 ; row -= 2) {
 		for(var i = -1; i < 2; ++i)
 		{
 			var platform = {
@@ -1013,9 +1110,10 @@ function create_lava_platforms(env) {
 	}
 
 	//Lager lavasteiner
-	for(var row = 1; row < env.tiles; row += 2) {
+	//for(var row = 1; row < env.tiles; row += 2) {
+	for(var row = env.tiles-1; row > 0 ; row -= 2) {
 
-		var x = -game.width - 4;
+		var x = -game.width - 2;
 		while(x < game.width + 4) {
 			var platform = {
 				x		: x,
@@ -1052,9 +1150,10 @@ function create_lava_platforms(env) {
 
 //Funksjon til å lage platformer til eit miljø.
 function create_river_platforms(env) {
-	for(var row = 1; row < env.tiles; ++row) {
+	//for(var row = 1; row < env.tiles; ++row) {
+	for(var row = env.tiles -1; row > 0; --row) {
 
-		var x = -game.width - 4;
+		var x = -game.width - 2;
 		while(x < game.width + 4) {
 			var platform = {
 				x		: x,
@@ -1080,13 +1179,24 @@ function create_river_platforms(env) {
 				platform.scaleY = 2;
 
 				platform.type = 'crocodile';
+;
+				let animation;
 
-				if(platform.speed < 0) {
-					platform.image = document.getElementById("crocodile");
+				if(Math.random() < 0.5) {
+					animation = "crocodile";
 				}
 				else {
-					platform.image = document.getElementById("alligator");
+					animation = "alligator";
 				}
+
+				if(platform.speed < 0) {
+					animation += "-l";
+				}
+				else {
+					animation += "-r";
+				}
+
+				platform.animation = document.getElementsByClassName(animation);
 			}
 			else if(type < 0.2) {
 				//Trompet
@@ -1096,7 +1206,12 @@ function create_river_platforms(env) {
 				platform.scaleY = 1.5;
 
 				platform.type = 'trumpet';
-				platform.image = document.getElementById("trumpet");
+				if(platform.speed < 0) {
+					platform.image = document.getElementById("trumpet-l");
+				}
+				else {
+					platform.image = document.getElementById("trumpet-r");
+				}
 			}
 			else {
 				//Tømmerstokk
@@ -1106,7 +1221,13 @@ function create_river_platforms(env) {
 				platform.scaleY = 2.5;
 
 				platform.type = 'log';
-				platform.image = document.getElementById("log1");
+
+				if(platform.speed < 0) {
+					platform.image = document.getElementById("log1-l");
+				}
+				else {
+					platform.image = document.getElementById("log1-r");
+				}
 			}
 
 			platform.x += platform.width/2;
@@ -1310,8 +1431,8 @@ function create_frog() {
 
 		xSpeed : 0,
 		ySpeed : 0,
-		walkSpeed : 0.2,
-		jumpSpeed : 0.3,
+		walkSpeed : 4.0,
+		jumpSpeed : 6.0,
 
 		inputCooldown : 0,
 		lifePoints : 3,
@@ -1329,9 +1450,9 @@ function create_frog() {
 
 		platform : constants.none,
 		//https://www.flaticon.com/free-icon/frog_1036001
-		//image : document.getElementById("frog"),
-		animation : document.getElementsByClassName("froganimation"),
-		animationStart : 0
+		image : document.getElementById("frog"),
+		//animation : document.getElementsByClassName("froganimation"),
+		//animationStart : 0
 	};
 
 	game.frog = frog;
@@ -1374,7 +1495,8 @@ function handle_frog() {
 		if(game.frameTime - frog.dying > 3000) {
 			frog.dying = 0;
 			frog.lifePoints -= 1;
-			frog.animation = document.getElementsByClassName("froganimation");
+			//frog.animation = document.getElementsByClassName("froganimation");
+			frog.image = document.getElementById("frog");
 
 			frog.x = 0;
 			frog.y = currentEnv.start + 0.5;
@@ -1388,13 +1510,13 @@ function handle_frog() {
 		//Når dette skjer kan me ikkje flytta på frosken og han vil ikkje kollidera med noko.
 		if(currentEnv != game.env[0])
 		{
-			game.distance += constants.scrollSpeed;
+			game.distance += constants.scrollSpeed * game.deltaTime;
 			frog.y = currentEnv.start + 1;
 		}
 		else {
 			if(frog.jump == true) {
 				if(frog.jumpTarget >= frog.y) {
-					frog.y += frog.jumpSpeed;
+					frog.y += frog.jumpSpeed * game.deltaTime;
 
 					//Om han har nådd målet, er han ferdig med å hoppe.
 					if(frog.y >= frog.jumpTarget) {
@@ -1408,7 +1530,7 @@ function handle_frog() {
 						frog.jump = false;
 					}
 					else {
-						frog.y -= frog.jumpSpeed;
+						frog.y -= frog.jumpSpeed * game.deltaTime;
 
 						//Om han har nådd målet, er han ferdig med å hoppe.
 						if(frog.y <= frog.jumpTarget) {
@@ -1424,7 +1546,7 @@ function handle_frog() {
 					frog.inputCooldown -= 1;
 				}
 				else {
-					frog.x += frog.xSpeed;
+					frog.x += frog.xSpeed * game.deltaTime;
 					//frog.y += frog.ySpeed;
 				}
 			}
@@ -1444,7 +1566,7 @@ function handle_frog() {
 					if(collision_detect(frog, platform, 0.1))
 					{
 						safe = true;
-						frog.x += platform.speed;
+						frog.x += platform.speed * game.deltaTime;
 
 						//Lavasteiner synker!
 						if(platform.type == "rock" && !platform.sinking) {
@@ -1527,6 +1649,10 @@ function handle_frog() {
 
 	}
 
-	//draw_object(frog);
-	animate_object(frog);
+	if(frog.dying) {
+		animate_object(frog);
+	}
+	else {
+		draw_object(frog);
+	}
 }

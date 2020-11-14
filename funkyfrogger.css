@@ -1,4 +1,17 @@
 /*************************/
+/* 	   Fargepalett       */
+/*************************/
+/*
+blå: #056CF2
+gul: #FAF430
+grønn: #00F56A
+lilla: #F500C2
+rød: #F50F00 
+
+*/
+
+
+/*************************/
 /* 	   Navigasjonsbar    */
 /*************************/
 
@@ -43,7 +56,7 @@
 
 /* Endrer fargen på lenkene ved "hover" */
 .nav-item:hover {
-	background-color: #28E322;
+	background-color:#056CF2;
 	color: #ffffff;
 }
 
@@ -53,7 +66,7 @@
 
 /* Fremhever den aktive siden */
 .nav-item.active {
-	background-color: #0E9908;
+	background-color: #F500C2;
 }
 
 
@@ -143,13 +156,12 @@ er lånt fra https://www.w3schools.com/css/tryit.asp?filename=trycss_template2_f
     font-size: 7em;
     font-weight: bolder;
 	text-align: center;
-	color: #FF00DD;
+	color: #F500C2;
 	-webkit-text-stroke: 3px #0058FF;
-
 }
 
 .page-header {
-	color: #00A801;
+	color: #F500C2;
 	margin: 30px auto;
 }
 
@@ -194,9 +206,9 @@ body {
 
 /* Knapp for å starte spill */
 .button {
-	background-color: #3DFF00;
+	background-color: #00F56A;
 	border-radius: 6px;
-	border: 3px solid #FF00DD;
+	border: 3px solid #F500C2;
 	color: white;
 	padding: 12px 128px;
 	text-align: center;
@@ -209,9 +221,9 @@ body {
 
 /* Fargebytteeffekt når musepekeren holdes over knappen */
 .button:hover {
-	background-color: #0058FF;
-	color: #FFEF00;
-	border: 3px solid #FF007E;
+	background-color: #056CF2;
+	color: #FAF430;
+	border: 3px solid #F50F00;
 }
 
 /* Usynlige knapper til splash screen (overlay til bildet) */
@@ -249,7 +261,7 @@ body {
 	}
 
 canvas {
-    border: 2px solid #04276e;
+    border: 2px solid #056CF2;
 	width: 100%;
 	max-width: 1000px;
 	max-height: 500px;
@@ -263,22 +275,27 @@ canvas {
 
 .game-button {
 	padding: 5px 10px;
-	background-color: #ffffff;
-	border: solid 2px #0583FA;
-	background-color: #0583FA;
+	border: solid 2px #056CF2;
+	background-color: #056CF2;
 	color: white;
 	border-radius: 2px;
 	cursor: pointer;
 }
 
 .inactive {
-	background-color: #ff40a9;
-	border-color: #ff40a9;
+	background-color: grey;
+	border-color: grey;
 }
 
 .game-button:hover {
-	background-color: #FA08D0;
-	border-color: #FA08D0;
+	background-color: #F500C2;
+	border-color: #F500C2;
+}
+
+.game-volume {
+	margin-top: -15px;
+	padding: 25px 10px;
+	color: #056CF2;
 }
 
 
@@ -288,7 +305,7 @@ canvas {
 }
 
 .statusbar {
-	color: #00A801;
+	color: #056CF2;
 	margin: 20px auto;
 	font-weight: bold;
 }
@@ -304,8 +321,8 @@ canvas {
 }
 
 .statusbar-item {
-	border-top: solid #00A801 2px;
-	border-bottom: solid #00A801 2px;
+	border-top: solid #056CF2 2px;
+	border-bottom: solid #056CF2 2px;
 	padding: 10px;
 	text-align: center;
 	margin: 0px 0px;
@@ -314,18 +331,18 @@ canvas {
 #score {
 	border-bottom-left-radius: 5px;
 	border-top-left-radius: 5px;
-	border-left: solid #00A801 2px;
+	border-left: solid #056CF2 2px;
 }
 
 #highscore {
-	border-right: solid 2px #00A801;
+	border-right: solid 2px #056CF2;
 	border-top-right-radius: 5px;
 	border-bottom-right-radius: 5px;
 }
 
 .life {
 	margin: 0px 5px;
-	color: #FA3254;
+	color: #F50F00;
 }
 
 
@@ -353,6 +370,7 @@ canvas {
 	padding-bottom: 10px;
 	text-align: center;
 	background-color: #4CAF50;
+	background-color: #056CF2;
 	color: white;
 	font-size: 20px;
 }
@@ -367,7 +385,7 @@ fra https://www.w3schools.com/css/css_table.asp */
 
 .game-rules, .backstory {
 	padding: 20px;
-	border: 2px dashed #00A801;
+	border: 2px dashed #056CF2;
 }
 
 
@@ -384,7 +402,7 @@ fra https://www.w3schools.com/css/css_table.asp */
 }
 
 .section__div--rectangle {
-	border: 2px solid #00A801;
+	border: 2px solid #056CF2;
 	padding: 10px;
 	border-radius: 5px;
 	margin-bottom: 20px;
