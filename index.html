@@ -10,7 +10,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    
 </head>
 <body>
 <div class="page-container">
@@ -44,6 +43,8 @@
     </div>
     <div class="column middle">
         <img class="splashpicture" id="splashpicture" src="images/shades_frog.jpg" alt="Frog with funky moves and shades">
+        <button id="freezebutton" class="invisbutton" type="button" onclick="freezePicture()"></button>
+        <button id="unfreezebutton" class="invisbutton" type="button" onclick="unfreezePicture()"></button>
     </div>
     <div class="column side">
         <img class="note" src="images/notes1.png" alt="Flying music notes">
@@ -64,28 +65,6 @@
     </audio>
 </div>
 
-<!-- Attribusjon til artisten -->
-<div class="center">
-    <p>
-        <strong>Music:</strong><br>
-        Protofunk by Kevin MacLeod<br>
-        Link: https://incompetech.filmmusic.io/song/4247-protofunk<br>
-        License: http://creativecommons.org/licenses/by/4.0/
-    </p>
-</div>
-
-<!-- Script for responsiv navigasjonsbar 
-<script>
-    function collapseNavbar() {
-        var x = document.getElementById("nav");
-        if (x.className === "nav") {
-            x.className += " responsive";
-        } else {
-            x.className = "nav";
-        }
-    }
-</script>
--->
 
 <!-- Script for å redirecte til spillet når knappen trykkes på -->
 <script>
@@ -94,10 +73,13 @@
     }
 </script>
 
-<!-- Script for bilde-slideshow-->
+<!-- Script for bilde-slideshow, inkl. pausefunksjon-->
 <script>
     const frog = document.getElementById("splashpicture");
-    var frogs = ["images/shades_frog.jpg", "images/lying_frog.jpg", "images/trumpet_frog.jpg"], i = 0;
+    var frogs = ["images/shades_frog.jpg", "images/lying_frog.jpg", "images/trumpet_frog.jpg", "images/guitar_frog.png"], i = 0;
+    var timer = setInterval(switchPicture, 4000);
+    var freezebutton = document.getElementById("freezebutton");
+    var unfreezebutton = document.getElementById("unfreezebutton");
 
     function switchPicture() {
 		i += 1;
@@ -106,10 +88,23 @@
         }
         frog.src = frogs[i];
     }
-    setInterval(switchPicture, 4000);
-</script>
+    timer;
 
+    function freezePicture() {
+        clearInterval(timer);
+        freezebutton.style.display = "none";
+        unfreezebutton.style.display = "block";
+    }
+
+    function unfreezePicture() {
+        timer = setInterval(switchPicture, 1000);
+        freezebutton.style.display = "block";
+        unfreezebutton.style.display = "none";
+    }
+</script>
 </div>
+
+<!-- Footer nederst på siden -->
 <footer class="footer">
     <div class="row footer-row">
         <div class="col-12 col-sm-3 col-lg-2">
