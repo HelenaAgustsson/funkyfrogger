@@ -196,6 +196,11 @@ body {
 	font-size: 1.2em;
 }
 
+/* Usynlige kulepunkter */
+.nobullet{
+	list-style-type: none;
+}
+
 /* Hovedbilde med frosk */
 .splashpicture {
     display: block;
@@ -236,6 +241,7 @@ body {
 	border: 3px solid #FF007E;
 }
 
+/* Usynlige knapper til splash screen (overlay til bildet) */
 .invisbutton {
 	background-color: transparent;
 	position: relative;
