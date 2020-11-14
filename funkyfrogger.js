@@ -19,7 +19,6 @@ var constants = {
 		[ "car2",	2, 2 ],
 		[ "cyber",	1.8, 1.8 ],
 		[ "police", 1.8, 1.8 ],
-		[ "police2", 2.25, 2.25 ],
 		[ "scooter", 1, 1 ],
 		[ "sportscar", 2, 2 ],
 		[ "truck",	2, 2 ],
