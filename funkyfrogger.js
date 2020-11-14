@@ -1417,7 +1417,8 @@ function handle_frog() {
 		if(game.frameTime - frog.dying > 3000) {
 			frog.dying = 0;
 			frog.lifePoints -= 1;
-			frog.animation = document.getElementsByClassName("froganimation");
+			//frog.animation = document.getElementsByClassName("froganimation");
+			frog.image = document.getElementById("frog");
 
 			frog.x = 0;
 			frog.y = currentEnv.start + 0.5;
@@ -1574,7 +1575,6 @@ function handle_frog() {
 		animate_object(frog);
 	}
 	else {
-		frog.image = document.getElementById("frog");
 		draw_object(frog);
 	}
 }
