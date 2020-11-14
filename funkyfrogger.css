@@ -7,7 +7,7 @@
 	
 }
 
-/* Legg til blank bakgrunnsfarge på navigasjonsbar */
+/* Legger til blank bakgrunnsfarge på navigasjonsbar */
 .navbar {
 	background-color: #333;
 	overflow: hidden;
@@ -17,7 +17,7 @@
 	*/
 }
 
-/* Stilsett lenkene i navigasjonsbaren */
+/* Stilsetter lenkene i navigasjonsbaren */
 .nav-item {
 	text-decoration: none;
 	/*
@@ -35,13 +35,13 @@
 	color: white;
 }
 
-/* Modify brand and text color */ 
+/* Modifiserer brand og text color */ 
 .navbar-custom .navbar-brand, 
 .navbar-custom .navbar-text { 
     color: green; 
 }
 
-/* Endre fargen på lenkene ved "hover" */
+/* Endrer fargen på lenkene ved "hover" */
 .nav-item:hover {
 	background-color: #28E322;
 	color: #ffffff;
@@ -51,12 +51,15 @@
 	color: white;
 }
 
-/* Fremheve den aktive siden */
+/* Fremhever den aktive siden */
 .nav-item.active {
 	background-color: #0E9908;
 }
 
-/* footer */
+
+/*************************/
+/* 	      Footer         */
+/*************************/
 
 .page-container {
 	position: relative;
@@ -93,36 +96,6 @@
 	cursor: pointer;
 }
 
-/* Gjem lenken som skal være åpen og lukk navigasjonsbar på små skjermer 
-.nav .icon {
-	display: none;
-}
-*/
-/* Dette skjer nå automatisk med boostrap */
-/* Når skjermen er mindre enn 600 piksler bred, gjem alle lenker, unntatt den første ("Hjem") */
-/*
-@media screen and (max-width: 600px) {
-	.nav a:not(:first-child) {display: none;}
-	.nav a.icon {
-		float: right;
-		display: block;
-	}
-}
-
-@media screen and (max-width: 600px) {
-	.nav.responsive {position: relative;}
-	.nav.responsive a.icon {
-		position: absolute;
-		right: 0;
-		top: 0;
-	}
-	.nav.responsive a {
-		float: none;
-		display: block;
-		text-align: left;
-	}
-}
-*/
 /* Navigasjonsbaren er sterkt inspirert fra w3schools, og mye av koden
 er lånt fra https://www.w3schools.com/howto/howto_js_topnav_responsive.asp */
 
@@ -284,15 +257,6 @@ canvas {
 	margin: auto;
 }
 
-/*
-.coins {
-    height: 10px;
-    width: auto;
-	visibility: hidden;
-	padding: 5px;
-}
-*/
-
 .game-buttons {
 	margin: 30px auto;
 }
@@ -406,6 +370,7 @@ fra https://www.w3schools.com/css/css_table.asp */
 	border: 2px dashed #00A801;
 }
 
+
 /*************************/
 /* 	     Kontaktsiden    */
 /*************************/
@@ -423,4 +388,24 @@ fra https://www.w3schools.com/css/css_table.asp */
 	padding: 10px;
 	border-radius: 5px;
 	margin-bottom: 20px;
+}
+
+ul.game-rules.row {
+	padding-left: 20px;
+}
+
+.name {
+	font-size: 20px;
+	font-weight: 500;
+}
+
+.role {
+	font-size: 18px;
+	font-weight: 400;
+}
+
+.description {
+	padding-top: 12px;
+	font-size: 16px;
+	font-weight: normal;
 }
