@@ -120,7 +120,8 @@ var game = {
 	score       : 0,
 	tileSize	: 0,
 	distance	: 0,
-	started		: false,	//Når spelet er i gang vil "started" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
+	started		: false,
+	running		: false,	//Når spelet er i gang vil "running" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
 	//started		: 0,	//Når spelet er i gang vil "started" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
 	fps			: 30,
 	env			: [],
@@ -132,25 +133,29 @@ var game = {
 	end		: end_game,
 
 	start	: function(fps = 30) {
-		if(!this.started)
+		if(!game.started) {
+			game.reset();
+			game.started = true;
+		}
+		if(!this.running)
 		//if(this.started == 0)
 		{
 			this.fps = fps;
-			this.started = true;
+			this.running = true;
 			//this.started = setInterval(this.update, 1000/fps);
 			this.update();
 		}
 		else
 		{
-			console.log("Error: Game already started");
+			console.log("Error: Game already running");
 		}
 	},
 
 	stop	: function() {
-		if(this.started)
+		if(this.running)
 		//if(this.started != 0)
 		{
-			this.started = false;
+			this.running = false;
 			//clearInterval(this.started);
 			//this.started = 0;
 
@@ -161,7 +166,7 @@ var game = {
 	},
 
 	pause	: function() {
-		if(this.started)
+		if(this.running)
 		//if(this.started != 0)
 		{
 			this.stop()
@@ -281,6 +286,21 @@ window.onload = function() {
 		game.audio[audio].volume = volumeSlider.value / 100;
 	}
 
+	$(".modal-footer > .btn-primary").on('click', function(){
+		game.start();
+	});
+	$(".modal-body > .btn-secondary").on('click', function(){
+		var input = $(".modal-body > input")
+		var name = input.val();
+
+		$(".modal-body > span").eq(1).text("Gratulerer " + name);
+
+		input.hide();
+		this.style.display = "none";
+
+		add_high_score(name, game.score);
+	});
+
 	//load_resources();
 
 	game.reset();
@@ -306,7 +326,7 @@ function update_game(frameTime) {
 		game.end();
 	}
 
-	if(game.started) {
+	if(game.running) {
 		if(game.audio.music.paused) {
 			//Om ikkje musikken har starta pga. autoplay policy vil han starta når han får lov.
 			var promise = game.audio.music.play();
@@ -346,7 +366,8 @@ function wait_a_frame() {
 function end_game() {
 	//Vis sluttskjerm med poengsum og "Vil du spille igjen?"
 	
-	add_high_score("Froggy", game.score);
+	//add_high_score("Froggy", game.score);
+
 	let lastHighscore = parseInt( $("#highscore > span").text());
 	//console.log(lastHighscore);
 	if(game.score > lastHighscore){
@@ -358,26 +379,28 @@ function end_game() {
 //	for(hs of highScore) {
 //		console.log(hs);
 //	}
+//
+	//Nullstiller game over og viser han.
+	$(".modal-body > span").eq(0).text(game.score);
+	$(".modal-body > span").eq(1).text("Skriv inn ditt navn");
+	$("#modal").modal("show");
 	
 	game.stop();
-	game.reset();
+	game.started = false;
 
-	context = game.canvas.getContext("2d");
-	context.fillStyle = "black";
-	let w = $("#gamecanvas").width();
-	let h = $("#gamecanvas").height();
-	context.fillRect(0,0,w,h);
-	context.fillStyle = "#28E322";
-	context.font = "120px calibri";
-	context.textAlign = "center";
-	context.fillText("Game Over!!", w/2, h/2);
-	
-	context.fillStyle = "#FA08D0";
-	context.font = "80px calibri";
-	context.fillText("Restart", w/2, h-h/4);
-	$("#gamecanvas").on('click', function(){
-		game.start();
-	});
+//	context = game.canvas.getContext("2d");
+//	context.fillStyle = "black";
+//	let w = $("#gamecanvas").width();
+//	let h = $("#gamecanvas").height();
+//	context.fillRect(0,0,w,h);
+//	context.fillStyle = "#28E322";
+//	context.font = "120px calibri";
+//	context.textAlign = "center";
+//	context.fillText("Game Over!!", w/2, h/2);
+//	
+//	context.fillStyle = "#FA08D0";
+//	context.font = "80px calibri";
+//	context.fillText("Restart", w/2, h-h/4);
 }
 
 //************************//
@@ -604,7 +627,7 @@ function key_down_logger(event) {
 		game.pause();
 	}
 
-	if(game.started) {
+	if(game.running) {
 		switch(event.key) {
 				// Hopp med mellomtast
 			case " ":
@@ -659,7 +682,7 @@ function key_down_logger(event) {
 }
 
 function mouse_down_logger(event) {
-	if(game.started) {
+	if(game.running) {
 		event.preventDefault();
 
 		var frog = game.frog;
@@ -691,7 +714,7 @@ function mouse_down_logger(event) {
 }
 
 function mouse_up_logger(event) {
-	if(game.started) {
+	if(game.running) {
 		event.preventDefault();
 		game.frog.xSpeed = 0;
 	}
@@ -712,7 +735,7 @@ function touch_to_mouse_converter(event) {
 function key_up_logger(event) {
 	var frog = game.frog;
 
-	if(game.started) {
+	if(game.running) {
 		switch(event.key) {
 			//Når me slepp opp ein tast vil frosken stoppa opp.
 			//case "ArrowUp":
