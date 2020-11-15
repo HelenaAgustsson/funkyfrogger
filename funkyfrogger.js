@@ -14,11 +14,11 @@ var constants = {
 	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"],
 
 	cars		: [
+		[ "police", 1.8, 1.8 ],
 		[ "bus",	3.3, 3.3 ],
 		[ "car1",	2, 2 ],
 		[ "car2",	2, 2 ],
 		[ "cyber",	1.8, 1.8 ],
-		[ "police", 1.8, 1.8 ],
 		[ "scooter", 1, 1 ],
 		[ "sportscar", 2, 2 ],
 		[ "truck",	2, 2 ],
@@ -139,7 +139,6 @@ var game = {
 			this.started = true;
 			//this.started = setInterval(this.update, 1000/fps);
 			this.update();
-			this.audio.music.play();
 		}
 		else
 		{
@@ -154,7 +153,10 @@ var game = {
 			this.started = false;
 			//clearInterval(this.started);
 			//this.started = 0;
-			this.audio.music.pause();
+
+			for(audio in this.audio) {
+				this.audio[audio].pause();
+			}
 		}
 	},
 
@@ -199,8 +201,12 @@ function reset_game() {
 	game.env = [];
 	add_environment(0);
 
-	//Set musikken tilbake til start
 	game.audio.music.currentTime = 0;
+
+	//Set lyd og musikk tilbake til start
+	for(audio in game.audio) {
+		game.audio[audio].currentTime = 0;
+	}
 
 	//Lagar ny frosk, gamle vert sletta
 	create_frog();
@@ -245,6 +251,13 @@ window.onload = function() {
 	window.onkeydown = key_down_logger;
 	window.onkeyup = key_up_logger;
 
+	game.canvas.onmousedown = mouse_down_logger;
+	game.canvas.onmouseup = mouse_up_logger;
+	game.canvas.onmouseleave = mouse_up_logger;
+
+	game.canvas.addEventListener("touchstart", touch_to_mouse_converter, false);
+	game.canvas.addEventListener("touchend", mouse_up_logger, false);
+
 	startButton.on('click', function(){
 		game.start();
 		//$(this).toggleClass("inactive");
@@ -270,7 +283,7 @@ window.onload = function() {
 
 	//load_resources();
 
-	reset_game();
+	game.reset();
 }
 
 //Hovudloopen til spelet. Alt starter frå her.
@@ -294,6 +307,15 @@ function update_game(frameTime) {
 	}
 
 	if(game.started) {
+		if(game.audio.music.paused) {
+			//Om ikkje musikken har starta pga. autoplay policy vil han starta når han får lov.
+			var promise = game.audio.music.play();
+
+			//Promise vert sjekka for å ikkje få error i konsollen.
+			//https://developers.google.com/web/updates/2017/09/autoplay-policy-changes
+			promise.then(_ => {}).catch(error => {});
+		}
+
 		if(game.fps < 45) {
 			window.requestAnimationFrame(wait_a_frame);
 		}
@@ -576,107 +598,165 @@ function jump(target) {
 
 function key_down_logger(event) {
 	var frog = game.frog;
-	switch(event.key) {
-		// Nyttar escape til å pause og starte spelet
-		case "Escape":
-			game.pause();
-			break;
-		// Hopp med mellomtast
-		case " ":
-			event.preventDefault();
-			jump(Math.ceil(frog.y) + 0.5);
-			//if(frog.down) {
-			//	//Hopp bakover
-			//	frog.jump = true;
-			//	frog.jumpTarget = Math.floor(frog.y) - 0.5;
-			//}
-			//else {
+
+	// Nyttar escape til å pause og starte spelet
+	if(event.key == "Escape") {
+		game.pause();
+	}
+
+	if(game.started) {
+		switch(event.key) {
+				// Hopp med mellomtast
+			case " ":
+				event.preventDefault();
+				jump(Math.ceil(frog.y) + 0.5);
+				//if(frog.down) {
+				//	//Hopp bakover
+				//	frog.jump = true;
+				//	frog.jumpTarget = Math.floor(frog.y) - 0.5;
+				//}
+				//else {
 				//Hopp framover
 				//frog.jump = true;
 				//frog.jumpTarget = Math.ceil(frog.y) + 0.5;
-			//}
-			break;
+				//}
+				break;
 
-		// Når me trykkjer ned ein tast vil frosken flytta på seg. 
-		case "ArrowUp":
-		case "w":
-			event.preventDefault();
-			jump(Math.ceil(frog.y) + 0.5);
-			//Hopp framover
-			//frog.up = true;
-			//frog.ySpeed = frog.walkSpeed;
-			break;
+				// Når me trykkjer ned ein tast vil frosken flytta på seg. 
+			case "ArrowUp":
+			case "w":
+				event.preventDefault();
+				jump(Math.ceil(frog.y) + 0.5);
+				//Hopp framover
+				//frog.up = true;
+				//frog.ySpeed = frog.walkSpeed;
+				break;
 
-		case "ArrowDown":
-		case "s":
-			event.preventDefault();
-			//Hopp bakover
-			jump(Math.floor(frog.y) - 0.5)
-			//frog.down = true;
-			//frog.ySpeed = -frog.walkSpeed;
-			break;
+			case "ArrowDown":
+			case "s":
+				event.preventDefault();
+				//Hopp bakover
+				jump(Math.floor(frog.y) - 0.5)
+					//frog.down = true;
+					//frog.ySpeed = -frog.walkSpeed;
+					break;
 
-		case "ArrowLeft":
-		case "a":
-			event.preventDefault();
-			frog.left = true;
-			frog.xSpeed = -frog.walkSpeed;
-			break;
+			case "ArrowLeft":
+			case "a":
+				event.preventDefault();
+				frog.left = true;
+				frog.xSpeed = -frog.walkSpeed;
+				break;
 
-		case "ArrowRight":
-		case "d":
-			event.preventDefault();
-			frog.right = true;
-			frog.xSpeed = frog.walkSpeed;
-		default:
+			case "ArrowRight":
+			case "d":
+				event.preventDefault();
+				frog.right = true;
+				frog.xSpeed = frog.walkSpeed;
+			default:
+		}
 	}
+}
+
+function mouse_down_logger(event) {
+	if(game.started) {
+		event.preventDefault();
+
+		var frog = game.frog;
+		var x = event.offsetX;
+		var y = event.offsetY;
+
+		if(y < game.canvas.height / 2 ) {
+			//Hopp framover
+			jump(Math.ceil(frog.y) + 0.5);
+		}
+		else {
+			if(x < game.canvas.width * 2/5) {
+				frog.xSpeed = -frog.walkSpeed;
+			}
+			else if(x > game.canvas.width * 3/5) {
+				frog.xSpeed = frog.walkSpeed;
+			}
+			else if(y > game.canvas.height *3/4) {
+				//Hopp tilbake
+				jump(Math.floor(frog.y) - 0.5)
+			}
+			else {
+				//Hopp framover
+				jump(Math.ceil(frog.y) + 0.5);
+			}
+
+		}
+	}
+}
+
+function mouse_up_logger(event) {
+	if(game.started) {
+		event.preventDefault();
+		game.frog.xSpeed = 0;
+	}
+}
+
+//Touchevent har ikkje offsetX og offsetY så me må leggja dei til.
+function touch_to_mouse_converter(event) {
+	var rect = event.target.getBoundingClientRect();
+	var x = event.targetTouches[0].pageX - rect.left;
+	var y = event.targetTouches[0].pageY - rect.top;
+
+	event.offsetX = x;
+	event.offsetY = y;
+
+	mouse_down_logger(event);
 }
 
 function key_up_logger(event) {
 	var frog = game.frog;
-	switch(event.key) {
-		//Når me slepp opp ein tast vil frosken stoppa opp.
-		//case "ArrowUp":
-		//case "w":
-		//	frog.up = false;
-		//	if(frog.down == true) {
-		//		frog.y = -frog.walkSpeed;
-		//	}
-		//	else {
-		//		frog.ySpeed = 0;
-		//	}
-		//case "ArrowDown":
-		//case "s":
-		//	frog.down = false;
-		//	if(frog.up == true) {
-		//		frog.ySpeed = frog.walkSpeed;
-		//	}
-		//	else {
-		//		frog.ySpeed = 0;
-		//	}
-		//	break;
 
-		case "ArrowLeft":
-		case "a":
-			frog.left = false;
-			if(frog.right == true) {
-				frog.xSpeed = frog.walkSpeed;
-			}
-			else {
-				frog.xSpeed = 0;
-			}
-			break;
-		case "ArrowRight":
-		case "d":
-			frog.right = false;
-			if(frog.left == true) {
-				frog.xSpeed = -frog.walkSpeed;
-			}
-			else {
-				frog.xSpeed = 0;
-			}
-			break;
-		default:
+	if(game.started) {
+		switch(event.key) {
+			//Når me slepp opp ein tast vil frosken stoppa opp.
+			//case "ArrowUp":
+			//case "w":
+			//	frog.up = false;
+			//	if(frog.down == true) {
+			//		frog.y = -frog.walkSpeed;
+			//	}
+			//	else {
+			//		frog.ySpeed = 0;
+			//	}
+			//case "ArrowDown":
+			//case "s":
+			//	frog.down = false;
+			//	if(frog.up == true) {
+			//		frog.ySpeed = frog.walkSpeed;
+			//	}
+			//	else {
+			//		frog.ySpeed = 0;
+			//	}
+			//	break;
+
+			case "ArrowLeft":
+			case "a":
+				frog.left = false;
+				if(frog.right == true) {
+					frog.xSpeed = frog.walkSpeed;
+				}
+				else {
+					frog.xSpeed = 0;
+				}
+				break;
+			case "ArrowRight":
+			case "d":
+				frog.right = false;
+				if(frog.left == true) {
+					frog.xSpeed = -frog.walkSpeed;
+				}
+				else {
+					frog.xSpeed = 0;
+				}
+				break;
+			default:
+		}
 	}
 }
 
@@ -717,7 +797,7 @@ function handle_enviroment() {
 		draw_objects(env.platforms);
 
 		handle_items(env.items);
-		animate_objects(env.items);
+		draw_objects(env.items);
 
 		move_objects(env.specialItems);
 		handle_items(env.specialItems);
@@ -920,6 +1000,11 @@ function create_cars_in(env) {
 
 			var type = get_random(0, constants.cars.length-1);
 
+			if(type == 0) {
+				//Politibil
+				obstacle.audio = game.audio.police;
+			}
+
 			obstacle.width = constants.cars[type][1]
 			obstacle.scaleY = constants.cars[type][2]
 
@@ -975,9 +1060,9 @@ function add_dragons_to_env(env) {
 			x		: game.width + 3,
 			y		: env.start + row + 0.5,
 
-			width	: 1,
+			width	: 2,
 			height	: 0.8,
-			scaleY	: 1.25,
+			scaleY	: 2,
 
 			speed	: game.difficulty.obstacleSpeed +
 				game.difficulty.obstacleAccel * row,
@@ -1009,7 +1094,7 @@ function create_item_in(env) {
 
 		points	: 10,
 
-		animation : document.getElementsByClassName('musicnote'),
+		image : document.getElementById('musicnote'),
 		animationStart : Math.random() * 2000
 	}
 
@@ -1068,8 +1153,17 @@ function handle_items(items){
 
 			add_points(item.points);
 
-			if(item.points < 0) {
-				game.audio.badNote.play();
+			switch(item.points) {
+				case -30:
+					game.audio.badNote.play();
+					break;
+				case 10:
+					game.audio.coins.play();
+					break;
+				case 30:
+					game.audio.cash.play();
+					break;
+				default:
 			}
 			break;
 		}
@@ -1204,7 +1298,7 @@ function create_river_platforms(env) {
 				platform.height = 1.05;
 				platform.scaleY = 1.5;
 
-				platform.type = 'trumpet';
+				platform.type = "trumpet";
 				if(platform.speed < 0) {
 					platform.image = document.getElementById("trumpet-l");
 				}
@@ -1330,7 +1424,12 @@ game.audio = {
 	drum	: new Audio("audio/tromme_cartoon_timpani.mp3"),
 	badNote	: new Audio("audio/bomlyd_sirene.mp3"),
 	cymbal	: new Audio("audio/cymbal.wav"),
-	trumpet	: new Audio("audio/trumpet.wav")
+	trumpet	: new Audio("audio/trumpet.wav"),
+	chomp	: new Audio("audio/crocodile_heavy_wet_crunch.mp3"),
+	chomp2	: new Audio("audio/crocodile_growl.mp3"),
+	police	: new Audio("audio/police_siren.mp3"),
+	coins	: new Audio("audio/coins.mp3"),
+	cash	: new Audio("audio/cash_register.mp3")
 }
 game.audio.music.loop = true;
 
@@ -1477,6 +1576,10 @@ function jump_done() {
 	if(frog.platform.type == "rock") {
 		game.audio.cymbal.play();
 	}
+
+	if(frog.platform.type == "trumpet") {
+		game.audio.trumpet.play();
+	}
 }
 
 function handle_frog() {
@@ -1578,9 +1681,13 @@ function handle_frog() {
 						if(platform.type == "crocodile") {
 							if(platform.speed < 0 && frog.x < platform.x) {
 								safe = false;
+								game.audio.chomp.play();
+								frog.animation = document.getElementsByClassName("explosion");
 							}
 							else if(platform.speed > 0 && frog.x > platform.x) {
 								safe = false;
+								game.audio.chomp.play();
+								frog.animation = document.getElementsByClassName("explosion");
 							}
 						}
 
@@ -1591,9 +1698,11 @@ function handle_frog() {
 				//Ingen plattform!!
 				if(frog.platform == constants.none) {
 					if(currentEnv.type == "river") {
+						frog.animation = document.getElementsByClassName("splash");
 						game.audio.splash.play();
 					}
 					else if(currentEnv.type == "lava") {
+						frog.animation = document.getElementsByClassName("fire");
 						game.audio.burn.play();
 					}
 				}
@@ -1604,17 +1713,27 @@ function handle_frog() {
 			{
 				for(obstacle of currentEnv.obstacles)
 				{
+					if(obstacle.hasOwnProperty("audio")) {
+						//Politibil med sirene
+						if(collision_detect(frog, obstacle, 2.5)) {
+							obstacle.audio.play();
+						}
+					}
 					//Collision detect med 0.9 for å gje litt slark med kollisjonen.
 					if(collision_detect(frog, obstacle, 0.9))
 					{
 						safe = false;
 
+						frog.animation = document.getElementsByClassName("explosion");
+
 						if(obstacle.type == "car") {
 							game.audio.crash.play();
 						}
+						else {
+							//Dragon
+							game.audio.chomp2.play();
+						}
 
-						//Endrar farge for å visa kontakt. Debugfunksjon
-						//obstacle.color = "red";
 						break;
 					}
 				}
@@ -1623,7 +1742,6 @@ function handle_frog() {
 			//Frosken er i vatnet eller truffen av ein bil.
 			if(safe == false) {
 				frog.dying = game.frameTime;
-				frog.animation = document.getElementsByClassName("explosion");
 
 				if(frog.lifePoints==3){
 					$("#life3").removeClass("fa-heart").addClass("fa-heart-o");

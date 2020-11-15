@@ -77,7 +77,7 @@
 <script>
     const frog = document.getElementById("splashpicture");
     var frogs = ["images/shades_frog.jpg", "images/lying_frog.jpg", "images/trumpet_frog.jpg", "images/guitar_frog.png"], i = 0;
-    var timer = setInterval(switchPicture, 4000);
+    var timer = setInterval(switchPicture, 3000);
     var freezebutton = document.getElementById("freezebutton");
     var unfreezebutton = document.getElementById("unfreezebutton");
 
@@ -97,7 +97,7 @@
     }
 
     function unfreezePicture() {
-        timer = setInterval(switchPicture, 1000);
+        timer = setInterval(switchPicture, 3000);
         freezebutton.style.display = "block";
         unfreezebutton.style.display = "none";
     }
