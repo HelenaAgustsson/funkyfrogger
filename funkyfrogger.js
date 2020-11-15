@@ -199,9 +199,17 @@ function reset_game() {
 	//fyller opp til tre liv igjen
 	$(".life").removeClass("fa-heart-o").addClass("fa-heart");
 
+	//Nullstiller game over modal.
+	$(".modal-body > span").eq(0).text(game.score);
+	$(".modal-body > span").eq(1).text("Skriv inn ditt navn");
+
+	$(".modal-body > input").show();
+	$(".modal-footer > .btn-secondary").show();
+
 	set_canvas();
 
 	//Fjerner gamle miljø og lager nye
+	game.difficulty = constants.difficulty.easy;
 	game.distance = 0;
 	game.env = [];
 	add_environment(0);
@@ -289,14 +297,15 @@ window.onload = function() {
 	$(".modal-footer > .btn-primary").on('click', function(){
 		game.start();
 	});
-	$(".modal-body > .btn-secondary").on('click', function(){
+
+	$(".modal-footer > .btn-secondary").on('click', function(){
 		var input = $(".modal-body > input")
 		var name = input.val();
 
 		$(".modal-body > span").eq(1).text("Gratulerer " + name);
 
 		input.hide();
-		this.style.display = "none";
+		$(this).hide();
 
 		add_high_score(name, game.score);
 	});
@@ -380,9 +389,6 @@ function end_game() {
 //		console.log(hs);
 //	}
 //
-	//Nullstiller game over og viser han.
-	$(".modal-body > span").eq(0).text(game.score);
-	$(".modal-body > span").eq(1).text("Skriv inn ditt navn");
 	$("#modal").modal("show");
 	
 	game.stop();
