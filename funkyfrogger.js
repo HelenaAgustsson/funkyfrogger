@@ -1368,6 +1368,7 @@ function create_safe_platform(row) {
 
 		width : game.width * 2,
 		height : 1.05,
+		scaleY : 0.95,
 
 		safe	: true,
 
