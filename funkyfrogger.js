@@ -388,7 +388,8 @@ function end_game() {
 //	for(hs of highScore) {
 //		console.log(hs);
 //	}
-//
+
+	$(".modal-body > span").eq(0).text(game.score);
 	$("#modal").modal("show");
 	
 	game.stop();
