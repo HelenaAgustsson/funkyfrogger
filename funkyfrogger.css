@@ -394,7 +394,7 @@ fra https://www.w3schools.com/css/css_table.asp */
 
 .card-body {
 	padding: 0.5rem !important;
-
+}
 
 .name {
 	font-size: 20px;
@@ -414,9 +414,6 @@ fra https://www.w3schools.com/css/css_table.asp */
   ul.game-rules.row {
 	padding-left: 20px;
 }
-
-
-
 
 
 @media screen and (max-width: 420px) {
