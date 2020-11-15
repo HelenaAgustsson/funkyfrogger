@@ -393,6 +393,11 @@ fra https://www.w3schools.com/css/css_table.asp */
 	margin: 10px auto;
 }
 
+#profil2 {
+	background-image: url(images/profil2.jpg);
+	
+}
+
 .section__div--rectangle {
 	border: 2px solid #056CF2;
 	padding: 10px;
