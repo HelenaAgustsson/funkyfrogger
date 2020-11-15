@@ -385,28 +385,15 @@ fra https://www.w3schools.com/css/css_table.asp */
 /* 	     Kontaktsiden    */
 /*************************/
 
-.profile-img {
-	background-image: url(images/frog-profile.jpg);
-	background-position: center;
-	height: 100px;
-	display: block;	
-	margin: 10px auto;
-}
-
-#profil2 {
-	background-image: url(images/profil2.jpg);
-	
-}
-
-.section__div--rectangle {
+.card.profile-card {
 	border: 2px solid #056CF2;
 	padding: 10px;
 	border-radius: 5px;
 	margin-bottom: 20px;
 }
 
-ul.game-rules.row {
-	padding-left: 20px;
+.card-body {
+	padding: 0.5rem !important;
 }
 
 .name {
@@ -424,6 +411,15 @@ ul.game-rules.row {
 	font-size: 16px;
 	font-weight: normal;
 }
+
+
+ul.game-rules.row {
+	padding-left: 20px;
+}
+
+
+
+
 
 @media screen and (max-width: 420px) {
 	.statusbar-item, .game-button  {
