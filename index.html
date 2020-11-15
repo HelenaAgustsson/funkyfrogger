@@ -38,16 +38,20 @@
 
 <!-- Midtinnhold, bestående av bilder -->
 <div class="content">
-    <div class="column side">
-        <img class="note" src="images/notes2.png" alt="Flying music notes">
+    <div class="column side left">
+        <img class="note outernoteleft" src="images/notes6.svg" alt="Orange and blue music notes">
+        <img class="note" src="images/notes3.svg" alt="Pink and purple music notes">
+        <img class="note outernoteleft" src="images/notes7.svg" alt="Blue music notes">
     </div>
     <div class="column middle">
         <img class="splashpicture" id="splashpicture" src="images/shades_frog.jpg" alt="Frog with funky moves and shades">
         <button id="freezebutton" class="invisbutton" type="button" onclick="freezePicture()"></button>
         <button id="unfreezebutton" class="invisbutton" type="button" onclick="unfreezePicture()"></button>
     </div>
-    <div class="column side">
-        <img class="note" src="images/notes1.png" alt="Flying music notes">
+    <div class="column side right">
+        <img class="note outernoteright" src="images/notes4.svg" alt="Orange and gold music notes">
+        <img class="note" src="images/notes5.svg" alt="Cyan and gold music notes">
+        <img class="note outernoteright" src="images/notes8.svg" alt="Blue and yellow music notes">
     </div>
 </div>
 
@@ -63,6 +67,7 @@
         <source src="audio/protofunk.mp3" type="audio/ogg">
         Nettleseren din støtter ikke avspilling av lydfilen.
     </audio>
+</div>
 </div>
 
 
@@ -102,7 +107,20 @@
         unfreezebutton.style.display = "none";
     }
 </script>
-</div>
+
+<!-- Script for flipping av musikknoter -->
+<script>
+    const note = document.getElementsByClassName("note");
+    const flippednote = document.getElementsByClassName("flippednote");
+    setInterval(flipNote, 1000);
+
+    function flipNote() {
+        note.removeClass("note").addClass("flippednote");
+        setTimeout(1000);
+        flippednote.removeClass("flippednote").addClass("note");
+    }
+</script>
+
 
 <!-- Footer nederst på siden -->
 <footer class="footer">
