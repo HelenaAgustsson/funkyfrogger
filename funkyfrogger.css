@@ -310,15 +310,7 @@ canvas {
 	font-weight: bold;
 }
 
-@media screen and (max-width: 420px) {
-	.statusbar-item, .game-button  {
-		font-size: 0.8rem;
-	}
-	.page-header {
-		font-size: 1.8rem;
-	}
-	
-}
+
 
 .statusbar-item {
 	border-top: solid #056CF2 2px;
@@ -393,23 +385,16 @@ fra https://www.w3schools.com/css/css_table.asp */
 /* 	     Kontaktsiden    */
 /*************************/
 
-.profile-img {
-	background-image: url(images/frog-profile.jpg);
-	background-position: center;
-	height: 100px;
-	display: block;	
-	margin: 10px auto;
-}
-
-.section__div--rectangle {
+.card.profile-card {
 	border: 2px solid #056CF2;
 	padding: 10px;
 	border-radius: 5px;
 	margin-bottom: 20px;
 }
-ul.game-rules.row {
-	padding-left: 20px;
-}
+
+.card-body {
+	padding: 0.5rem !important;
+
 
 .name {
 	font-size: 20px;
@@ -426,3 +411,27 @@ ul.game-rules.row {
 	font-size: 16px;
 	font-weight: normal;
 }
+  ul.game-rules.row {
+	padding-left: 20px;
+}
+
+
+
+
+
+@media screen and (max-width: 420px) {
+	.statusbar-item, .game-button  {
+		font-size: 0.8rem;
+	}
+	.page-header {
+		font-size: 1.8rem;
+	}
+	#header {
+		font-size: 4rem;
+	}
+	.button {
+		padding: 20px;
+	}
+	
+}
+
