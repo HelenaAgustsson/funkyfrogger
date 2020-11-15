@@ -10,6 +10,19 @@ rød: #F50F00
 
 */
 
+/*************************/
+/* 	   Modal             */
+/*************************/
+
+.modal-title {
+	color: #F50F00;
+}
+
+.modal-body {
+	text-align:center;
+}
+
+
 
 /*************************/
 /* 	   Navigasjonsbar    */
