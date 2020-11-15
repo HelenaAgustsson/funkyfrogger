@@ -7,7 +7,6 @@ gul: #FAF430
 grønn: #00F56A
 lilla: #F500C2
 rød: #F50F00 
-
 */
 
 /*************************/
@@ -33,17 +32,14 @@ rød: #F50F00
 	
 }
 
-/* Legger til blank bakgrunnsfarge på navigasjonsbar */
+/* Legg til blank bakgrunnsfarge på navigasjonsbar */
 .navbar {
 	background-color: #333;
 	overflow: hidden;
-	/*
-	
-	padding: 0;
-	*/
+	/* padding: 0; */
 }
 
-/* Stilsetter lenkene i navigasjonsbaren */
+/* Stilsett lenkene i navigasjonsbaren */
 .nav-item {
 	text-decoration: none;
 	/*
@@ -61,13 +57,13 @@ rød: #F50F00
 	color: white;
 }
 
-/* Modifiserer brand og text color */ 
+/* Modifiser brand og text color */ 
 .navbar-custom .navbar-brand, 
 .navbar-custom .navbar-text { 
     color: green; 
 }
 
-/* Endrer fargen på lenkene ved "hover" */
+/* Endre fargen på lenkene ved "hover" */
 .nav-item:hover {
 	background-color:#056CF2;
 	color: #ffffff;
@@ -77,10 +73,13 @@ rød: #F50F00
 	color: white;
 }
 
-/* Fremhever den aktive siden */
+/* Fremhev den aktive siden */
 .nav-item.active {
 	background-color: #F500C2;
 }
+
+/* Navigasjonsbaren er sterkt inspirert fra w3schools, og mye av koden
+er lånt fra https://www.w3schools.com/howto/howto_js_topnav_responsive.asp */
 
 
 /*************************/
@@ -99,7 +98,6 @@ rød: #F50F00
 	padding: 20px 30px;
 	font-size: 0.8em;
 	margin-top: 50px;
-	
 }
 
 .footer-li {
@@ -121,9 +119,6 @@ rød: #F50F00
 	color: #ffffff;
 	cursor: pointer;
 }
-
-/* Navigasjonsbaren er sterkt inspirert fra w3schools, og mye av koden
-er lånt fra https://www.w3schools.com/howto/howto_js_topnav_responsive.asp */
 
 
 /*************************/
@@ -164,7 +159,7 @@ er lånt fra https://www.w3schools.com/css/tryit.asp?filename=trycss_template2_f
 /* 	  	  Innhold	     */
 /*************************/
 
-/* Funky overskrift */
+/* Funky overskrift på splash screen */
 #header {
     font-family: "Comic Sans MS", cursive, sans-serif;
     font-size: 7em;
@@ -172,8 +167,10 @@ er lånt fra https://www.w3schools.com/css/tryit.asp?filename=trycss_template2_f
 	text-align: center;
 	color: #F500C2;
 	-webkit-text-stroke: 3px #0058FF;
+	padding-bottom: 20px;
 }
 
+/* Vanlig overskrift */
 .page-header {
 	color: #F500C2;
 	margin: 30px auto;
@@ -220,6 +217,7 @@ body {
 	padding: 2em 0em;
 }
 
+/* Juster høyre og venstre musikknoter */
 .outernoteleft {
 	margin-right: 0;
 }
@@ -290,8 +288,9 @@ body {
 .game-section {
 	max-width: 900px;
 	margin: auto;
-	}
+}
 
+/* Spillvindu */
 canvas {
     border: 2px solid #056CF2;
 	width: 100%;
@@ -301,6 +300,7 @@ canvas {
 	margin: auto;
 }
 
+/* Spillknapper */
 .game-buttons {
 	margin: 30px auto;
 }
@@ -324,25 +324,24 @@ canvas {
 	border-color: #F500C2;
 }
 
+/* Lydstyrke */
 .game-volume {
 	margin-top: -15px;
 	padding: 25px 10px;
 	color: #056CF2;
 }
 
-
-/* Display hidden då desse er fullstendig gøymd */
+/* Spillressurser. Display hidden då desse er fullstendig gøymd */
 .gameresources {
 	display: none;
 }
 
+/* Statusbar på toppen av spillet */
 .statusbar {
 	color: #056CF2;
 	margin: 20px auto;
 	font-weight: bold;
 }
-
-
 
 .statusbar-item {
 	border-top: solid #056CF2 2px;
@@ -374,6 +373,7 @@ canvas {
 /* 	     High Score      */
 /*************************/
 
+/* Tabell med high scores */
 #scoretable {
 	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 	border-collapse: collapse;
@@ -385,15 +385,16 @@ canvas {
 	padding: 8px;
 }
 
+/* Effekt ved hover */
 #scoretable tr:nth-child(even){background-color: #f2f2f2;}
 
 #scoretable tr:hover {background-color: #ddd;}
 
+/* Overskriftsraden i tabellen */
 #scoretable th {
 	padding-top: 10px;
 	padding-bottom: 10px;
 	text-align: center;
-	background-color: #4CAF50;
 	background-color: #056CF2;
 	color: white;
 	font-size: 20px;
@@ -404,7 +405,7 @@ fra https://www.w3schools.com/css/css_table.asp */
 
 
 /*************************/
-/* 	     Instruksjoner     */
+/* 	   Instruksjoner     */
 /*************************/
 
 .game-rules, .backstory {
@@ -426,7 +427,7 @@ ul.game-rules.row {
 
 
 /*************************/
-/* 	     Kontaktsiden    */
+/* 	    Kontaktsiden     */
 /*************************/
 
 .card.profile-card {
@@ -457,6 +458,9 @@ ul.game-rules.row {
 }
 
 
+/*************************/
+/* 	  Skjermtilpasning   */
+/*************************/
 
 @media screen and (max-width: 420px) {
 	.statusbar-item, .game-button  {
@@ -471,6 +475,4 @@ ul.game-rules.row {
 	.button {
 		padding: 20px;
 	}
-	
 }
-
