@@ -1,5 +1,5 @@
 /*************************/
-/* 	   Fargepalett       */
+/* 	    Fargepalett      */
 /*************************/
 /*
 blå: #056CF2
@@ -11,7 +11,7 @@ rød: #F50F00
 
 
 /*************************/
-/* 	   Modal             */
+/* 	       Modal         */
 /*************************/
 
 .modal-title {
@@ -466,7 +466,7 @@ ul.game-rules.row {
 /* 	  Skjermtilpasning   */
 /*************************/
 
-@media screen and (max-width: 420px) {
+@media screen and (max-width: 600px) {
 	.statusbar-item, .game-button  {
 		font-size: 0.8rem;
 	}
@@ -486,3 +486,9 @@ ul.game-rules.row {
 		padding: 0;
 	}
 }
+
+/* @media only screen and (max-width: 600px) {
+	 #gamecanvas {position: fixed; border: none;}
+	 .game-button {display: none};
+	 .navbar {display: none};
+} */
