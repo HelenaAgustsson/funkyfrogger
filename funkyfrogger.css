@@ -380,10 +380,17 @@ fra https://www.w3schools.com/css/css_table.asp */
 	border: 2px dashed #056CF2;
 }
 
+.container.game-rules {
+	padding: 30px;
+}
+
 ul.game-rules.row {
 	padding-left: 20px;
 }
 
+.game-rules > .row > .col > h3 {
+	color: #056CF2;
+}
 
 /*************************/
 /* 	     Kontaktsiden    */
