@@ -135,7 +135,6 @@ var game = {
 	start	: function(fps = 30) {
 		if(!game.started) {
 			game.reset();
-			game.started = true;
 		}
 		if(!this.running)
 		//if(this.started == 0)
@@ -226,6 +225,7 @@ function reset_game() {
 
 	//Teikner opp fyrste bilete
 	update_game();
+	game.started = true;
 }
 
 //function load_resources() {
@@ -811,13 +811,16 @@ function handle_enviroment() {
 
 	//Teikn opp alle miljø på canvas.
 	for (env of game.env) {
-	//for (var i = game.env.length-1; i >= 0; --i) {
-		//var env = game.env[i]
-
 		draw_environment(env);
 
 		//Flyttar og teiknar opp objekt i miljøet
 		draw_objects(env.safePlatforms);
+	}
+
+	//Teiknar opp alle objekt i miljø
+	for (env of game.env) {
+	//for (var i = game.env.length-1; i >= 0; --i) {
+		//var env = game.env[i]
 
 		move_objects(env.platforms);
 		for(platform of env.platforms) {
@@ -825,11 +828,9 @@ function handle_enviroment() {
 		}
 		draw_objects(env.platforms);
 
-		handle_items(env.items);
 		draw_objects(env.items);
 
 		move_objects(env.specialItems);
-		handle_items(env.specialItems);
 		draw_objects(env.specialItems);
 		
 		move_objects(env.obstacles)
@@ -1785,6 +1786,9 @@ function handle_frog() {
 				} 
 			}
 		}
+
+		handle_items(currentEnv.items);
+		handle_items(currentEnv.specialItems);
 
 		//Stenger frosken inne i spelvindauge.
 		if(frog.y - frog.height/2 < game.distance) {
