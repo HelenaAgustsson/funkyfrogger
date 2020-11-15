@@ -227,10 +227,13 @@ body {
 }
 
 /* Flippede musikknoter */
-.flippednote {
-	transform: rotateY(180deg);
+.note {
 	transition: transform 0.8s;
 	transform-style: preserve-3d;
+}
+
+.flippednote {
+	transform: rotateY(180deg);
 }
 
 /* Knapp for å starte spill */
