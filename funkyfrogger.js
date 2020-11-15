@@ -153,7 +153,10 @@ var game = {
 			this.started = false;
 			//clearInterval(this.started);
 			//this.started = 0;
-			this.audio.music.pause();
+
+			for(audio in this.audio) {
+				this.audio[audio].pause();
+			}
 		}
 	},
 
@@ -198,8 +201,12 @@ function reset_game() {
 	game.env = [];
 	add_environment(0);
 
-	//Set musikken tilbake til start
 	game.audio.music.currentTime = 0;
+
+	//Set lyd og musikk tilbake til start
+	for(audio in game.audio) {
+		game.audio[audio].currentTime = 0;
+	}
 
 	//Lagar ny frosk, gamle vert sletta
 	create_frog();
@@ -243,6 +250,13 @@ window.onload = function() {
 	//Legg til interaktivitet
 	window.onkeydown = key_down_logger;
 	window.onkeyup = key_up_logger;
+
+	game.canvas.onmousedown = mouse_down_logger;
+	game.canvas.onmouseup = mouse_up_logger;
+	game.canvas.onmouseleave = mouse_up_logger;
+
+	game.canvas.addEventListener("touchstart", touch_to_mouse_converter, false);
+	game.canvas.addEventListener("touchend", mouse_up_logger, false);
 
 	startButton.on('click', function(){
 		game.start();
@@ -642,6 +656,57 @@ function key_down_logger(event) {
 			default:
 		}
 	}
+}
+
+function mouse_down_logger(event) {
+	if(game.started) {
+		event.preventDefault();
+
+		var frog = game.frog;
+		var x = event.offsetX;
+		var y = event.offsetY;
+
+		if(y < game.canvas.height / 2 ) {
+			//Hopp framover
+			jump(Math.ceil(frog.y) + 0.5);
+		}
+		else {
+			if(x < game.canvas.width * 2/5) {
+				frog.xSpeed = -frog.walkSpeed;
+			}
+			else if(x > game.canvas.width * 3/5) {
+				frog.xSpeed = frog.walkSpeed;
+			}
+			else if(y > game.canvas.height *3/4) {
+				//Hopp tilbake
+				jump(Math.floor(frog.y) - 0.5)
+			}
+			else {
+				//Hopp framover
+				jump(Math.ceil(frog.y) + 0.5);
+			}
+
+		}
+	}
+}
+
+function mouse_up_logger(event) {
+	if(game.started) {
+		event.preventDefault();
+		game.frog.xSpeed = 0;
+	}
+}
+
+//Touchevent har ikkje offsetX og offsetY så me må leggja dei til.
+function touch_to_mouse_converter(event) {
+	var rect = event.target.getBoundingClientRect();
+	var x = event.targetTouches[0].pageX - rect.left;
+	var y = event.targetTouches[0].pageY - rect.top;
+
+	event.offsetX = x;
+	event.offsetY = y;
+
+	mouse_down_logger(event);
 }
 
 function key_up_logger(event) {
