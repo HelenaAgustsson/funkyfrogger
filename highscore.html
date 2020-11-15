@@ -45,19 +45,24 @@
         <th>Poengsum</th>
         <th>Navn</th>
     </tr>
-    </table>
+</table>
+</div>
+
 
 <!-- Script til responsiv navigasjonsbar -->
 <script>
-    function collapsenavbar() {
-        var x = document.getElementById("nav");
-        if (x.className === "nav") {
-            x.className += " responsive";
-        } else {
-            x.className = "nav";
-        }
+function collapsenavbar() {
+    var x = document.getElementById("nav");
+    if (x.className === "nav") {
+        x.className += " responsive";
+    } else {
+        x.className = "nav";
     }
+}
+</script>
 
+<!-- Script til å legge inn high scores fra spillet -->
+<script>
 function get_high_score_list() {
 	try{
 		var highScore = JSON.parse(window.localStorage.getItem("highScore"))
@@ -89,9 +94,8 @@ window.onload = function() {
 	}
 
 }
-
 </script>
-</div>
+
 
 <!-- Footer nederst på siden -->
 <footer class="footer">
