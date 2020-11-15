@@ -111,14 +111,14 @@
 
 <!-- Script for flipping av musikknoter -->
 <script>
-    const note = document.getElementsByClassName("note");
-    const flippednote = document.getElementsByClassName("flippednote");
+    const note = $(".note");
+    const flippednote = $(".flippednote");
     setInterval(flipNote, 3000);
 
     function flipNote() {
-        note.removeClass("note").addClass("flippednote");
-        setTimeout(3000);
-        flippednote.removeClass("flippednote").addClass("note");
+        note.toggleClass("flippednote");
+        //setTimeout(3000);
+        //flippednote.removeClass("flippednote").addClass("note");
     }
 </script>
 
