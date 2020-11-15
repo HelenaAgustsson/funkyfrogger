@@ -1450,7 +1450,7 @@ game.audio = {
 	trumpet	: new Audio("audio/trumpet.wav"),
 	chomp	: new Audio("audio/crocodile_heavy_wet_crunch.mp3"),
 	chomp2	: new Audio("audio/crocodile_growl.mp3"),
-	police	: new Audio("audio/police_siren.mp3"),
+	police	: new Audio("audio/police_siren2.mp3"),
 	coins	: new Audio("audio/coins.mp3"),
 	cash	: new Audio("audio/cash_register.mp3")
 }
@@ -1739,7 +1739,10 @@ function handle_frog() {
 					if(obstacle.hasOwnProperty("audio")) {
 						//Politibil med sirene
 						if(collision_detect(frog, obstacle, 2.5)) {
-							obstacle.audio.play();
+							if(obstacle.audio.paused) {
+								obstacle.audio.play();
+								delete obstacle.audio;
+							}
 						}
 					}
 					//Collision detect med 0.9 for å gje litt slark med kollisjonen.
