@@ -476,4 +476,10 @@ ul.game-rules.row {
 	.button {
 		padding: 20px;
 	}
+	.splashpicture {
+		height: 20em;
+	}
+	.column.side {
+		padding: 0;
+	}
 }
