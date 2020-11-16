@@ -90,7 +90,6 @@ var game = {
 			game.reset();
 		}
 		if(!this.running)
-		//if(this.started == 0)
 		{
 			this.fps = fps;
 			this.running = true;
@@ -180,7 +179,6 @@ function reset_game() {
 window.onload = function() {
 	game.canvas = document.getElementById("gamecanvas");
 
-	//let coinImg = document.getElementById('coins');
 	let startButton = $("#start-btn");
 	let stopButton = $("#stop-btn");
 	let pauseButton = $("#pause-btn");
@@ -271,9 +269,11 @@ function update_game(frameTime) {
 		}
 
 		if(game.fps < 45) {
+			//Ventar ein frame for 30 fps (vanlegvis)
 			window.requestAnimationFrame(wait_a_frame);
 		}
 		else {
+			//Vanlegvis 60 fps
 			window.requestAnimationFrame(game.update);
 		}
 	}
@@ -284,12 +284,9 @@ function wait_a_frame() {
 }
 
 function end_game() {
-	//Vis sluttskjerm med poengsum og "Vil du spille igjen?"
+	//Viser sluttskjerm med poengsum og "Spill igjen?"
 	
-	//add_high_score("Froggy", game.score);
-
 	let lastHighscore = parseInt( $("#highscore > span").text());
-	//console.log(lastHighscore);
 	if(game.score > lastHighscore){
 		$("#highscore > span").text(game.score);
 	}
@@ -299,7 +296,6 @@ function end_game() {
 	
 	game.stop();
 	game.started = false;
-
 }
 
 //************************//
@@ -647,6 +643,7 @@ function draw_environment(env) {
 		var width = game.canvas.width;
 		var height = env.tiles * (game.tileSize);
 
+		//Fyller med vatn
 		context.drawImage(env.image, x, y, width, height);
 	}
 	else if(env.type == "lava") {
@@ -753,7 +750,7 @@ function add_environment(start = undefined) {
 		create_cars_in(env);
 	}
 
-	// lager items uansett type miljø foreløpig
+	// lager items uansett type miljø
 	
 	env.items = [];
 	env.specialItems = [];
@@ -868,7 +865,6 @@ function create_item_in(env) {
 		points	: 10,
 
 		image : document.getElementById('musicnote'),
-		animationStart : Math.random() * 2000
 	}
 
 	env.items.push(item);
@@ -1335,6 +1331,7 @@ function jump_done() {
 		frog.bestY = frog.y;
 	}
 
+	//Nokon plattformar har lyd
 	if(frog.platform.type == "drum") {
 		game.audio.drum.play();
 	}
@@ -1360,6 +1357,8 @@ function handle_frog() {
 	}
 
 	if(frog.dying) {
+		//Spelar animasjon i 3 sekunder
+		//Deretter nullstiller til fyrste rad
 		if(game.frameTime - frog.dying > 3000) {
 			frog.dying = 0;
 			frog.lifePoints -= 1;
