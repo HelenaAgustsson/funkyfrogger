@@ -1,7 +1,3 @@
-//DEBUG
-//Automatisk scrolling
-var time = 0;
-
 //************************//
 //      Hovudspelet       //
 //************************//
@@ -9,9 +5,7 @@ var time = 0;
 //Faste konstantar me ikkje forventar skal endre seg i løpet av spelet. 
 var constants = {
 	scrollSpeed	: 10,
-	//scrollSpeed	: 0.5,
 	tileCount	: 12, //Kor mange "tiles" som er synlege på canvas. Vert nytta til å rekna ut størrelsen ved teikning på canvas.
-	envColors	: ["lawngreen", "aqua", "coral", "teal", "slategrey", "forestgreen"],
 
 	cars		: [
 		[ "police", 1.8, 1.8 ],
@@ -27,15 +21,12 @@ var constants = {
 	//Tomt objekt
 	none		: {type : "none"},
 
-	carLeft		: [],
-	carRight	: [],
-
 	noteCount	: 4,
 	specialNoteCount : 3,
 
-	rockSinkTime	: 1500,
 	sinkTime	: 3000,
 	sinkChance	: 0.0005,
+
 		//Oppsett av vanskegrad. Større fart og akselerasjon vil vera vanskelegare. Større avstand på platformar vil vera vanskelegare. Større avstand på hinder vil vera lettare.
 	difficulty	: {
 		easy	: {
@@ -74,43 +65,6 @@ var constants = {
 			obstacleGap		: 3,
 		}
 	}
-//	difficulty	: {
-//		easy	: {
-//			pointLimit		: 200,
-//			platformSpeed	: 0.02,
-//			platformAccel	: 0.02,
-//			platformGap		: 4,
-//			obstacleSpeed	: 0.02,
-//			obstacleAccel	: 0.02,
-//			obstacleGap		: 6,
-//		},
-//		normal	: {
-//			pointLimit		: 500,
-//			platformSpeed	: 0.03,
-//			platformAccel	: 0.03,
-//			platformGap		: 6,
-//			obstacleSpeed	: 0.03,
-//			obstacleAccel	: 0.03,
-//			obstacleGap		: 5,
-//		},
-//		hard	: {
-//			pointLimit		: 1000,
-//			platformSpeed	: 0.04,
-//			platformAccel	: 0.04,
-//			platformGap		: 8,
-//			obstacleSpeed	: 0.04,
-//			obstacleAccel	: 0.04,
-//			obstacleGap		: 4,
-//		},
-//		impossible	: {
-//			platformSpeed	: 0.05,
-//			platformAccel	: 0.05,
-//			platformGap		: 10,
-//			obstacleSpeed	: 0.05,
-//			obstacleAccel	: 0.05,
-//			obstacleGap		: 3,
-//		}
-//	}
 };
 
 var game = {
@@ -122,7 +76,6 @@ var game = {
 	distance	: 0,
 	started		: false,
 	running		: false,	//Når spelet er i gang vil "running" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
-	//started		: 0,	//Når spelet er i gang vil "started" vise til setInterval funksjonen som køyrer og oppdaterer spelet.
 	fps			: 30,
 	env			: [],
 
@@ -141,7 +94,6 @@ var game = {
 		{
 			this.fps = fps;
 			this.running = true;
-			//this.started = setInterval(this.update, 1000/fps);
 			this.update();
 		}
 		else
@@ -152,11 +104,8 @@ var game = {
 
 	stop	: function() {
 		if(this.running)
-		//if(this.started != 0)
 		{
 			this.running = false;
-			//clearInterval(this.started);
-			//this.started = 0;
 
 			for(audio in this.audio) {
 				this.audio[audio].pause();
@@ -166,7 +115,6 @@ var game = {
 
 	pause	: function() {
 		if(this.running)
-		//if(this.started != 0)
 		{
 			this.stop()
 		}
@@ -227,27 +175,6 @@ function reset_game() {
 	update_game();
 	game.started = true;
 }
-
-//function load_resources() {
-//
-//	//Utvalg av køyretøy. Er satt opp som array med:
-//	//[ image, width, scaleY ]
-//
-//	constants.carLeft = [
-//		[ document.getElementById("bus-l"), 3.3, 3.3 ],
-//		[ document.getElementById("car1"), 2, 2 ],
-//		[ document.getElementById("cyber"), 1.8, 1.8 ],
-//		[ document.getElementById("police2"), 2.2, 2.2 ],
-//		[ document.getElementById("scooter"), 1, 1 ],
-//	];
-//
-//	constants.carRight = [
-//		[ document.getElementById("car2"), 2, 2 ],
-//		[ document.getElementById("police-r"), 1.8, 1.8 ],
-//		[ document.getElementById("sportscar"), 2, 2 ],
-//		[ document.getElementById("truck-r"), 2, 2 ],
-//	];
-//}
 
 //Vent til nettsida er lasta før ein hentar canvas og koplar opp funksjonar
 window.onload = function() {
@@ -310,8 +237,6 @@ window.onload = function() {
 		add_high_score(name, game.score);
 	});
 
-	//load_resources();
-
 	game.reset();
 }
 
@@ -358,20 +283,6 @@ function wait_a_frame() {
 	window.requestAnimationFrame(game.update);
 }
 
-//function update_game() {
-//	game.frameTime = Date.now();
-//	set_canvas();
-//
-//	// Miljø
-//	handle_enviroment();
-//
-//	handle_frog();
-//
-//	if(game.frog.lifePoints < 1) {
-//		game.end();
-//	}
-//}
-
 function end_game() {
 	//Vis sluttskjerm med poengsum og "Vil du spille igjen?"
 	
@@ -383,31 +294,12 @@ function end_game() {
 		$("#highscore > span").text(game.score);
 	}
 	
-//	var highScore = get_high_score_list();
-//	//console.log("High scores");
-//	for(hs of highScore) {
-//		console.log(hs);
-//	}
-
 	$(".modal-body > span").eq(0).text(game.score);
 	$("#modal").modal("show");
 	
 	game.stop();
 	game.started = false;
 
-//	context = game.canvas.getContext("2d");
-//	context.fillStyle = "black";
-//	let w = $("#gamecanvas").width();
-//	let h = $("#gamecanvas").height();
-//	context.fillRect(0,0,w,h);
-//	context.fillStyle = "#28E322";
-//	context.font = "120px calibri";
-//	context.textAlign = "center";
-//	context.fillText("Game Over!!", w/2, h/2);
-//	
-//	context.fillStyle = "#FA08D0";
-//	context.font = "80px calibri";
-//	context.fillText("Restart", w/2, h-h/4);
 }
 
 //************************//
@@ -557,65 +449,6 @@ function move_objects(objects) {
 	}
 }
 
-//// Testfunksjon for å visualisere bruken av draw_object(object)
-//function debug_draw_test() {
-//	//Array med testobjekt
-//	var testObjects = [{
-//		x : -2,
-//		y : 0.5,
-//		width: 1,
-//		height: 1,
-//	}, {
-//		x : -1,
-//		y : 1,
-//		width: 1,
-//		height: 1,
-//	}, {
-//		x : 0,
-//		y : 2,
-//		width: 0.5,
-//		height: 1.5,
-//		color: "purple"
-//	}, {
-//		x : 1,
-//		y : 2.5,
-//		width: 0.2,
-//		height: 0.2,
-//	}, {
-//		x : 2,
-//		y : 0,
-//		width: 1,
-//		height: 1,
-//	}];
-//
-//	var topLeftCornerX = 0.5 - (game.canvas.width / game.tileSize)/2;
-//	var topLeftCornerY = 11.5;
-//	var testObjectTopLeft = {
-//		x : topLeftCornerX,
-//		y : topLeftCornerY,
-//		width: 1,
-//		height: 1,
-//		color: "red"
-//		};
-//
-//	var topRightCornerX = (game.canvas.width / game.tileSize)/2 - 0.5;
-//	var topRightCornerY = 11.5;
-//	var testObjectTopRight = {
-//		x : topRightCornerX,
-//		y : topRightCornerY,
-//		width: 1,
-//		height: 1,
-//		color: "green"
-//		};
-//
-//	for (object of testObjects){
-//		draw_object(object);
-//	}
-//
-//	draw_object(testObjectTopLeft);
-//	draw_object(testObjectTopRight);
-//}
-
 //************************//
 //         Input          //
 //************************//
@@ -640,36 +473,22 @@ function key_down_logger(event) {
 			case " ":
 				event.preventDefault();
 				jump(Math.ceil(frog.y) + 0.5);
-				//if(frog.down) {
-				//	//Hopp bakover
-				//	frog.jump = true;
-				//	frog.jumpTarget = Math.floor(frog.y) - 0.5;
-				//}
-				//else {
-				//Hopp framover
-				//frog.jump = true;
-				//frog.jumpTarget = Math.ceil(frog.y) + 0.5;
-				//}
 				break;
 
 				// Når me trykkjer ned ein tast vil frosken flytta på seg. 
 			case "ArrowUp":
 			case "w":
 				event.preventDefault();
-				jump(Math.ceil(frog.y) + 0.5);
 				//Hopp framover
-				//frog.up = true;
-				//frog.ySpeed = frog.walkSpeed;
+				jump(Math.ceil(frog.y) + 0.5);
 				break;
 
 			case "ArrowDown":
 			case "s":
 				event.preventDefault();
 				//Hopp bakover
-				jump(Math.floor(frog.y) - 0.5)
-					//frog.down = true;
-					//frog.ySpeed = -frog.walkSpeed;
-					break;
+				jump(Math.floor(frog.y) - 0.5);
+				break;
 
 			case "ArrowLeft":
 			case "a":
@@ -744,27 +563,6 @@ function key_up_logger(event) {
 
 	if(game.running) {
 		switch(event.key) {
-			//Når me slepp opp ein tast vil frosken stoppa opp.
-			//case "ArrowUp":
-			//case "w":
-			//	frog.up = false;
-			//	if(frog.down == true) {
-			//		frog.y = -frog.walkSpeed;
-			//	}
-			//	else {
-			//		frog.ySpeed = 0;
-			//	}
-			//case "ArrowDown":
-			//case "s":
-			//	frog.down = false;
-			//	if(frog.up == true) {
-			//		frog.ySpeed = frog.walkSpeed;
-			//	}
-			//	else {
-			//		frog.ySpeed = 0;
-			//	}
-			//	break;
-
 			case "ArrowLeft":
 			case "a":
 				frog.left = false;
@@ -820,9 +618,6 @@ function handle_enviroment() {
 
 	//Teiknar opp alle objekt i miljø
 	for (env of game.env) {
-	//for (var i = game.env.length-1; i >= 0; --i) {
-		//var env = game.env[i]
-
 		move_objects(env.platforms);
 		for(platform of env.platforms) {
 			handle_sinking(platform);
@@ -922,24 +717,11 @@ function add_environment(start = undefined) {
 	var env = {
 		start	: start,
 		tiles	: 6,
-		//tiles	: get_random(3,8),
-		//type	: get_random(0,5)
 	};
 	env.end = env.start + env.tiles;
 
 	//Fast rotasjon på miljø
-	env.type = (env.start / constants.envColors.length) % constants.envColors.length;
-//	//Dersom me tilfeldigvis fekk same miljø att, prøv igjen.
-//	try {
-//		while(env.type == prevEnv.type)
-//		{
-//			env.type = get_random(0,5);
-//		}
-//	}
-//	catch {
-//		//Dersom dette er fyrste enviroment vil prevEnv vera "undefined".
-//		//Nyttar difor try-catch blokk for å ignorera error sidan me ikkje bryr oss.
-//	}
+	env.type = (env.start / 6) % 6;
 
 	env.safePlatforms = [];
 	env.platforms = [];
@@ -1002,14 +784,6 @@ function enviroment_is_complete() {
 //Funksjon til å lage hindringar til eit miljø.
 function create_cars_in(env) {
 	for(var row = env.tiles-1; row > 0; --row) {
-	//for(var row = 0; row < env.tiles; ++row) {
-		//var carColors = ["blue", "purple", "black"];
-		//var carTypes = [
-		//	car1 = document.getElementById("redcar_right"),
-		//	car2 = document.getElementById("car2"),
-		//	bus = document.getElementById("bus")
-		//];
-
 		var x = -game.width - 2;
 
 		while(x < game.width + 4) {
@@ -1017,16 +791,12 @@ function create_cars_in(env) {
 				x		: x,
 				y		: env.start + row + 0.5,
 
-				//width	: 1 + 1 * Math.random(),
 				height	: 0.8,
 
 				speed	: game.difficulty.obstacleSpeed +
 						  game.difficulty.obstacleAccel * row,
 
 				type	: "car"
-
-				//color	: carColors[get_random(0,2)],
-				//image	: carTypes[get_random(0,2)]
 			}
 
 			var type = get_random(0, constants.cars.length-1);
@@ -1048,34 +818,6 @@ function create_cars_in(env) {
 			else {
 				obstacle.image = document.getElementById(constants.cars[type][0] + "-r");
 			}
-
-			//switch(get_random(0,2)) {
-			//	case 0:
-			//		if(obstacle.speed > 0) {
-			//			obstacle.image = document.getElementById("redcarright");
-			//		}
-			//		else {
-			//			obstacle.image = document.getElementById("yellowcarleft");
-			//		}
-			//		obstacle.width = 2;
-			//		obstacle.scaleY = 2;
-			//		break;
-			//	case 1:
-			//		if(obstacle.speed > 0) {
-			//			obstacle.image = document.getElementById("car2");
-			//		}
-			//		else {
-			//			obstacle.image = document.getElementById("car1");
-			//		}
-			//		obstacle.width = 2;
-			//		obstacle.scaleY = 2;
-			//		break;
-			//	case 2:
-			//		obstacle.image = document.getElementById("bus");
-			//		obstacle.width = 3;
-			//		obstacle.scaleY = 3;
-			//		break;
-			//}
 
 			obstacle.x += obstacle.width/2;
 			x += obstacle.width/2 + game.difficulty.obstacleGap + 2 * Math.random();
@@ -1209,7 +951,6 @@ function handle_items(items){
 function create_lava_platforms(env) {
 
 	//Legger til trommer
-	//for(var row = 2; row < env.tiles; row += 2) {
 	for(var row = env.tiles-2; row > 0 ; row -= 2) {
 		for(var i = -1; i < 2; ++i)
 		{
@@ -1234,7 +975,6 @@ function create_lava_platforms(env) {
 	}
 
 	//Lager lavasteiner
-	//for(var row = 1; row < env.tiles; row += 2) {
 	for(var row = env.tiles-1; row > 0 ; row -= 2) {
 
 		var x = -game.width - 2;
@@ -1274,7 +1014,6 @@ function create_lava_platforms(env) {
 
 //Funksjon til å lage platformer til eit miljø.
 function create_river_platforms(env) {
-	//for(var row = 1; row < env.tiles; ++row) {
 	for(var row = env.tiles -1; row > 0; --row) {
 
 		var x = -game.width - 2;
@@ -1567,8 +1306,6 @@ function create_frog() {
 		inputCooldown : 0,
 		lifePoints : 3,
 
-		//up		: false,
-		//down	: false,
 		left	: false,
 		right	: false,
 
@@ -1579,10 +1316,7 @@ function create_frog() {
 		dying : 0,
 
 		platform : constants.none,
-		//https://www.flaticon.com/free-icon/frog_1036001
 		image : document.getElementById("frog"),
-		//animation : document.getElementsByClassName("froganimation"),
-		//animationStart : 0
 	};
 
 	game.frog = frog;
@@ -1629,7 +1363,6 @@ function handle_frog() {
 		if(game.frameTime - frog.dying > 3000) {
 			frog.dying = 0;
 			frog.lifePoints -= 1;
-			//frog.animation = document.getElementsByClassName("froganimation");
 			frog.image = document.getElementById("frog");
 
 			frog.x = 0;
@@ -1681,7 +1414,6 @@ function handle_frog() {
 				}
 				else {
 					frog.x += frog.xSpeed * game.deltaTime;
-					//frog.y += frog.ySpeed;
 				}
 			}
 
