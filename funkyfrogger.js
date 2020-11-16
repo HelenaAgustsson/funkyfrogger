@@ -1518,10 +1518,10 @@ function handle_frog() {
 					$("#life1").removeClass("fa-heart").addClass("fa-heart-o");
 				} 
 			}
-		}
 
-		handle_items(currentEnv.items);
-		handle_items(currentEnv.specialItems);
+			handle_items(currentEnv.items);
+			handle_items(currentEnv.specialItems);
+		}
 
 		//Stenger frosken inne i spelvindauge.
 		if(frog.y - frog.height/2 < game.distance) {
