@@ -298,6 +298,7 @@ function end_game() {
 	game.started = false;
 }
 
+
 //************************//
 //    Hjelpefunksjonar    //
 //************************//
@@ -445,6 +446,7 @@ function move_objects(objects) {
 	}
 }
 
+
 //************************//
 //         Input          //
 //************************//
@@ -584,8 +586,9 @@ function key_up_logger(event) {
 	}
 }
 
+
 //************************//
-//       Enviroment       //
+//       Environment       //
 //************************//
 
 //Hovudfunksjonen til handtering av miljø
@@ -848,6 +851,7 @@ function add_dragons_to_env(env) {
 	}
 }
 
+
 //************************//
 //        Items           //
 //************************//
@@ -938,6 +942,7 @@ function handle_items(items){
 		}
 	}
 }
+
 
 //************************//
 //        Platforms       //
@@ -1178,6 +1183,7 @@ function start_to_sink(platform) {
 	platform.sinking = game.frameTime;
 }
 
+
 //************************//
 //       Multimedia       //
 //************************//
@@ -1199,6 +1205,7 @@ game.audio = {
 	cash	: new Audio("audio/cash_register.mp3")
 }
 game.audio.music.loop = true;
+
 
 //************************//
 //       High Score       //
@@ -1282,6 +1289,7 @@ function get_high_score_list() {
 function clear_all_high_score() {
 	window.localStorage.setItem("highScore", JSON.stringify([]));
 }
+
 
 //************************//
 //       Funky Frog       //
