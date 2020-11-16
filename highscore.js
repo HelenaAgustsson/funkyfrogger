@@ -1,4 +1,4 @@
-//<!-- Script til responsiv navigasjonsbar -->
+// Script til responsiv navigasjonsbar
 function collapsenavbar() {
     var x = document.getElementById("nav");
     if (x.className === "nav") {
@@ -8,7 +8,7 @@ function collapsenavbar() {
     }
 }
 
-//<!-- Script til å legge inn high scores fra spillet -->
+// Script til å legge inn high scores fra spillet
 function get_high_score_list() {
 	try{
 		var highScore = JSON.parse(window.localStorage.getItem("highScore"))
