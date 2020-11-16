@@ -220,6 +220,11 @@ window.onload = function() {
 	}
 
 	$(".modal-footer > .btn-primary").on('click', function(){
+		var input = $(".modal-body > input")
+		var name = input.val();
+
+		add_high_score(name, game.score);
+
 		game.start();
 	});
 
