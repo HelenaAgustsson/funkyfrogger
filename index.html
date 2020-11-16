@@ -46,8 +46,8 @@
     </div>
     <div class="column middle">
         <img class="splashpicture" id="splashpicture" src="images/shades_frog.jpg" alt="Frog with funky moves and shades">
-        <button id="freezebutton" class="invisbutton" type="button" onclick="freezePicture()"></button>
-        <button id="unfreezebutton" class="invisbutton" type="button" onclick="unfreezePicture()"></button>
+        <button id="freezebutton" class="invisbutton" type="button" ></button>
+        <button id="unfreezebutton" class="invisbutton" type="button" ></button>
     </div>
     <div class="column side right">
         <img class="note outernoteright" src="images/notes4.svg" alt="Orange and gold music notes">
@@ -58,7 +58,7 @@
 
 <!-- Knapp for å starte spill -->
 <div class="center">
-    <button type="button" class="button" onclick="redirect()">
+    <button id="redirect" type="button" class="button" >
         <i class="fa fa-play"></i> Start spill</button>
 </div>
 
@@ -70,56 +70,6 @@
     </audio>
 </div>
 </div>
-
-
-<!-- Script for å redirecte til spillet når knappen trykkes på -->
-<script>
-    function redirect() {
-        window.location.href = "spill.html"
-    }
-</script>
-
-<!-- Script for bilde-slideshow, inkl. pausefunksjon-->
-<script>
-    const frog = document.getElementById("splashpicture");
-    var frogs = ["images/shades_frog.jpg", "images/lying_frog.jpg", "images/trumpet_frog.jpg", "images/guitar_frog.png"], i = 0;
-    var timer = setInterval(switchPicture, 3000);
-    var freezebutton = document.getElementById("freezebutton");
-    var unfreezebutton = document.getElementById("unfreezebutton");
-
-    function switchPicture() {
-		i += 1;
-		if (i >= frogs.length) {
-            i = 0
-        }
-        frog.src = frogs[i];
-    }
-    timer;
-
-    function freezePicture() {
-        clearInterval(timer);
-        freezebutton.style.display = "none";
-        unfreezebutton.style.display = "block";
-    }
-
-    function unfreezePicture() {
-        timer = setInterval(switchPicture, 3000);
-        freezebutton.style.display = "block";
-        unfreezebutton.style.display = "none";
-    }
-</script>
-
-<!-- Script for flipping av musikknoter -->
-<script>
-    const note = $(".note");
-    const flippednote = $(".flippednote");
-    setInterval(flipNote, 1500);
-
-    function flipNote() {
-        note.toggleClass("flippednote");
-    }
-</script>
-
 
 <!-- Footer nederst på siden -->
 <footer class="footer">
@@ -145,4 +95,6 @@
 </footer>
 
 </body>
+<script src="index.js"></script>
+
 </html>
